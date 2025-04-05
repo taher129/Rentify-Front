@@ -1,27 +1,51 @@
-# Rentify
+# Rentify – Rent Smarter, Live Greener 🌱
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.3.14.
+## Description
+**Rentify** is an innovative online rental platform that connects people who own underused items with those who need them temporarily. By promoting item sharing and reuse, Rentify supports the circular economy and helps reduce overconsumption.
 
-## Development server
+## 🌟 Key Features
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+- 🔐 **User Management**  
+  Registration, identity verification, and role-based profiles (renter, owner, admin).
 
-## Code scaffolding
+- 📦 **Product Management**  
+  Add/edit items, dynamic pricing, and promotional offers.
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+- 📅 **Booking System**  
+  Real-time availability calendar, deposit handling, and cancellation management.
 
-## Build
+- ⭐ **Ratings & Reviews**  
+  Product and owner reviews to build trust within the community.
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+- 📍 **Geolocation**  
+  Search for available items nearby.
 
-## Running unit tests
+- 🔍 **Advanced Search**  
+  Filter by category, price, location, and availability.
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+- 📢 **Blog & Content**  
+  Tips, guides, and user stories to enrich the platform experience.
 
-## Running end-to-end tests
+- 🛠️ **Complaint Handling**  
+  Claim submission and dispute resolution system.
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+- 🤖 **Smart Recommendations**  
+  AI-powered personalized suggestions based on user behavior.
 
-## Further help
+---
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+## 💚 Vision
+Rentify is committed to security, flexibility, and a smooth user experience—while encouraging responsible consumption and sustainable living.
+
+## 📁 This Repository
+This repository contains the **Admin Frontend** for Rentify, built using **Angular**. It provides tools and interfaces for administrators to manage the platform efficiently.
+
+---
+
+## 🚀 Getting Started
+
+```bash
+git clone https://github.com/taher129/Rentify-Front.git
+cd Rentify-Admin-Front
+npm install
+ng serve
