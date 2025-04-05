@@ -1,0 +1,98 @@
+<footer class="bg-dark bg-cover" style="background-image: url('assets/images/patterns/pattern-2.svg')">
+    <div class="py-12 border-bottom border-gray-700">
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-12 col-md-10 col-lg-8 col-xl-6">
+            <h5 class="mb-7 text-center text-white">Looking for the best rental deals and tips?</h5>
+            
+            <form class="mb-11">
+              <div class="row gx-5 align-items-start">
+                <div class="col">
+                  <input type="email" class="form-control form-control-gray-700 form-control-lg" 
+                         placeholder="Enter Email *" required>
+                </div>
+                <div class="col-auto">
+                  <button type="submit" class="btn btn-gray-500 btn-lg">Subscribe</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+        
+        <div class="row">
+          <div class="col-12 col-md-3">
+            <h4 class="mb-6 text-white">Rentify.</h4>
+            
+            <ul class="list-unstyled list-inline mb-7 mb-md-0">
+              <li class="list-inline-item" *ngFor="let social of socialLinks">
+                <a [href]="social.link" class="text-gray-350">
+                  <i class="fab fa-{{social.icon}}"></i>
+                </a>
+              </li>
+            </ul>
+          </div>
+          
+          <div class="col-6 col-sm">
+            <h6 class="heading-xxs mb-4 text-white">Support</h6>
+            <ul class="list-unstyled mb-7 mb-sm-0">
+              <li *ngFor="let link of supportLinks">
+                <a class="text-gray-300" 
+                   [href]="link.link || null"
+                   (click)="link.action === 'sizeGuide' ? openSizeGuide() : null">
+                  {{link.text}}
+                </a>
+              </li>
+            </ul>
+          </div>
+          
+          <div class="col-6 col-sm">
+            <h6 class="heading-xxs mb-4 text-white"> Browse Rentals
+
+            </h6>
+            <ul class="list-unstyled mb-7 mb-sm-0">
+              <li *ngFor="let link of shopLinks">
+                <a class="text-gray-300" [href]="link.link">{{link.text}}</a>
+              </li>
+            </ul>
+          </div>
+          
+          <div class="col-6 col-sm">
+            <h6 class="heading-xxs mb-4 text-white">Company</h6>
+            <ul class="list-unstyled mb-0">
+              <li *ngFor="let link of companyLinks">
+                <a class="text-gray-300" [href]="link.link">{{link.text}}</a>
+              </li>
+            </ul>
+          </div>
+          
+          <div class="col-6 col-sm">
+            <h6 class="heading-xxs mb-4 text-white">Contact</h6>
+            <ul class="list-unstyled mb-0">
+              <li *ngFor="let info of contactInfo">
+                <a class="text-gray-300" [href]="info.link">{{info.text}}</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="py-6">
+      <div class="container">
+        <div class="row">
+          <div class="col">
+            <p class="mb-3 mb-md-0 fs-xxs text-muted">
+              © {{currentYear}} Rentify. All rights reserved.
+            </p>
+          </div>
+          <div class="col-auto">
+            <img *ngFor="let method of paymentMethods" 
+                 class="footer-payment" 
+                 [src]="'assets/images/payment/' + method + '.svg'" 
+                 [alt]="method">
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+

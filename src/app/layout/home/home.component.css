@@ -1,0 +1,7 @@
+/* Assurer que toutes les images ont la même hauteur */
+.equal-height {
+    object-fit: cover; /* Garde les proportions de l'image tout en la redimensionnant */
+    height: 250px; /* Hauteur fixe pour toutes les images */
+    width: 100%; /* Largeur de l'image pour qu'elle occupe toute la largeur du conteneur */
+  }
+  

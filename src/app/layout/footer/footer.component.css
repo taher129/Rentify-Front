@@ -1,0 +1,47 @@
+footer {
+    .footer-payment {
+      height: 24px;
+      margin-left: 8px;
+    }
+  
+    .bg-cover {
+      background-size: cover;
+      background-position: center;
+    }
+  
+    .border-gray-700 {
+      border-color: rgba(255, 255, 255, 0.1) !important;
+    }
+  
+    .text-gray-300 {
+      color: rgba(255, 255, 255, 0.6);
+      &:hover {
+        color: white;
+        text-decoration: none;
+      }
+    }
+  
+    .text-gray-350 {
+      color: rgba(255, 255, 255, 0.7);
+      &:hover {
+        color: white;
+      }
+    }
+  
+    .form-control-gray-700 {
+      background-color: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.1);
+      color: white;
+      &::placeholder {
+        color: rgba(255, 255, 255, 0.5);
+      }
+    }
+  
+    .btn-gray-500 {
+      background-color: rgba(255, 255, 255, 0.1);
+      color: white;
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+      }
+    }
+  }

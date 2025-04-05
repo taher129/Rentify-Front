@@ -1,0 +1,202 @@
+<!-- <div class="container mx-auto p-6" data-aos="fade-up">
+    <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">
+      Lower your CO2 Footprint
+    </h1>
+    <p class="text-center text-gray-600 mb-8">
+      We only have one planet. How do Sharelians contribute to care for it? When making a transaction on Sharely, you actually save on average more than 88 kg CO2 – equivalent.
+    </p>
+  
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+      <div class="p-6 border rounded-lg shadow-lg bg-white" data-aos="fade-up">
+        <h2 class="text-xl font-semibold text-primary">Impact at a glance</h2>
+        <p class="text-gray-700 mt-2">
+          Per rental transaction, <strong>88.4kg CO2-eq</strong> are saved. With <strong>100 rental transactions</strong>, <strong>52 new article purchases</strong> are avoided.
+        </p>
+      </div>
+      <div class="p-6 border rounded-lg shadow-lg bg-white" data-aos="fade-up">
+        <h2 class="text-xl font-semibold text-primary">Usership over Ownership</h2>
+        <p class="text-gray-700 mt-2">
+          We all have too many things at home that we are not using. Yet, when we need something, the first option is often to go and buy it. By sharing articles among each other, not only CO2 emissions are reduced, but everyone gets access to a wider range of things and activities.
+        </p>
+      </div>
+    </div>
+  
+    <div class="text-center" data-aos="fade-up">
+      <h3 class="text-2xl font-semibold text-gray-800 mb-4">Impact at scale</h3>
+      <p class="text-gray-600 mb-6">
+        Enabling businesses to join the movement and transitioning from ownership to access economy can have a significant impact on lowering our CO2 footprint. Everyone must be involved: businesses, governments, individuals, and stores!
+      </p>
+  
+      <button class="bg-red-500 text-white px-6 py-3 rounded-lg shadow-md hover:bg-red-600 btn-animated">
+        Learn More
+        <span class="arrow ml-2">&#8594;</span>
+      </button>
+    </div>
+  
+    <div class="mt-10 text-center" data-aos="fade-up">
+      <h4 class="text-xl font-semibold text-gray-800 mb-4">Up for some more reading?</h4>
+      <p class="text-gray-600 mb-8">
+        You can find their full study about the environmental benefits of Sharely transactions here. We explain it all in detail.
+      </p>
+      <a href="#" class="text-blue-500 hover:underline">Read the full study</a>
+    </div>
+  </div>
+   -->
+
+
+  <!-- sustainability.component.html -->
+  <div class="sustainability-page">
+    <div class="container">
+      <!-- Hero Section -->
+      <section class="hero-section" [@fadeIn]>
+        <h1 class="title">
+          <span class="primary-text">Lower</span> Your CO<sub>2</sub> Footprint
+        </h1>
+        <p class="subtitle">
+          We only have one planet. Discover how Sharelians contribute to protecting it through sustainable sharing practices.
+        </p>
+        <div class="metric-badge" [@zoomIn]>
+          <span class="metric-value">88.4 kg CO<sub>2</sub>-eq</span>
+          <span class="metric-label">saved per transaction</span>
+        </div>
+      </section>
+  
+      <!-- Impact Cards -->
+      <div class="impact-cards">
+        <!-- Card 1 -->
+        <div class="impact-card" [@fadeIn]>
+          <div class="card-content">
+            <div class="card-header">
+              <div class="icon-container blue">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                </svg>
+              </div>
+              <h3 class="card-title">Impact at a Glance</h3>
+            </div>
+            <p class="card-text">
+              Each rental transaction saves <strong>88.4kg CO<sub>2</sub>-eq</strong>. With <strong>100 rentals</strong>, we avoid <strong>52 new purchases</strong>, reducing waste and emissions.
+            </p>
+            <div class="verification-badge">
+              <svg xmlns="http://www.w3.org/2000/svg" class="badge-icon" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+              </svg>
+              Verified by Green Standards
+            </div>
+          </div>
+        </div>
+  
+        <!-- Card 2 -->
+        <div class="impact-card" [@fadeIn]="{ delay: 100 }">
+          <div class="card-content">
+            <div class="card-header">
+              <div class="icon-container green">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
+              </div>
+              <h3 class="card-title">Usership Over Ownership</h3>
+            </div>
+            <p class="card-text">
+              Our homes are filled with unused items. Sharing gives access without the waste. Join the circular economy and reduce your environmental impact.
+            </p>
+            <div class="info-badge">
+              <svg xmlns="http://www.w3.org/2000/svg" class="badge-icon" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+              </svg>
+              Learn how sharing reduces waste
+            </div>
+          </div>
+        </div>
+  
+        <!-- Card 3 -->
+        <div class="impact-card" [@fadeIn]="{ delay: 200 }">
+          <div class="card-content">
+            <div class="card-header">
+              <div class="icon-container purple">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                </svg>
+              </div>
+              <h3 class="card-title">Community Impact</h3>
+            </div>
+            <p class="card-text">
+              Our community has already saved over <strong>1,200 tons</strong> of CO<sub>2</sub> emissions. Join thousands of eco-conscious users making a difference.
+            </p>
+            <div class="user-avatars">
+              <div class="avatar-group">
+                <div class="avatar"></div>
+                <div class="avatar"></div>
+                <div class="avatar"></div>
+                <div class="avatar-count">1K+</div>
+              </div>
+              <span class="avatar-label">Active community members</span>
+            </div>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Impact Visualization -->
+      <section class="impact-stats" [@fadeIn]>
+        <h2 class="section-title">Our Collective Impact</h2>
+        
+        <div class="stats-grid">
+          <div class="stat-item">
+            <div class="stat-value green">1.2M+</div>
+            <div class="stat-label">Items Shared</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value blue">88.4kg</div>
+            <div class="stat-label">CO<sub>2</sub> Saved Per Rental</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value purple">52</div>
+            <div class="stat-label">Purchases Avoided per 100 Rentals</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value red">1200T</div>
+            <div class="stat-label">Total CO<sub>2</sub> Saved</div>
+          </div>
+        </div>
+      </section>
+  
+      <!-- Call to Action -->
+      <section class="cta-section" [@fadeIn]>
+        <h2 class="section-title">Join the Sharing Revolution</h2>
+        <p class="section-description">
+          Businesses, governments, and individuals all have a role to play in transitioning to a sustainable access economy.
+        </p>
+        <button class="cta-button">
+          Start Sharing Today
+          <span class="arrow">→</span>
+        </button>
+      </section>
+  
+      <!-- Additional Resources -->
+      <section class="resources-section" [@fadeIn]>
+        <h3 class="resources-title">Dive Deeper Into Our Impact</h3>
+        <div class="resources-grid">
+          <div class="resource-item green">
+            <h4 class="resource-title">Full Sustainability Report</h4>
+            <p class="resource-description">Explore our comprehensive analysis of the environmental benefits of sharing economy models.</p>
+            <a href="#" class="resource-link green">
+              Download PDF
+              <svg xmlns="http://www.w3.org/2000/svg" class="link-icon" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" />
+              </svg>
+            </a>
+          </div>
+          <div class="resource-item blue">
+            <h4 class="resource-title">Case Studies</h4>
+            <p class="resource-description">See real-world examples of how sharing creates measurable environmental impact.</p>
+            <a href="#" class="resource-link blue">
+              View Case Studies
+              <svg xmlns="http://www.w3.org/2000/svg" class="link-icon" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13a1 1 0 102 0V9.414l1.293 1.293a1 1 0 001.414-1.414z" clip-rule="evenodd" />
+              </svg>
+            </a>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>

@@ -1,0 +1,55 @@
+.coming-soon-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: linear-gradient(135deg, #FF6B6B, #556270);
+    text-align: center;
+    color: #fff;
+  }
+  
+  .coming-soon-content {
+    max-width: 600px;
+    padding: 30px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  }
+  
+  .title {
+    font-size: 3rem;
+    font-weight: bold;
+  }
+  
+  .subtitle {
+    font-size: 1.2rem;
+    margin: 10px 0;
+  }
+  
+  .countdown {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    font-size: 2rem;
+    margin: 20px 0;
+  }
+  
+  .countdown span {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 10px 20px;
+    border-radius: 10px;
+    text-align: center;
+  }
+  
+  .countdown small {
+    display: block;
+    font-size: 0.8rem;
+  }
+  
+  .stay-tuned {
+    font-size: 1rem;
+    margin-top: 20px;
+    opacity: 0.8;
+  }
+  

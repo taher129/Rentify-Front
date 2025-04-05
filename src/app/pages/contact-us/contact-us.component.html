@@ -1,0 +1,56 @@
+<div class="contact-container">
+    <div class="header">
+      <h2>Get in Touch</h2>
+      <p>We'd love to hear from you! Fill out the form below.</p>
+    </div>
+    
+    <div *ngIf="showSuccessMessage" class="success-message show">
+      Your message has been sent successfully! We'll get back to you soon.
+    </div>
+    
+    <form [formGroup]="contactForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="name">Full Name</label>
+        <input id="name" type="text" class="form-control" formControlName="name">
+        <span class="error-message" *ngIf="formSubmitted && nameControl?.errors?.['required']">
+          Please enter your name
+        </span>
+        <span class="error-message" *ngIf="formSubmitted && nameControl?.errors?.['minlength']">
+          Name must be at least 2 characters
+        </span>
+      </div>
+      
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input id="email" type="email" class="form-control" formControlName="email">
+        <span class="error-message" *ngIf="formSubmitted && emailControl?.errors?.['required']">
+          Please enter your email address
+        </span>
+        <span class="error-message" *ngIf="formSubmitted && emailControl?.errors?.['email']">
+          Please enter a valid email address
+        </span>
+      </div>
+      
+      <div class="form-group">
+        <label for="message">Your Message</label>
+        <textarea id="message" class="form-control" formControlName="message"></textarea>
+        <span class="error-message" *ngIf="formSubmitted && messageControl?.errors?.['required']">
+          Please enter your message
+        </span>
+        <span class="error-message" *ngIf="formSubmitted && messageControl?.errors?.['minlength']">
+          Your message should be at least 10 characters
+        </span>
+      </div>
+      
+      <button type="submit" class="submit-btn" [disabled]="contactForm.invalid && formSubmitted">
+        Send Message
+      </button>
+    </form>
+    
+    <div class="support-info">
+      <h3>Contact Information</h3>
+      <p><span class="info-icon">✉️</span> <a href="mailto:support@rentify.com"> support&#64;rentify.com</a></p>
+      <p><span class="info-icon">📞</span> <a href="tel:+21650794341">+216 50794341</a></p>
+      <p><span class="info-icon">📍</span> Pôle Technologique El Ghazela, Ariana, Tunisia</p>
+    </div>
+  </div>

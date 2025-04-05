@@ -1,0 +1,18 @@
+
+
+<div *ngIf="post" class="blog-post-container">
+    <div class="blog-post-header">
+      <h1 class="blog-post-title">{{ post.title }}</h1>
+      <p class="post-date">Published on: <strong>{{ post.publishDate }}</strong></p>
+    </div>
+  
+    <div class="blog-post-images">
+      <img *ngFor="let image of post.images" [src]="image" alt="{{ post.title }}" class="blog-post-image">
+    </div>
+  
+    <div class="blog-post-content" [innerHTML]="post.content">
+    </div>
+  
+    <a routerLink="/blog" class="back-to-blog">← Back to Blog</a>
+  </div>
+  
