@@ -38,7 +38,9 @@
 Rentify is committed to security, flexibility, and a smooth user experience—while encouraging responsible consumption and sustainable living.
 
 ## 📁 This Repository
-This repository contains the **Admin Frontend** for Rentify, built using **Angular**. It provides tools and interfaces for administrators to manage the platform efficiently.
+This repository contains the **User Frontend** for Rentify, built using Angular. It provides a user-friendly interface for customers to browse, rent, and manage their rental items on the platform.
+
+
 
 ---
 
@@ -46,6 +48,6 @@ This repository contains the **Admin Frontend** for Rentify, built using **Angul
 
 ```bash
 git clone https://github.com/taher129/Rentify-Front.git
-cd Rentify-Admin-Front
+cd Rentify-Front
 npm install
 ng serve
