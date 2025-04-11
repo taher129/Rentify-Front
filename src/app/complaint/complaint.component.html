@@ -1,1 +1,48 @@
-<p>complaint works!</p>
+<div class="p-6 bg-white rounded-2xl shadow-lg overflow-x-auto">
+  <h2 class="text-2xl font-semibold mb-4 text-gray-800"> 📋 Complaints List</h2>
+
+  <table class="min-w-full border border-gray-200 rounded-lg overflow-hidden">
+    <thead class="bg-gray-100 text-gray-700 text-left text-sm uppercase">
+      <tr>
+       <th class="px-5 py-3">ID</th>
+        <th class="px-5 py-3">User</th>
+        <th class="px-5 py-3">Reported</th>
+        <th class="px-5 py-3">Description</th>
+        <th class="px-5 py-3">Type</th>
+        <th class="px-5 py-3">Evidence</th>
+        <th class="px-5 py-3">Status</th>
+        <th class="px-5 py-3">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let complaint of complaints" class="hover:bg-gray-50 transition-colors">
+        <td class="px-4 py-2">{{ complaint.complaintId }}</td>
+        <td class="px-4 py-2">{{ complaint.userId }}</td>
+        <td class="px-4 py-2">{{ complaint.reportedUserId }}</td>
+        <td class="px-4 py-2">{{ complaint.description }}</td>
+        <td class="px-4 py-2">{{ complaint.complaintType }}</td>
+        <td class="px-4 py-2">{{ complaint.evidence }}</td>
+        <td class="px-4 py-2">
+          <span [ngClass]="{
+              'text-green-600 font-medium': complaint.status === 'RESOLVED',
+              'text-yellow-600 font-medium': complaint.status === 'PENDING',
+              'text-red-600 font-medium': complaint.status === 'REJECTED'
+            }">{{ complaint.status }}</span>
+        </td>
+        <td class="px-4 py-2 flex flex-col gap-2 sm:flex-row">
+          <button class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-md text-sm"
+          [routerLink]="['/complaint-add',complaint.complaintId]">
+    ✏️ Modifier
+  </button>
+  <!-- <button class="btn btn-succes"  [routerLink]="['/complaint-add',complaint.complaintId]">update</button> -->
+  <button class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md text-sm"
+          (click)="deleteComplaint(complaint.complaintId!)">
+    🗑️ Supprimer
+  </button>
+  
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+

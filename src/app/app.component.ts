@@ -3,6 +3,7 @@ import { isPlatformBrowser } from '@angular/common';  // Importation de isPlatfo
 import { RouterOutlet } from '@angular/router';
 import { NavbarComponent } from "./layout/navbar/navbar.component";
 import { FooterComponent } from "./layout/footer/footer.component";
+import { FormsModule } from '@angular/forms';
 import AOS from 'aos';  // Importation de AOS
 
 import { InsuranceComponent } from './pages/insurance/insurance.component';
