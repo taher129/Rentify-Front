@@ -1,1 +1,21 @@
-<p>rating works!</p>
+<div class="rating-container">
+    <div class="stars">
+      <span
+        *ngFor="let star of [0, 1, 2, 3, 4]; let i = index"
+        [class.filled]="i < (hoverIndex !== null ? hoverIndex + 1 : ratingValue)"
+        (mouseenter)="onHover(i)"
+        (mouseleave)="onLeave()"
+        (click)="selectRating(i)">
+        ★
+      </span>
+    </div>
+  
+    <div class="hover-msg" *ngIf="hoverMessage">
+      {{ hoverMessage }}
+    </div>
+  
+    <div class="popup" *ngIf="showPopup">
+      ✅ Votre note a été enregistrée avec succès !
+    </div>
+  </div>
+  

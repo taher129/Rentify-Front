@@ -1,0 +1,22 @@
+<div class="complaint-detail" *ngIf="!isLoading && complaint">
+    <h2>Complaint Details</h2>
+    <ul>
+    
+      <li><strong>User ID:</strong> {{ complaint.userId }}</li>
+      <li><strong>Reported User ID:</strong> {{ complaint.reportedUserId }}</li>
+      <li><strong>Description:</strong> {{ complaint.description }}</li>
+      <li><strong>Type:</strong> {{ complaint.complaintType }}</li>
+      <li><strong>Status:</strong> {{ complaint.status }}</li>
+      <li><strong>Date:</strong> {{ complaint.complaintDate }}</li>
+      <li><strong>Evidence:</strong>
+        <ul>
+          <li *ngFor="let ev of complaint.evidence">{{ ev }}</li>
+        </ul>
+      </li>
+    </ul>
+    <button (click)="goBack()">Back</button>
+  </div>
+  
+  <div *ngIf="isLoading">Loading complaint...</div>
+  <div *ngIf="errorMessage">{{ errorMessage }}</div>
+  

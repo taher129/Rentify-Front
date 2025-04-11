@@ -1,0 +1,181 @@
+<!-- 
+<div class="complaint-container">
+    <div class="complaint-card" [class.submitted]="isSubmitted">
+      <div *ngIf="isSubmitted" class="success-state">
+        <div class="success-animation">
+          <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+            <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
+            <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+          </svg>
+        </div>
+        <h2>Complaint Submitted Successfully!</h2>
+        <p>Thank you for your submission. We will review your complaint shortly.</p>
+        <button class="btn-primary" (click)="router.navigate(['/complaint'])">Return to Home</button>
+      </div>
+  
+      <form *ngIf="!isSubmitted" (ngSubmit)="addComplaint()" #complaintForm="ngForm" class="complaint-form">
+        <h2>File a Complaint</h2>
+        <p class="form-description">Please fill out the form below to submit your complaint.</p>
+  
+        <div class="form-group">
+          <label for="userId">Your User ID</label>
+          <input type="number" id="userId" name="userId" [(ngModel)]="complaintDTO.userId" required
+                 class="form-control" [class.invalid]="complaintForm.submitted && !complaintForm.form.controls['userId']?.valid">
+        </div>
+  
+        <div class="form-group">
+          <label for="reportedUserId">Reported User ID</label>
+          <input type="number" id="reportedUserId" name="reportedUserId" [(ngModel)]="complaintDTO.reportedUserId" required
+                 class="form-control" [class.invalid]="complaintForm.submitted && !complaintForm.form.controls['reportedUserId']?.valid">
+        </div>
+  
+        <div class="form-group">
+          <label for="complaintType">Complaint Type</label>
+          <select id="complaintType" name="complaintType" [(ngModel)]="complaintDTO.complaintType" required
+                  class="form-control" [class.invalid]="complaintForm.submitted && !complaintForm.form.controls['complaintType']?.valid">
+            <option value="">Select a type</option>
+            <option value="HARASSMENT">Harassment</option>
+            <option value="FRAUD">Fraud</option>
+            <option value="INAPPROPRIATE_CONTENT">Inappropriate Content</option>
+            <option value="OTHER">Other</option>
+          </select>
+        </div>
+  
+        <div class="form-group">
+          <label for="description">Description</label>
+          <textarea id="description" name="description" [(ngModel)]="complaintDTO.description" required
+                    class="form-control" rows="5" [class.invalid]="complaintForm.submitted && !complaintForm.form.controls['description']?.valid"></textarea>
+        </div>
+  
+        <div class="form-group">
+          <label for="evidence">Evidence (comma separated URLs)</label>
+          <input type="text" id="evidence" name="evidence" [(ngModel)]="complaintDTO.evidence"
+                 class="form-control" placeholder="https://example.com/proof1.jpg, https://example.com/proof2.jpg">
+        </div>
+  
+        <div *ngIf="errorMessage" class="error-message">
+          {{ errorMessage }}
+        </div>
+  
+        <button type="submit" class="btn-primary" [disabled]="isLoading">
+          <span *ngIf="!isLoading">Submit Complaint</span>
+          <span *ngIf="isLoading" class="loading-spinner"></span>
+        </button>
+      </form>
+    </div>
+  </div> -->
+
+
+
+
+
+  <div class="complaint-container">
+    <div class="complaint-card" [class.submitted]="isSubmitted">
+      <!-- Success state for new complaint submission -->
+      <div *ngIf="isSubmitted && !id" class="success-state">
+        <div class="success-animation">
+          <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+            <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
+            <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+          </svg>
+        </div>
+        <h2>Complaint Submitted Successfully!</h2>
+        <p>Thank you for your submission. We will review your complaint shortly.</p>
+        <button class="btn-primary" (click)="router.navigate(['/complaint'])">Return to Complaints List</button>
+      </div>
+  
+      <!-- Success state for complaint update -->
+      <div *ngIf="isSubmitted && id" class="success-state">
+        <div class="success-animation">
+          <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+            <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
+            <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+          </svg>
+        </div>
+        <h2>Complaint Updated Successfully!</h2>
+        <p>Your changes have been saved. The updated complaint will be reviewed shortly.</p>
+        <button class="btn-primary" (click)="router.navigate(['/complaint'])">Return to Complaints List</button>
+      </div>
+  
+      <!-- Form state -->
+      <form *ngIf="!isSubmitted" (ngSubmit)="save()" #complaintForm="ngForm" class="complaint-form">
+        <h2>{{ id ? 'Edit Complaint' : 'File a New Complaint' }}</h2>
+        <p class="form-description">
+          {{ id ? 'Update the complaint details below.' : 'Please fill out the form below to submit your complaint.' }}
+        </p>
+  
+        <div class="form-group">
+          <label for="userId">Your User ID</label>
+          <input type="number" id="userId" name="userId" [(ngModel)]="complaintDTO.userId" required
+                 class="form-control" [class.invalid]="complaintForm.submitted && !complaintForm.form.get('userId')?.valid">
+          <small *ngIf="complaintForm.submitted && complaintForm.form.get('userId')?.errors?.['required']" 
+                 class="error-text">User ID is required</small>
+        </div>
+  
+        <div class="form-group">
+          <label for="reportedUserId">Reported User ID</label>
+          <input type="number" id="reportedUserId" name="reportedUserId" [(ngModel)]="complaintDTO.reportedUserId" required
+                 class="form-control" [class.invalid]="complaintForm.submitted && !complaintForm.form.get('reportedUserId')?.valid">
+          <small *ngIf="complaintForm.submitted && complaintForm.form.get('reportedUserId')?.errors?.['required']" 
+                 class="error-text">Reported User ID is required</small>
+        </div>
+  
+        <div class="form-group">
+          <label for="complaintType">Complaint Type</label>
+          <select id="complaintType" name="complaintType" [(ngModel)]="complaintDTO.complaintType" required
+                  class="form-control" [class.invalid]="complaintForm.submitted && !complaintForm.form.get('complaintType')?.valid">
+            <option value="">Select a type</option>
+            <option value="HARASSMENT">Harassment</option>
+            <option value="FRAUD">Fraud</option>
+            <option value="INAPPROPRIATE_CONTENT">Inappropriate Content</option>
+            <option value="SPAM">Spam</option>
+            <option value="OTHER">Other</option>
+          </select>
+          <small *ngIf="complaintForm.submitted && complaintForm.form.get('complaintType')?.errors?.['required']" 
+                 class="error-text">Complaint type is required</small>
+        </div>
+  
+        <div class="form-group">
+          <label for="status">Status</label>
+          <select id="status" name="status" [(ngModel)]="complaintDTO.status" required
+                  class="form-control" [class.invalid]="complaintForm.submitted && !complaintForm.form.get('status')?.valid"
+                  [disabled]="!id">
+            <option value="PENDING">Pending</option>
+            <option value="UNDER_REVIEW">Under Review</option>
+            <option value="RESOLVED">Resolved</option>
+            <option value="REJECTED">Rejected</option>
+          </select>
+        </div>
+  
+        <div class="form-group">
+          <label for="description">Description</label>
+          <textarea id="description" name="description" [(ngModel)]="complaintDTO.description" required
+                    class="form-control" rows="5" [class.invalid]="complaintForm.submitted && !complaintForm.form.get('description')?.valid"
+                    placeholder="Please provide detailed information about your complaint"></textarea>
+          <small *ngIf="complaintForm.submitted && complaintForm.form.get('description')?.errors?.['required']" 
+                 class="error-text">Description is required</small>
+        </div>
+  
+        <div class="form-group">
+          <label for="evidence">Evidence (comma separated URLs)</label>
+          <input type="text" id="evidence" name="evidence" [(ngModel)]="complaintDTO.evidence"
+                 class="form-control" placeholder="https://example.com/proof1.jpg, https://example.com/proof2.jpg">
+        </div>
+  
+        <div *ngIf="errorMessage" class="error-message">
+          {{ errorMessage }}
+        </div>
+  
+        <div class="form-actions">
+          <button type="submit" class="btn-primary" [disabled]="isLoading">
+            <span *ngIf="!isLoading">{{ id ? 'Update' : 'Submit' }} Complaint</span>
+            <span *ngIf="isLoading" class="loading-spinner"></span>
+          </button>
+          
+          <button type="button" class="btn-secondary" (click)="router.navigate(['/complaint'])" [disabled]="isLoading">
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>

@@ -11,6 +11,10 @@ import { BecomeALenderComponent } from './pages/become-a-lender/become-a-lender.
 import { InsuranceComponent } from './pages/insurance/insurance.component';
 import { SustainabilityComponent } from './pages/sustainability/sustainability.component';
 import { HomeComponent } from './layout/home/home.component';
+import { ComplaintComponent } from './complaint/complaint.component';
+import { ComplaintAddComponent } from './complaint-add/complaint-add.component';
+import { RatingComponent } from './rating/rating.component';
+import { ComplaintDetailComponent } from './complaint-detail/complaint-detail.component';
 
 export const routes: Routes = [
    // Page d'accueil
@@ -30,10 +34,29 @@ export const routes: Routes = [
    // Blog et articles de blog
    { path: 'blog', component: BlogComponent },
    { path: 'blog/:id', component: BlogPostComponent },
+
+
+
+
+   { path: 'complaint', component: ComplaintComponent },
+   { path: 'complaint-add', component: ComplaintAddComponent },
+   { path: 'complaint-add/:id', component: ComplaintAddComponent },
+   { path: 'complaint-detail/:id', component: ComplaintDetailComponent },
+   
+
+   {
+      path: 'rating',
+      loadComponent: () => import('./rating/rating.component').then(m => m.RatingComponent)
+    },
+
  
    // Page de gestion des erreurs 404
    { path: '404', component: NotFoundComponent },
  
    // Redirection vers la page d'accueil par défaut
    { path: '**', redirectTo: '/404', pathMatch: 'full' }
+
+
+
+
 ];
