@@ -66,12 +66,11 @@
   </div> -->
 
 
-
+<!-- 
 
 
   <div class="complaint-container">
     <div class="complaint-card" [class.submitted]="isSubmitted">
-      <!-- Success state for new complaint submission -->
       <div *ngIf="isSubmitted && !id" class="success-state">
         <div class="success-animation">
           <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
@@ -84,7 +83,6 @@
         <button class="btn-primary" (click)="router.navigate(['/complaint'])">Return to Complaints List</button>
       </div>
   
-      <!-- Success state for complaint update -->
       <div *ngIf="isSubmitted && id" class="success-state">
         <div class="success-animation">
           <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
@@ -97,7 +95,6 @@
         <button class="btn-primary" (click)="router.navigate(['/complaint'])">Return to Complaints List</button>
       </div>
   
-      <!-- Form state -->
       <form *ngIf="!isSubmitted" (ngSubmit)="save()" #complaintForm="ngForm" class="complaint-form">
         <h2>{{ id ? 'Edit Complaint' : 'File a New Complaint' }}</h2>
         <p class="form-description">
@@ -178,4 +175,42 @@
         </div>
       </form>
     </div>
+  </div> -->
+  <div class="complaint-container" *ngIf="!isSubmitted">
+    <form (ngSubmit)="save()" #complaintForm="ngForm" class="complaint-card animate">
+      <h2>📢 File a Complaint</h2>
+  
+      <div *ngIf="errorMessage" class="error-text">{{ errorMessage }}</div>
+  
+      <div class="form-group">
+        <label for="complaintType">Complaint Type</label>
+        <select id="complaintType" name="complaintType" [(ngModel)]="complaintDTO.complaintType" required class="form-control">
+          <option value="">-- Select Type --</option>
+          <option *ngFor="let type of complaintTypes" [value]="type">{{ type }}</option>
+        </select>
+      </div>
+  
+      <div class="form-group">
+        <label for="description">Description</label>
+        <textarea id="description" name="description" [(ngModel)]="complaintDTO.description" required class="form-control" placeholder="Describe the issue..."></textarea>
+      </div>
+  
+      <div class="form-group">
+        <label for="evidence">Evidence (URLs, optional)</label>
+        <input type="text" id="evidence" name="evidenceInput" [(ngModel)]="evidenceInput" class="form-control" placeholder="e.g., http://example.com/image.jpg">
+      </div>
+  
+      <button type="submit" class="btn-primary" [disabled]="isLoading">
+        {{ isLoading ? 'Submitting...' : 'Submit Complaint' }}
+        <span *ngIf="isLoading" class="loading-spinner"></span>
+      </button>
+    </form>
   </div>
+  
+  <div class="complaint-card submitted animate" *ngIf="isSubmitted">
+    <div class="checkmark success-animation">&#10003;</div>
+    <h2>Complaint Submitted!</h2>
+    <p>Thank you. Your complaint has been successfully received and will be reviewed.</p>
+    <button class="btn-success" (click)="goToComplaintList()">🔙 Back to Complaints</button>
+  </div>
+  

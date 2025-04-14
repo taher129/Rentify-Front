@@ -1,0 +1,38 @@
+<div class="complaint-container" *ngIf="!isSubmitted">
+    <form (ngSubmit)="update()" #complaintForm="ngForm" class="complaint-card animate">
+      <h2>✏️ Update Complaint</h2>
+  
+      <div *ngIf="errorMessage" class="error-text">{{ errorMessage }}</div>
+  
+      <div class="form-group">
+        <label for="complaintType">Complaint Type</label>
+        <select id="complaintType" name="complaintType" [(ngModel)]="complaintDTO.complaintType" required class="form-control">
+          <option value="">-- Select Type --</option>
+          <option *ngFor="let type of complaintTypes" [value]="type">{{ type }}</option>
+        </select>
+      </div>
+  
+      <div class="form-group">
+        <label for="description">Description</label>
+        <textarea id="description" name="description" [(ngModel)]="complaintDTO.description" required class="form-control" placeholder="Describe the issue..."></textarea>
+      </div>
+  
+      <div class="form-group">
+        <label for="evidence">Evidence (URLs, optional)</label>
+        <input type="text" id="evidence" name="evidenceInput" [(ngModel)]="evidenceInput" class="form-control" placeholder="e.g., http://example.com/image.jpg">
+      </div>
+  
+      <button type="submit" class="btn-primary" [disabled]="isLoading">
+        {{ isLoading ? 'Updating...' : 'Update Complaint' }}
+        <span *ngIf="isLoading" class="loading-spinner"></span>
+      </button>
+    </form>
+  </div>
+  
+  <div class="complaint-card submitted animate" *ngIf="isSubmitted">
+    <div class="checkmark success-animation">&#10003;</div>
+    <h2>Complaint Updated!</h2>
+    <p>Your complaint has been successfully updated.</p>
+    <button class="btn-success" (click)="goToComplaintList()">🔙 Back to Complaints</button>
+  </div>
+  

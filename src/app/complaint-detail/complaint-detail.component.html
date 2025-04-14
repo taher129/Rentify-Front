@@ -1,22 +1,26 @@
-<div class="complaint-detail" *ngIf="!isLoading && complaint">
-    <h2>Complaint Details</h2>
-    <ul>
-    
-      <li><strong>User ID:</strong> {{ complaint.userId }}</li>
-      <li><strong>Reported User ID:</strong> {{ complaint.reportedUserId }}</li>
-      <li><strong>Description:</strong> {{ complaint.description }}</li>
-      <li><strong>Type:</strong> {{ complaint.complaintType }}</li>
-      <li><strong>Status:</strong> {{ complaint.status }}</li>
-      <li><strong>Date:</strong> {{ complaint.complaintDate }}</li>
-      <li><strong>Evidence:</strong>
-        <ul>
-          <li *ngFor="let ev of complaint.evidence">{{ ev }}</li>
-        </ul>
-      </li>
-    </ul>
-    <button (click)="goBack()">Back</button>
+<div class="complaint-detail-container" *ngIf="!isLoading && complaint">
+  <div class="complaint-detail-card">
+    <h2>📋 Complaint Details</h2>
+
+    <p><strong>Type:</strong> {{ complaint.complaintType }}</p>
+    <p><strong>Description:</strong> {{ complaint.description }}</p>
+    <p><strong>Status:</strong> {{ complaint.status }}</p>
+    <p><strong>Complaint Date:</strong> {{ complaint.complaintDate | date:'medium' }}</p>
+    <p><strong>User ID:</strong> {{ complaint.userId }}</p>
+    <p><strong>Reported User ID:</strong> {{ complaint.reportedUserId }}</p>
+
+    <div *ngIf="complaint.evidence?.length">
+      <p><strong>Evidence:</strong></p>
+      <ul>
+        <li *ngFor="let ev of complaint.evidence">{{ ev }}</li>
+      </ul>
+    </div>
+    <button *ngIf=" this.complaintId !== undefined"
+  class="bg-purple-500 hover:bg-purple-600 text-white px-3 py-1 rounded-md text-sm"
+  (click)="downloadPdf(complaintId)">
+📄 PDF
+</button>
   </div>
-  
-  <div *ngIf="isLoading">Loading complaint...</div>
-  <div *ngIf="errorMessage">{{ errorMessage }}</div>
-  
+</div>
+
+<div class="error-text" *ngIf="errorMessage">{{ errorMessage }}</div>

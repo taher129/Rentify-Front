@@ -13,8 +13,8 @@ import { SustainabilityComponent } from './pages/sustainability/sustainability.c
 import { HomeComponent } from './layout/home/home.component';
 import { ComplaintComponent } from './complaint/complaint.component';
 import { ComplaintAddComponent } from './complaint-add/complaint-add.component';
-import { RatingComponent } from './rating/rating.component';
 import { ComplaintDetailComponent } from './complaint-detail/complaint-detail.component';
+import { ComplaintUpdateComponent } from './complaint-update/complaint-update.component';
 
 export const routes: Routes = [
    // Page d'accueil
@@ -44,10 +44,18 @@ export const routes: Routes = [
    { path: 'complaint-detail/:id', component: ComplaintDetailComponent },
    
 
-   {
-      path: 'rating',
-      loadComponent: () => import('./rating/rating.component').then(m => m.RatingComponent)
-    },
+{ path: 'complaint/update/:id', component: ComplaintUpdateComponent },
+
+
+{
+   path: 'complaint/detail/:id',
+   loadComponent: () => import('./complaint-detail/complaint-detail.component').then(m => m.ComplaintDetailComponent)
+ }, 
+
+   // {
+   //    path: 'rating',
+   //    loadComponent: () => import('./rating/rating.component').then(m => m.RatingComponent)
+   //  },
 
  
    // Page de gestion des erreurs 404

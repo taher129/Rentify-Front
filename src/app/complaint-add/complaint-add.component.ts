@@ -65,8 +65,113 @@
     
 //   }
 // }
+
+
+
+// import { Component, OnInit } from '@angular/core';
+// import { Router, ActivatedRoute } from '@angular/router';
+// import { ComplaintService } from '../services/complaint.service';
+// import { ComplaintDTO } from '../models/ComplaintDTO';
+// import { HttpErrorResponse } from '@angular/common/http';
+// import { CommonModule } from '@angular/common';
+// import { FormsModule } from '@angular/forms';
+
+// @Component({
+//   selector: 'app-complaint-add',
+//   templateUrl: './complaint-add.component.html',
+//   styleUrls: ['./complaint-add.component.css'],
+//   imports: [CommonModule, FormsModule],
+//   standalone: true,
+// })
+// export class ComplaintAddComponent implements OnInit {
+//   complaintDTO: ComplaintDTO = new ComplaintDTO();
+//   isLoading: boolean = false;
+//   errorMessage: string = '';
+//   isSubmitted: boolean = false;
+//   id: number | null = null;
+
+//   constructor(
+//     private route: ActivatedRoute,
+//     private complaintService: ComplaintService,
+//     public router: Router
+//   ) {}
+
+//   ngOnInit(): void {
+//     this.route.paramMap.subscribe(params => {
+//       const idParam = params.get('id');
+//       if (idParam) {
+//         this.id = +idParam;
+//         this.loadComplaint(this.id);
+//       } else {
+//         this.route.queryParams.subscribe(queryParams => {
+//           this.complaintDTO = {
+//             ...this.complaintDTO,
+//             userId: queryParams['userId'] || 0,
+//             reportedUserId: queryParams['reportedUserId'] || 0,
+//             description: queryParams['description'] || '',
+//             complaintType: queryParams['complaintType'] || '',
+//             status: queryParams['status'] || 'PENDING',
+//             complaintDate: new Date().toISOString(),
+//             evidence: queryParams['evidence'] ? queryParams['evidence'].split(',') : []  // Vérification pour evidence
+//           };
+//         });
+//       }
+//     });
+//   }
+
+//   loadComplaint(id: number): void {
+//     this.isLoading = true;
+//     this.complaintService.getComplaintById(id).subscribe(
+//       (complaint: ComplaintDTO) => {
+//         this.complaintDTO = complaint;
+//         this.isLoading = false;
+//       },
+//       (error: HttpErrorResponse) => {
+//         this.errorMessage = 'Error loading complaint: ' + error.message;
+//         this.isLoading = false;
+//       }
+//     );
+//   }
+
+//   save(): void {
+//     this.isLoading = true;
+//     this.errorMessage = '';
+
+//     // Vérification de la validité des champs avant d'envoyer
+//     if (!this.complaintDTO.userId || !this.complaintDTO.reportedUserId || !this.complaintDTO.description || !this.complaintDTO.complaintType) {
+//       this.errorMessage = 'Tous les champs obligatoires doivent être remplis!';
+//       this.isLoading = false;
+//       return;
+//     }
+
+//     if (this.id) {
+//       this.complaintService.updateComplaint(this.id, this.complaintDTO).subscribe(
+//         () => {
+//           this.isSubmitted = true;
+//           this.isLoading = false;
+//         },
+//         (error: HttpErrorResponse) => this.handleError(error)
+//       );
+//     } else {
+//       this.complaintService.createComplaint(this.complaintDTO).subscribe(
+//         () => {
+//           this.isSubmitted = true;
+//           this.isLoading = false;
+//         },
+//         (error: HttpErrorResponse) => this.handleError(error)
+//       );
+//     }
+//   }
+
+//   private handleError(error: HttpErrorResponse): void {
+//     console.error('Error:', error);
+//     this.errorMessage = error.error?.message || 'An unexpected error occurred';
+//     this.isLoading = false;
+//   }
+// }
+
 import { Component, OnInit } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { ComplaintService } from '../services/complaint.service';
 import { ComplaintDTO } from '../models/ComplaintDTO';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -77,92 +182,56 @@ import { FormsModule } from '@angular/forms';
   selector: 'app-complaint-add',
   templateUrl: './complaint-add.component.html',
   styleUrls: ['./complaint-add.component.css'],
-  imports: [CommonModule, FormsModule],
   standalone: true,
+  imports: [CommonModule, FormsModule,RouterModule]
 })
 export class ComplaintAddComponent implements OnInit {
   complaintDTO: ComplaintDTO = new ComplaintDTO();
-  isLoading: boolean = false;
-  errorMessage: string = '';
-  isSubmitted: boolean = false;
-  id: number | null = null;
+  evidenceInput: string = '';
+  isLoading = false;
+  errorMessage = '';
+  isSubmitted = false;
 
-  constructor(
-    private route: ActivatedRoute,
-    private complaintService: ComplaintService,
-    public router: Router
-  ) {}
+  complaintTypes: string[] = ['HARASSMENT', 'SPAM', 'ABUSE', 'OTHER'];
+
+  constructor(public router: Router, private complaintService: ComplaintService) {}
 
   ngOnInit(): void {
-    this.route.paramMap.subscribe(params => {
-      const idParam = params.get('id');
-      if (idParam) {
-        this.id = +idParam;
-        this.loadComplaint(this.id);
-      } else {
-        this.route.queryParams.subscribe(queryParams => {
-          this.complaintDTO = {
-            ...this.complaintDTO,
-            userId: queryParams['userId'] || 0,
-            reportedUserId: queryParams['reportedUserId'] || 0,
-            description: queryParams['description'] || '',
-            complaintType: queryParams['complaintType'] || '',
-            status: queryParams['status'] || 'PENDING',
-            complaintDate: new Date().toISOString(),
-            evidence: queryParams['evidence'] ? queryParams['evidence'].split(',') : []  // Vérification pour evidence
-          };
-        });
-      }
-    });
-  }
-
-  loadComplaint(id: number): void {
-    this.isLoading = true;
-    this.complaintService.getComplaintById(id).subscribe(
-      (complaint: ComplaintDTO) => {
-        this.complaintDTO = complaint;
-        this.isLoading = false;
-      },
-      (error: HttpErrorResponse) => {
-        this.errorMessage = 'Error loading complaint: ' + error.message;
-        this.isLoading = false;
-      }
-    );
+    this.complaintDTO.userId = 77;
+    this.complaintDTO.reportedUserId = 77;
+    this.complaintDTO.status = 'PENDING';
+    this.complaintDTO.complaintDate = new Date().toISOString();
   }
 
   save(): void {
-    this.isLoading = true;
     this.errorMessage = '';
+    this.isLoading = true;
 
-    // Vérification de la validité des champs avant d'envoyer
-    if (!this.complaintDTO.userId || !this.complaintDTO.reportedUserId || !this.complaintDTO.description || !this.complaintDTO.complaintType) {
-      this.errorMessage = 'Tous les champs obligatoires doivent être remplis!';
+    if (!this.complaintDTO.complaintType || !this.complaintDTO.description) {
+      this.errorMessage = 'Please fill in all required fields.';
       this.isLoading = false;
       return;
     }
 
-    if (this.id) {
-      this.complaintService.updateComplaint(this.id, this.complaintDTO).subscribe(
-        () => {
-          this.isSubmitted = true;
-          this.isLoading = false;
-        },
-        (error: HttpErrorResponse) => this.handleError(error)
-      );
-    } else {
-      this.complaintService.createComplaint(this.complaintDTO).subscribe(
-        () => {
-          this.isSubmitted = true;
-          this.isLoading = false;
-        },
-        (error: HttpErrorResponse) => this.handleError(error)
-      );
-    }
+    this.complaintDTO.evidence = this.evidenceInput
+      ? this.evidenceInput.split(',').map(e => e.trim()).filter(e => e !== '')
+      : [];
+
+    this.complaintService.createComplaint(this.complaintDTO).subscribe({
+      next: () => {
+        this.isSubmitted = true;
+        this.isLoading = false;
+      },
+      error: (error: HttpErrorResponse) => {
+        this.errorMessage = error.error?.message || 'Submission failed.';
+        this.isLoading = false;
+      }
+    });
+    console.log('Payload:', this.complaintDTO);
+
   }
 
-  private handleError(error: HttpErrorResponse): void {
-    console.error('Error:', error);
-    this.errorMessage = error.error?.message || 'An unexpected error occurred';
-    this.isLoading = false;
+  goToComplaintList(): void {
+    this.router.navigate(['/complaint']);
   }
 }
