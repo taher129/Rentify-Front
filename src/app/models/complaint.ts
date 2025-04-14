@@ -31,14 +31,13 @@
 //   }
   
 
-// src/app/models/complaint.ts
 export class Complaint {
-  complaintId?: number; // facultatif à la création
+  complaintId?: number;
   userId!: number;
   reportedUserId!: number;
-  complaintDate?: Date; // gérée côté backend
+  complaintDate?: Date; 
   description!: string;
   complaintType!: string;
-  evidence?: string;
-  status?: string; // ex: "EN_ATTENTE", "TRAITÉ"
+  evidence?: string[]; 
+  status?: string; 
 }

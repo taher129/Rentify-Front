@@ -37,8 +37,9 @@ export class ComplaintComponent implements OnInit {
       error: (error) => console.error('Erreur lors de la suppression', error)
     });
   }
-
-  updateComplaint(complaintId: number): void {
-    this.router.navigate([`/update-complaint/${complaintId}`]);
+  downloadPdf(id: number): void {
+    this.complaintService.downloadComplaintPdf(id);
   }
+  
+ 
 }

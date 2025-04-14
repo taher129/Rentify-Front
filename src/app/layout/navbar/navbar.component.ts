@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { RatingComponent } from "../../rating/rating.component";
 
 
 @Component({
