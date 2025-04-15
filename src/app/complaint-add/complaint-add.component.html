@@ -207,10 +207,153 @@
     </form>
   </div>
   
-  <div class="complaint-card submitted animate" *ngIf="isSubmitted">
+  <!-- <div class="complaint-card submitted animate" *ngIf="isSubmitted">
     <div class="checkmark success-animation">&#10003;</div>
     <h2>Complaint Submitted!</h2>
     <p>Thank you. Your complaint has been successfully received and will be reviewed.</p>
-    <button class="btn-success" (click)="goToComplaintList()">🔙 Back to Complaints</button>
+    <button class="btn-success" (click)="goToComplaintList()"> Back to Complaints</button>
+  </div>
+   -->
+   <div class="success-container" *ngIf="isSubmitted">
+    <div class="success-card">
+      <div class="success-icon animate">
+        <svg class="checkmark" viewBox="0 0 52 52">
+          <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none"/>
+          <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+        </svg>
+      </div>
+      <h2 class="success-title">Complaint Submitted!</h2>
+      <p class="success-message">Thank you for your submission. We've received your complaint and our team will review it shortly.</p>
+      <button class="success-btn" (click)="goToComplaintList()">
+        <span>View All Complaints</span>
+        <svg class="arrow-icon" viewBox="0 0 24 24">
+          <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/>
+        </svg>
+      </button>
+    </div>
   </div>
   
+  <style>
+  /* Component-scoped styles */
+  :host {
+    --success-green: #4CAF50;
+    --deep-green: #45a049;
+    --text-primary: #2d3748;
+    --text-secondary: #4a5568;
+  }
+  
+  .success-container {
+    display: grid;
+    place-items: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    padding: 2em;
+  }
+  
+  .success-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(12px);
+    border-radius: 24px;
+    padding: 3em 2.5em;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
+    max-width: 480px;
+    width: 90%;
+    text-align: center;
+    animation: cardEntrance 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+  }
+  
+  .success-icon {
+    position: relative;
+    margin: 0 auto 2em;
+    width: 80px;
+    height: 80px;
+  }
+  
+  .checkmark-circle {
+    stroke: var(--success-green);
+    stroke-width: 2;
+    stroke-dasharray: 166;
+    stroke-dashoffset: 166;
+    animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+  }
+  
+  .checkmark-check {
+    transform-origin: 50% 50%;
+    stroke-dasharray: 48;
+    stroke-dashoffset: 48;
+    animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.6s forwards;
+  }
+  
+  .success-title {
+    color: var(--text-primary);
+    font-size: 1.8em;
+    font-weight: 700;
+    margin-bottom: 0.8em;
+  }
+  
+  .success-message {
+    color: var(--text-secondary);
+    font-size: 1.1em;
+    line-height: 1.6;
+    margin-bottom: 2em;
+    opacity: 0.9;
+  }
+  
+  .success-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.8em;
+    padding: 0.9em 2em;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--success-green) 0%, var(--deep-green) 100%);
+    color: white;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(76, 175, 80, 0.2);
+  }
+  
+  .success-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(76, 175, 80, 0.3);
+    gap: 1.2em;
+  }
+  
+  .arrow-icon {
+    width: 20px;
+    height: 20px;
+    fill: currentColor;
+    transition: transform 0.3s ease;
+  }
+  
+  .success-btn:hover .arrow-icon {
+    transform: translateX(3px);
+  }
+  
+  /* Animations */
+  @keyframes cardEntrance {
+    0% { opacity: 0; transform: scale(0.9) translateY(20px); }
+    100% { opacity: 1; transform: scale(1) translateY(0); }
+  }
+  
+  @keyframes stroke {
+    100% { stroke-dashoffset: 0; }
+  }
+  
+  @media (max-width: 480px) {
+    .success-card {
+      padding: 2em 1.5em;
+      border-radius: 20px;
+    }
+    
+    .success-title {
+      font-size: 1.5em;
+    }
+    
+    .success-btn {
+      padding: 0.75em 1.5em;
+      font-size: 0.9em;
+    }
+  }
+  </style>

@@ -1,10 +1,11 @@
-// src/app/services/complaint.service.ts
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Complaint } from '../models/complaint';
 import { ComplaintDTO } from '../models/ComplaintDTO';
 import { saveAs } from 'file-saver';
+import { map, catchError, throwError } from 'rxjs';
+
 
 
 @Injectable({
@@ -22,7 +23,28 @@ export class ComplaintService {
   getAllComplaints(): Observable<Complaint[]> {
     return this.http.get<Complaint[]>(`${this.apiUrl}/list`);
   }
+  
 
+
+  filterComplaintsByStatus(status: string): Observable<Complaint[]> {
+    const params = new HttpParams().set('status', status);
+    return this.http.get<Complaint[]>(`${this.apiUrl}/filtercomplaint`, { params })
+      .pipe(
+        catchError(error => {
+          console.error('Error filtering complaints:', error);
+          return throwError(() => new Error('Failed to filter complaints'));
+        })
+      );
+  }
+
+  filterComplaintsByType(type: string): Observable<Complaint[]> {
+    return this.http.get<Complaint[]>(`${this.apiUrl}/filterByType?type=${type}`);
+  }
+
+  // filterComplaintsByStatus(status: string): Observable<Complaint[]> {
+  //   return this.http.get<Complaint[]>(`${this.apiUrl}/filter?status=${status}`);
+  // }
+  
   // getComplaintById(complaintId: number): Observable<Complaint> {
   //   return this.http.get<Complaint>(`${this.apiUrl}/details/${complaintId}`);
   // }
@@ -40,32 +62,33 @@ export class ComplaintService {
   }
 
 
+  
+  downloadComplaintPdf(id: number): Observable<Blob> {
+    console.log(`Appel API: ${this.apiUrl}/pdf/${id}`);
+    return this.http.get(`${this.apiUrl}/pdf/${id}`, {
+      responseType: 'blob',
+      observe: 'response'
+    }).pipe(
+      map(response => {
+        console.log('Headers reçus:', response.headers);
+        return response.body as Blob;
+      }),
+      catchError(error => {
+        console.error('Erreur HTTP:', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
+
+
   deleteComplaint(complaintId: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/delete/${complaintId}`);
   }
+ 
 
-  downloadComplaintPdf(id: number): void {
-    const url = `${this.apiUrl}/complaints/pdf/${id}`;
-    this.http.get(url, { responseType: 'blob', observe: 'response' }).subscribe(response => {
-      const blob = response.body!;
-      const file = new Blob([blob], { type: 'application/pdf' });
-      const fileURL = window.URL.createObjectURL(file);
-      
-      // Ouvre le PDF dans un nouvel onglet
-      window.open(fileURL, '_blank');
   
-      // Crée un lien pour le téléchargement et clique sur le lien (pour déclencher le téléchargement)
-      const a = document.createElement('a');
-      a.href = fileURL;
-      a.download = `complaint_${id}.pdf`; // Nom du fichier téléchargé
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-  
-      // Libère l'URL de l'objet
-      window.URL.revokeObjectURL(fileURL);
-    });
-  }
+
 
   // downloadComplaintPdf(id: number): void {
   //   const url = `${this.apiUrl}/pdf/${id}`;
@@ -75,4 +98,6 @@ export class ComplaintService {
   //     console.error('Erreur lors du téléchargement du PDF', error);
   //   });
   // }
+
+
 }

@@ -22,7 +22,7 @@ complaintDTO: ComplaintDTO = new ComplaintDTO();
   isSubmitted = false;
   complaintId !: number;
 
-  complaintTypes: string[] = ['HARASSMENT', 'SPAM', 'ABUSE', 'OTHER'];
+  complaintTypes: string[] = ['Fraud', 'Billing Issues', 'Product Issues', 'Reservation Problems'];
 
   constructor(
     private router: Router,

@@ -15,11 +15,22 @@
         <li *ngFor="let ev of complaint.evidence">{{ ev }}</li>
       </ul>
     </div>
-    <button *ngIf=" this.complaintId !== undefined"
-  class="bg-purple-500 hover:bg-purple-600 text-white px-3 py-1 rounded-md text-sm"
+    <!-- <button *ngIf="complaintId"
+    class="bg-purple-500 hover:bg-purple-600 text-white px-3 py-1 rounded-md text-sm"
+    (click)="downloadPdf(complaintId)">
+    📄 <span>Download PDF</span>
+  </button> -->
+ 
+  <button *ngIf="complaintId" 
+  class="pdf-button"
   (click)="downloadPdf(complaintId)">
-📄 PDF
+📄 <span>Download PDF</span>
 </button>
+
+  <div class="back-arrow" (click)="goToComplaintList()" title="Retour à la liste">
+  ⬅ Retour
+</div>
+
   </div>
 </div>
 

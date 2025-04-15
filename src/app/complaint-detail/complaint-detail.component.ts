@@ -1,10 +1,12 @@
 
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { ActivatedRoute, RouterModule,Router } from '@angular/router';
 import { ComplaintService } from '../services/complaint.service';
 import { ComplaintDTO } from '../models/ComplaintDTO';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { saveAs } from 'file-saver';
+
 
 @Component({
   selector: 'app-complaint-detail',
@@ -19,7 +21,7 @@ export class ComplaintDetailComponent implements OnInit {
   isLoading = false;
   errorMessage = '';
 
-  constructor(private route: ActivatedRoute, private complaintService: ComplaintService) {}
+  constructor(private route: ActivatedRoute, private complaintService: ComplaintService, private router: Router) {}
 
   ngOnInit(): void {
     this.complaintId = Number(this.route.snapshot.paramMap.get('id'));
@@ -39,10 +41,45 @@ export class ComplaintDetailComponent implements OnInit {
       }
     });
   }
+  goToComplaintList(): void {
+    this.router.navigate(['/complaint']);
+  }
 
+  downloadPdf(id: number) {
+    console.log('Tentative de téléchargement du PDF pour ID:', id);
+    
+    this.complaintService.downloadComplaintPdf(id).subscribe({
+      next: (blob) => {
+        console.log('Blob reçu:', blob);
+        console.log('Type du blob:', blob.type);
+        
+        try {
+          const file = new Blob([blob], { type: 'application/pdf' });
+          const url = window.URL.createObjectURL(file);
+          
+          console.log('URL créée:', url);
+          
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = `complaint_${id}.pdf`;
+          document.body.appendChild(link); // Ajouter au DOM pour compatibilité
+          link.click();
+          document.body.removeChild(link); // Nettoyer
+          
+          window.URL.revokeObjectURL(url);
+          console.log('Téléchargement lancé!');
+        } catch (error) {
+          console.error('Erreur lors de la création du fichier:', error);
+        }
+      },
+      error: (error) => {
+        console.error('Erreur lors de la récupération du PDF:', error);
+      }
+    });
+  }
 
-  downloadPdf(id: number): void {
-      this.complaintService.downloadComplaintPdf(id);
-    }
+  // downloadPdf(id: number): void {
+  //     this.complaintService.downloadComplaintPdf(id);
+  //   }
     
 }
