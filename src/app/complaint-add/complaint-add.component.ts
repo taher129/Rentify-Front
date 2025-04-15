@@ -192,7 +192,7 @@ export class ComplaintAddComponent implements OnInit {
   errorMessage = '';
   isSubmitted = false;
 
-  complaintTypes: string[] = ['HARASSMENT', 'SPAM', 'ABUSE', 'OTHER'];
+  complaintTypes: string[] = ['Fraud', 'Billing Issues', 'Product Issues', 'Reservation Problems'];
 
   constructor(public router: Router, private complaintService: ComplaintService) {}
 
