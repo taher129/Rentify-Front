@@ -1,1 +1,22 @@
-<p>product-list works!</p>
+<div class="container">
+  <h2 class="text-center">Products</h2>
+  <div class="row">
+    <div class="col-12 col-md-4 mb-4" *ngFor="let product of products">
+      <a [routerLink]="['/product', product.id]" class="text-decoration-none text-dark">
+      <div class="card h-100 d-flex flex-column product-card">
+        <img [src]="product.productImage" alt="{{ product.name }}" class="card-img-top product-image" />
+        <div class="card-body d-flex flex-column">
+          <h5 class="card-title">{{ product.name }}</h5>
+          <p class="card-text flex-grow-1">{{ product.description }}</p>
+
+          <!-- Footer section to align price + button -->
+          <div class="card-footer mt-auto p-0 pt-1 border-0">
+            <p class="card-text price mb-2">Price: {{ product.price | currency }}</p>
+            <a href="#" class="btn btn-primary w-100">Book Now</a>
+          </div>
+        </div>
+      </div>
+      </a>
+    </div>
+  </div>
+</div>

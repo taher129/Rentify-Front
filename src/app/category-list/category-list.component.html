@@ -1,0 +1,18 @@
+<!-- category-list.component.html -->
+<div class="row" *ngIf="categories.length > 0">
+  <div class="col-12 col-md-6 col-lg-4 mb-4" *ngFor="let category of categories">
+    <div class="card text-white" style="min-height: 400px; background-color: #000">
+      <!-- Background -->
+      <div class="card-bg">
+        <div class="card-bg-img bg-cover" [style.background-image]="'url(' + category.categoryImage + ')'"></div>
+      </div>
+      <!-- Body -->
+      <div class="card-body my-auto text-center">
+        <h4 class="mb-0">{{ category.category_Name }}</h4>
+        <a class="btn btn-link stretched-link text-reset" [routerLink]="['/products/category/', category.id_Category]">
+          Book Now <i class="fe fe-arrow-right ms-2"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>

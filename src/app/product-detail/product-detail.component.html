@@ -1,1 +1,13 @@
-<p>product-detail works!</p>
+<div class="product-detail-container" *ngIf="product">
+  <div class="product-detail-card">
+    <div class="product-image">
+      <img [src]="product.productImage" alt="{{ product.name }}" />
+    </div>
+    <div class="product-info">
+      <h2>{{ product.name }}</h2>
+      <p class="description">{{ product.description }}</p>
+      <h4 class="price">{{ product.price | currency }}</h4>
+      <button class="book-btn">Book Now</button>
+    </div>
+  </div>
+</div>

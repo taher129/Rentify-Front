@@ -4,20 +4,25 @@ import { RouterOutlet } from '@angular/router';
 import { NavbarComponent } from "./layout/navbar/navbar.component";
 import { FooterComponent } from "./layout/footer/footer.component";
 import AOS from 'aos';  // Importation de AOS
+import { HttpClientModule } from '@angular/common/http';
+
 
 import { InsuranceComponent } from './pages/insurance/insurance.component';
 import { AboutComponent } from './pages/about/about.component';
 import { HomeComponent } from './layout/home/home.component';
+import {ProductAddComponent} from "./product-add/product-add.component";
 
 @Component({
   selector: 'app-root',
-  standalone: true,
   imports: [
     RouterOutlet,
     FooterComponent,
-    NavbarComponent
+    NavbarComponent,
+    ProductAddComponent,
+    HttpClientModule
   ],
   templateUrl: './app.component.html',
+  standalone: true,
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
