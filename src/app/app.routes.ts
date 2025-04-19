@@ -26,14 +26,14 @@ export const routes: Routes = [
    { path: 'become-a-lender', component: BecomeALenderComponent },
    { path: 'insurance', component: InsuranceComponent },
    { path: 'sustainability', component: SustainabilityComponent },
- 
+
    // Blog et articles de blog
    { path: 'blog', component: BlogComponent },
-   { path: 'blog/:id', component: BlogPostComponent },
- 
+   { path: 'blogpost', component: BlogPostComponent },
+
    // Page de gestion des erreurs 404
    { path: '404', component: NotFoundComponent },
- 
+
    // Redirection vers la page d'accueil par défaut
    { path: '**', redirectTo: '/404', pathMatch: 'full' }
 ];

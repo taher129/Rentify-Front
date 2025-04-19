@@ -1,43 +1,91 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-
-interface BlogPost {
-  id: number;
-  title: string;
-  excerpt: string;
-  images: string[];
-}
+import { BlogService } from '../services/blog.service';
+import { Blog } from '../models/blog';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-blog',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './blog.component.html',
-  styleUrl: './blog.component.css'
+  styleUrls: ['./blog.component.css']
 })
-export class BlogComponent {
-  blogPosts: BlogPost[] = [
-    {
-      id: 1,
-      title: 'How to Make Money by Renting Your Items',
-      excerpt: 'Detailed guide on how you can start earning through Rentify...',
-      images: ['assets/images/blog/image0_0.jpg', 'assets/images/blog/blog11.jpg']
-    },
-    {
-     
-      id: 2,
-      title: 'Top 5 Most Rented Items on Rentify',
-      excerpt: 'Here’s a breakdown of the most sought-after items on Rentify...',
-      images: ['assets/images/blog/image1_0 (1).jpg', 'assets/images/blog/blog11.jpg']
-    },
-    {
-      id: 3,
-      title: 'Why Renting is the Future of Sustainable Living',
-      excerpt: 'Learn about the impact of renting on sustainability...',
-      images: ['assets/images/blog/image1_0 (2).jpg', 'assets/images/blog/image0_0 (2).jpg']
+export class BlogComponent implements OnInit {
+  blogs: Blog[] = [];
+  featuredBlogs: Blog[] = [];
+  latestBlogs: Blog[] = [];
+  blogRows: Blog[][] = [];
+  searchQuery: string = '';
+  filteredBlogs: Blog[] = [];
+
+  constructor(
+    private blogService: BlogService,
+    private router: Router
+  ) {}
+
+  ngOnInit(): void {
+    this.loadBlogs();
+  }
+
+  loadBlogs(): void {
+    this.blogService.getAllBlogs().subscribe({
+      next: (blogs) => {
+        this.blogs = blogs;
+        this.filteredBlogs = blogs;
+
+        // Sort by view count for featured blogs (most viewed)
+        const sortedByViews = [...blogs].sort((a, b) => b.viewCount - a.viewCount);
+        this.featuredBlogs = sortedByViews.slice(0, 3);
+
+        // Sort by date for latest blogs (most recent)
+        const sortedByDate = [...blogs].sort((a, b) =>
+          new Date(b.date).getTime() - new Date(a.date).getTime()
+        );
+        this.latestBlogs = sortedByDate.slice(3);
+
+        // Create rows of 3 blogs each
+        this.blogRows = this.chunkArray(this.latestBlogs, 3);
+      },
+      error: (error) => {
+        console.error('Error loading blogs:', error);
+      }
+    });
+  }
+
+  // Helper function to chunk array into rows
+  chunkArray(array: Blog[], size: number): Blog[][] {
+    const result: Blog[][] = [];
+    for (let i = 0; i < array.length; i += size) {
+      result.push(array.slice(i, i + size));
     }
-  ];
+    return result;
+  }
 
+  onSearch(): void {
+    if (!this.searchQuery.trim()) {
+      this.filteredBlogs = this.blogs;
+      return;
+    }
+
+    const query = this.searchQuery.toLowerCase();
+    this.filteredBlogs = this.blogs.filter(blog =>
+      blog.title.toLowerCase().includes(query) ||
+      (blog.description && blog.description.toLowerCase().includes(query)) ||
+      blog.content.toLowerCase().includes(query)
+    );
+  }
+
+  getCategoryFromContent(blog: Blog): string {
+    // Extract category from content if not provided
+    if (blog.content.toLowerCase().includes('technology')) return 'Technology';
+    if (blog.content.toLowerCase().includes('business')) return 'Business';
+    if (blog.content.toLowerCase().includes('history')) return 'History';
+    if (blog.content.toLowerCase().includes('research')) return 'Research';
+    if (blog.content.toLowerCase().includes('adventure')) return 'Adventure';
+    if (blog.content.toLowerCase().includes('hotel')) return 'Hotel Service';
+    return 'General';
+  }
 }
-
