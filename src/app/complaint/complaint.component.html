@@ -1,136 +1,229 @@
-<div class="p-6 bg-white rounded-2xl shadow-lg overflow-x-auto">
-  <!-- <div class="mb-4">
-    <label for="statusFilter" class="block mb-2 text-sm font-medium text-gray-700">Filtrer par statut :</label>
-      <select id="statusFilter" [(ngModel)]="selectedStatus" (change)="filterComplaints()"
-      class="px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-200">
-      <option value="">-- Tous --</option>
-      <option *ngFor="let status of statusList" [value]="status">{{ status }}</option>
-    </select>
-  </div>
-  <div class="mb-4">
-    <label for="type" class="mr-2 text-gray-700 font-medium">Filtrer par type :</label>
-      <select [(ngModel)]="selectedType" (change)="filterComplaints()" class="border rounded px-3 py-1">
-      <option value="">-- Tous --</option>
-      <option *ngFor="let type of typeList" [value]="type">{{ type }}</option>
-    </select>
-  </div> -->
-  <div class="flex flex-col md:flex-row gap-6 animate-fadeIn">
-    <!-- Conteneur des deux filtres -->
-    <div class="w-full md:w-1/2 space-y-4"> <!-- Added space-y-4 for vertical spacing -->
-      <!-- Filtrer par statut -->
-      <div class="mb-4"> <!-- Added margin-bottom -->
-        <label for="statusFilter" class="block mb-1 text-sm font-semibold text-gray-800">
-          🎯 Filtrer par statut
-        </label>
-        <select id="statusFilter" [(ngModel)]="selectedStatus" (change)="filterComplaints()"
-          class="w-full px-4 py-2 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 transition-all duration-300"
-        >
-          <option value="">-- Tous --</option>
-          <option *ngFor="let status of statusList" [value]="status">{{ status }}</option>
-        </select>
+
+<div class="main-container">
+    <div class="controls-container">
+      <h2 class="page-title">Complaints List</h2>
+      
+      
+      <div class="search-container">
+        <div class="search-box">
+          <i class="fa fa-search search-icon"></i>
+          <input 
+            type="text" 
+            [(ngModel)]="searchTerm" 
+            placeholder="Search complaints by keyword..." 
+            class="search-input"
+            (keyup.enter)="searchComplaints()">
+          <button 
+            *ngIf="searchTerm" 
+            class="clear-search" 
+            (click)="clearSearch()">
+            <i class="fa fa-times"></i>
+          </button>
+          <button class="search-button" (click)="searchComplaints()">
+            Search
+          </button>
+        </div>
+      </div>
+
+      <!-- Filters -->
+      <div class="filters-container">
+        <div class="filter-group">
+          <label for="statusFilter">
+            <i class="fa fa-filter"></i> Filter by status:
+          </label>
+          <div class="select-wrapper">
+            <select id="statusFilter" [(ngModel)]="selectedStatus" (change)="filterComplaints()">
+              <option value="">All</option>
+              <option *ngFor="let status of statusList" [value]="status">{{ status }}</option>
+            </select>
+            <div class="select-arrow"></div>
+          </div>
+        </div>
+        
+        <div class="filter-group">
+          <label for="typeFilter">
+            <i class="fa fa-tags"></i> Filter by type:
+          </label>
+          <div class="select-wrapper">
+            <select id="typeFilter" [(ngModel)]="selectedType" (change)="filterComplaints()">
+              <option value="">All</option>
+              <option *ngFor="let type of typeList" [value]="type">{{ type }}</option>
+            </select>
+            <div class="select-arrow"></div>
+          </div>
+        </div>
+      </div>
+    </div>
   
-      <!-- Filtrer par type -->
-        <label for="type" class="block mb-1 text-sm font-semibold text-gray-800">
-                    🗂️ Filtrer par type
-        </label>
-        <select [(ngModel)]="selectedType" (change)="filterComplaints()"
-          class="w-full px-4 py-2 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 transition-all duration-300"
-        >
-          <option value="">-- Tous --</option>
-          <option *ngFor="let type of typeList" [value]="type">{{ type }}</option>
-        </select>
+    <!-- Loading indicator -->
+    <div *ngIf="isLoading" class="loading">
+      <div class="spinner"></div>
+      <p>Loading complaints...</p>
+    </div>
+  
+    <!-- Table display -->
+    <div class="table-container" *ngIf="!isLoading">
+      <!-- Pagination summary and page size selector -->
+      <div class="pagination-controls top-controls">
+        <div class="records-info">
+          Showing <span class="highlight">{{ paginatedComplaints.length }}</span> of <span class="highlight">{{ totalItems }}</span> records
+        </div>
+        <div class="page-size-selector">
+          <label for="pageSizeSelect">Show per page:</label>
+          <div class="select-wrapper small">
+            <select id="pageSizeSelect" [ngModel]="pageSize" (change)="onPageSizeChange($event)">
+              <option *ngFor="let size of pageSizeOptions" [value]="size">{{ size }}</option>
+            </select>
+            <div class="select-arrow"></div>
+          </div>
+        </div>
+      </div>
+      
+      <table class="complaints-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Image</th>
+            <th>Type</th>
+            <th>Description</th>
+            <th class="sortable" (click)="sortComplaints('date')">
+              Date
+              <span class="sort-icon" *ngIf="sortField === 'date'">
+                <i class="fa" [ngClass]="{
+                  'fa-sort-up': sortDirection === 'asc',
+                  'fa-sort-down': sortDirection === 'desc'
+                }"></i>
+              </span>
+            </th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let complaint of paginatedComplaints" class="animate-fadeIn">
+            <td>{{ complaint.complaintId }}</td>
+            <td class="image-cell">
+              <!-- Display first image if available -->
+              <div *ngIf="complaint.evidence && complaint.evidence.length > 0">
+                <div *ngFor="let file of complaint.evidence.slice(0, 1)">
+                  <img *ngIf="isImageFile(file || '')" 
+                       [src]="getFileUrl(file || '')" 
+                       alt="Evidence" 
+                       class="evidence-thumbnail"
+                       (click)="openImage(file || '')">
+                  <span *ngIf="!isImageFile(file || '')" class="file-icon">
+                    <i class="fa fa-file"></i>
+                    {{ getFileName(file || '') }}
+                  </span>
+                </div>
+                <span *ngIf="complaint.evidence.length > 1" class="more-files">
+                  +{{ complaint.evidence.length - 1 }} file(s)
+                </span>
+              </div>
+              <span *ngIf="!complaint.evidence || complaint.evidence.length === 0" class="no-image">
+                No Image
+              </span>
+            </td>
+            <td>{{ complaint.complaintType }}</td>
+            <td>{{ complaint.description }} </td>
+           
+            <td>{{ complaint.complaintDate | date:'dd/MM/yyyy' }}</td>
+            <td>
+              <span class="status-badge" [ngClass]="getStatusClass(complaint.status || '')">
+                {{ complaint.status }}
+              </span>
+            </td>
+            <td class="actions-cell">
+              <button class="btn-view" [routerLink]="['/complaint/detail', complaint.complaintId]" 
+              *ngIf="complaint.complaintId !== undefined">
+         <i class="fa fa-eye"></i> 
+       </button>
+       <button 
+       class="btn-response" 
+       [routerLink]="['/complaintresponse', complaint.complaintId]" 
+       *ngIf="complaint.status !== 'PENDING'">
+       <i class="fa fa-check"></i> 
+     </button>
+     
+     <button 
+     class="btn-update" 
+     [routerLink]="['/complaint/update', complaint.complaintId]" 
+     *ngIf="complaint.complaintId !== undefined && complaint.status === 'PENDING'">
+     <i class="fa fa-edit"></i> 
+   </button>
+
+
+       <button class="btn-download" (click)="downloadPdf(complaint.complaintId!)" 
+              *ngIf="complaint.complaintId !== undefined">
+         <i class="fa fa-download"></i> 
+       </button>
+      
+       <!-- btn-update et btn-delete s'affichent uniquement si status === 'PENDING' -->
+
+       <button 
+       class="btn-delete" 
+       (click)="deleteComplaint(complaint.complaintId!)" 
+       *ngIf="complaint.complaintId !== undefined && complaint.status === 'PENDING'">
+       <i class="fa fa-trash"></i> 
+     </button>
+
+
+            </td>
+          </tr>
+          <tr *ngIf="paginatedComplaints.length === 0">
+            <td colspan="7" class="no-data">No complaints found</td>
+          </tr>
+        </tbody>
+      </table>
+      
+      <!-- Pagination component -->
+      <div class="pagination-container" *ngIf="totalItems > 0">
+        <div class="pagination-wrapper">
+          <!-- Previous page button -->
+          <button 
+            class="pagination-btn prev-btn" 
+            [disabled]="currentPage === 1"
+            [class.disabled]="currentPage === 1"
+            (click)="previousPage()">
+            <i class="fa fa-chevron-left"></i>
+          </button>
+          
+          <!-- Page numbers -->
+          <div class="page-numbers">
+            <button 
+              *ngFor="let page of pageNumbers" 
+              [class.active]="page === currentPage"
+              [class.ellipsis]="page < 0"
+              [disabled]="page < 0"
+              (click)="goToPage(page)">
+              {{ page < 0 ? '...' : page }}
+            </button>
+          </div>
+          
+          <!-- Next page button -->
+          <button 
+            class="pagination-btn next-btn" 
+            [disabled]="currentPage === totalPages"
+            [class.disabled]="currentPage === totalPages"
+            (click)="nextPage()">
+            <i class="fa fa-chevron-right"></i>
+          </button>
+        </div>
+        
+        <!-- Page info -->
+        <div class="page-info">
+          Page {{ currentPage }} of {{ totalPages }}
+        </div>
+      </div>
+    </div>
+    
+    <!-- Image Modal -->
+    <div class="image-modal" *ngIf="showModal">
+      <div class="modal-content">
+        <span class="close-button" (click)="closeModal()">&times;</span>
+        <img [src]="selectedImage || ''" alt="Evidence" class="modal-image">
       </div>
     </div>
   </div>
-  
-   
 
-  <h2 class="text-2xl font-semibold mb-4 text-gray-800 text-center"> 📋 Complaints List</h2>
-
-  <table class="min-w-full border border-gray-200 rounded-lg overflow-hidden">
-    <thead class="bg-gray-100 text-gray-700 text-left text-sm uppercase">
-      <tr>
-       <th class="px-5 py-3">ID</th>
-        <th class="px-5 py-3">User</th>
-        <th class="px-5 py-3">Reported</th>
-        <th class="px-5 py-3">Description</th>
-        <th class="px-5 py-3">Type</th>
-        <th class="px-5 py-3">Evidence</th>
-        <th class="px-5 py-3">Status</th>
-        <th class="px-5 py-3">Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let complaint of complaints" class="hover:bg-gray-50 transition-colors">
-        <td class="px-4 py-2">{{ complaint.complaintId }}</td>
-        <td class="px-4 py-2">{{ complaint.userId }}</td>
-        <td class="px-4 py-2">{{ complaint.reportedUserId }}</td>
-        <td class="px-4 py-2">{{ complaint.description }}</td>
-        <td class="px-4 py-2">{{ complaint.complaintType }}</td>
-        <td class="px-4 py-2">{{ complaint.evidence }}</td>
-        <td class="px-4 py-2">
-          <span [ngClass]="{
-              'text-green-600 font-medium': complaint.status === 'RESOLVED',
-              'text-yellow-600 font-medium': complaint.status === 'PENDING',
-              'text-red-600 font-medium': complaint.status === 'REJECTED'
-            }">{{ complaint.status }}</span>
-        </td>
-        <!-- <td class="px-4 py-2 flex flex-col gap-2 sm:flex-row">
-          <button class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-md text-sm"
-          [routerLink]="['/complaint/update', complaint.complaintId]">
-    ✏️ Modifier
-  </button>
-  <button class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md text-sm"
-          (click)="deleteComplaint(complaint.complaintId!)">
-    🗑️ Supprimer
-  </button>
-  <button class="bg-gray-500 hover:bg-gray-600 text-white px-3 py-1 rounded-md text-sm"
-          [routerLink]="['/complaint/detail', complaint.complaintId]">
-    🔍 Détail
-  </button>
-  <button *ngIf="complaint.complaintId"
-  class="bg-purple-500 hover:bg-purple-600 text-white px-3 py-1 rounded-md text-sm"
-  (click)="downloadPdf(complaint.complaintId)">
-  📄 Télécharger PDF
-</button>
-
-        </td> -->
-        <td class="px-4 py-2">
-          <div class="flex items-center gap-x-4 text-lg">
-            <!-- Modifier -->
-            <a [routerLink]="['/complaint/update', complaint.complaintId]"
-               class="text-gray-700 hover:text-blue-600 transition-transform transform hover:scale-110"
-               title="Modifier">
-              ✏️
-            </a>
-        
-            <!-- Supprimer -->
-            <button (click)="deleteComplaint(complaint.complaintId!)"
-                    class="text-gray-700 hover:text-red-600 transition-transform transform hover:scale-110"
-                    title="Supprimer">
-              🗑️
-            </button>
-        
-            <!-- Détail -->
-            <a [routerLink]="['/complaint/detail', complaint.complaintId]"
-               class="text-gray-700 hover:text-gray-900 transition-transform transform hover:scale-110"
-               title="Détail">
-              🔍
-            </a>
-        
-            <!-- Télécharger PDF -->
-            <button *ngIf="complaint.complaintId"
-                    (click)="downloadPdf(complaint.complaintId)"
-                    class="text-gray-700 hover:text-purple-600 transition-transform transform hover:scale-110"
-                    title="Télécharger PDF">
-              📄
-            </button>
-          </div>
-        </td>
-        
-        
-      </tr>
-    </tbody>
-  </table>
-</div>
 

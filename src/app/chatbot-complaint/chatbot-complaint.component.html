@@ -1,0 +1,103 @@
+<div class="chatbot-popup-overlay" [@fadeIn]>
+  <div class="chatbot-popup" [@popupAnimation]>
+    <div class="close-button" (click)="closeChatbot()">✕</div>
+    
+    <div class="chatbot-container">
+      <div class="chatbot-header">
+        <div class="chatbot-title">
+          <svg class="chat-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+          </svg>
+          <h2>Support Assistant</h2>
+        </div>
+        <div class="chatbot-status">
+          <span class="status-indicator"></span>
+          <span class="status-text">Online</span>
+        </div>
+      </div>
+
+      <div class="chat-messages" #scrollContainer>
+        <div class="welcome-message" *ngIf="chatHistory.length === 0">
+          <div class="bot-avatar">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <path d="M8 14s1.5 2 4 2 4-2 4-2"></path>
+              <line x1="9" y1="9" x2="9.01" y2="9"></line>
+              <line x1="15" y1="9" x2="15.01" y2="9"></line>
+            </svg>
+          </div>
+          <div class="message-bubble bot-message">
+            <p>Hello! How can I help you with your complaint today?</p>
+          </div>
+        </div>
+
+        <div *ngFor="let msg of chatHistory; let i = index" class="message-wrapper" [@messageAnimation]>
+          <div class="message-container" [ngClass]="{'user-container': msg.sender === 'You', 'bot-container': msg.sender === 'Chatbot'}">
+            <div *ngIf="msg.sender === 'Chatbot'" class="bot-avatar">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M8 14s1.5 2 4 2 4-2 4-2"></path>
+                <line x1="9" y1="9" x2="9.01" y2="9"></line>
+                <line x1="15" y1="9" x2="15.01" y2="9"></line>
+              </svg>
+            </div>
+            <div class="message-bubble" [ngClass]="{'user-message': msg.sender === 'You', 'bot-message': msg.sender === 'Chatbot'}">
+              <p>{{msg.text}}</p>
+              <span class="message-time">{{getMessageTime(i)}}</span>
+            </div>
+            <div *ngIf="msg.sender === 'You'" class="user-avatar">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="isTyping" class="message-wrapper typing-indicator" [@fadeIn]>
+          <div class="message-container bot-container">
+            <div class="bot-avatar">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M8 14s1.5 2 4 2 4-2 4-2"></path>
+                <line x1="9" y1="9" x2="9.01" y2="9"></line>
+                <line x1="15" y1="9" x2="15.01" y2="9"></line>
+              </svg>
+            </div>
+            <div class="message-bubble bot-message typing">
+              <span class="dot"></span>
+              <span class="dot"></span>
+              <span class="dot"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="chat-input-container">
+        <form (ngSubmit)="sendMessage()" #chatForm="ngForm">
+          <div class="input-wrapper">
+            <input 
+              type="text" 
+              [(ngModel)]="userMessage" 
+              name="userMessage" 
+              placeholder="Type your message..." 
+              autocomplete="off"
+              [disabled]="isTyping" 
+              class="chat-input" />
+              
+            <button 
+              type="submit" 
+              [disabled]="!userMessage.trim() || isTyping" 
+              class="send-button" 
+              [ngClass]="{'active': userMessage.trim()}">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="22" y1="2" x2="11" y2="13"></line>
+                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+              </svg>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

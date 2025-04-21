@@ -1,4 +1,4 @@
-<div class="complaint-detail-container" *ngIf="!isLoading && complaint">
+<!-- <div class="complaint-detail-container" *ngIf="!isLoading && complaint">
   <div class="complaint-detail-card">
     <h2>📋 Complaint Details</h2>
 
@@ -15,11 +15,7 @@
         <li *ngFor="let ev of complaint.evidence">{{ ev }}</li>
       </ul>
     </div>
-    <!-- <button *ngIf="complaintId"
-    class="bg-purple-500 hover:bg-purple-600 text-white px-3 py-1 rounded-md text-sm"
-    (click)="downloadPdf(complaintId)">
-    📄 <span>Download PDF</span>
-  </button> -->
+
  
   <button *ngIf="complaintId" 
   class="pdf-button"
@@ -30,8 +26,77 @@
   <div class="back-arrow" (click)="goToComplaintList()" title="Retour à la liste">
   ⬅ Retour
 </div>
+<button (click)="openChatbot()" class="chatbot-button">Besoin d’aide ?</button>
 
   </div>
 </div>
 
+<div class="error-text" *ngIf="errorMessage">{{ errorMessage }}</div> -->
+
+<div class="complaint-detail-container" *ngIf="!isLoading && complaint">
+  <div class="complaint-detail-card">
+    <h2>📋 Complaint Details</h2>
+    
+    <p><strong>Type:</strong> {{ complaint.complaintType }}</p>
+    <p><strong>Description:</strong> {{ complaint.description }}</p>
+    <p><strong>Status:</strong> <span [ngClass]="{
+      'status-resolved': complaint.status === 'RESOLVED',
+      'status-pending': complaint.status === 'PENDING',
+      'status-rejected': complaint.status === 'REJECTED',
+      'status-review': complaint.status === 'UNDERREVIEW'
+    }">{{ complaint.status }}</span></p>
+    <p><strong>Complaint Date:</strong> {{ complaint.complaintDate | date:'medium' }}</p>
+    <p><strong>User ID:</strong> {{ complaint.userId }}</p>
+    <p><strong>Reported User ID:</strong> {{ complaint.reportedUserId }}</p>
+    
+    <!-- Affichage des preuves (evidence) -->
+    <div *ngIf="complaint.evidence && complaint.evidence.length > 0" class="evidence-section">
+      <h3>Evidence:</h3>
+      <div class="evidence-gallery">
+        <div *ngFor="let ev of complaint.evidence" class="evidence-item">
+          <!-- Si c'est une image, afficher une miniature cliquable -->
+          <div *ngIf="isImageFile(ev)" class="evidence-image">
+            <img 
+              [src]="getFileUrl(ev)"
+              alt="Evidence"
+              (click)="openImage(ev)"
+              title="Cliquez pour agrandir"
+            />
+          </div>
+          <!-- Si ce n'est pas une image, afficher un lien de téléchargement -->
+          <div *ngIf="!isImageFile(ev)" class="evidence-file">
+            <a [href]="getFileUrl(ev)" target="_blank" download>
+              <span class="file-icon">📄</span>
+              <span class="file-name">{{ getFileName(ev) }}</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="actions-container">
+      <button *ngIf="complaintId" class="pdf-button" (click)="downloadPdf(complaintId)">
+        📄 <span>Download PDF</span>
+      </button>
+      
+      <div class="back-arrow" (click)="goToComplaintList()" title="Retour à la liste">
+        ⬅ Retour
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal pour afficher l'image en grand -->
+<div *ngIf="showModal && selectedImage" class="image-modal" (click)="closeModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <span class="close-button" (click)="closeModal()">&times;</span>
+    <img [src]="selectedImage" alt="Evidence" class="modal-image">
+  </div>
+</div>
+
 <div class="error-text" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+<div class="loading-container" *ngIf="isLoading">
+  <div class="loading-spinner"></div>
+  <p>Chargement des détails...</p>
+</div>

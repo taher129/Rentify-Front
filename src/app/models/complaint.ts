@@ -40,4 +40,5 @@ export class Complaint {
   complaintType!: string;
   evidence?: string[]; 
   status?: string; 
+
 }
