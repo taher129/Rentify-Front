@@ -1,7 +1,6 @@
 import { Routes } from '@angular/router';
 import { AboutComponent } from './pages/about/about.component';
 import { ContactUsComponent } from './pages/contact-us/contact-us.component';
-import { StoreLocatorComponent } from './pages/store-locator/store-locator.component';
 import { FaqComponent } from './pages/faq/faq.component';
 import { ComingSoonComponent } from './pages/coming-soon/coming-soon.component';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
@@ -11,11 +10,9 @@ import { BecomeALenderComponent } from './pages/become-a-lender/become-a-lender.
 import { InsuranceComponent } from './pages/insurance/insurance.component';
 import { SustainabilityComponent } from './pages/sustainability/sustainability.component';
 import { HomeComponent } from './layout/home/home.component';
-import { ProductAddComponent} from "./product-add/product-add.component";
 import { CategoryListComponent } from './category-list/category-list.component';
 import {ProductListComponent} from "./product-list/product-list.component";
 import {ProductDetailComponent} from "./product-detail/product-detail.component";
-
 
 export const routes: Routes = [
    // Page d'accueil
@@ -25,7 +22,6 @@ export const routes: Routes = [
    // Pages principales
    { path: 'about', component: AboutComponent },
    { path: 'contact', component: ContactUsComponent },
-   { path: 'store-locator', component: StoreLocatorComponent },
    { path: 'faq', component: FaqComponent },
    { path: 'coming-soon', component: ComingSoonComponent },
    { path: 'become-a-lender', component: BecomeALenderComponent },
@@ -37,8 +33,7 @@ export const routes: Routes = [
    { path: 'blog/:id', component: BlogPostComponent },
 
   //Product et categories
-  { path: 'product-add', component: ProductAddComponent },
-  { path: 'products/category/:id_Category', component: ProductListComponent },
+  { path: 'products/category/:categoryId', component: ProductListComponent },
   { path: 'categories', component: CategoryListComponent },
   { path: 'product/:id', component: ProductDetailComponent },
   { path: 'products', component: ProductListComponent },

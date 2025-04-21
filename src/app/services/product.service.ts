@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Product } from '../models/product';
-import { Observable, of } from 'rxjs';
+import {map, Observable, of} from 'rxjs';
 import { environment } from "../environments/environment";
 import {Category} from "../models/category";
 
@@ -11,21 +11,16 @@ import {Category} from "../models/category";
 export class ProductService {
   private apiUrl = 'http://localhost:8084/api/products'; // Update the API URL as needed
 
-  constructor(private http: HttpClient) {}
-
-  create(product: FormData): Observable<Product> {
-    return this.http.post<Product>(`${this.apiUrl}/upload`, product);
+  constructor(private http: HttpClient) {
   }
+
 
   getAllProducts(): Observable<Product[]> {
     return this.http.get<Product[]>(this.apiUrl);
   }
+
   getProductById(id: number): Observable<Product> {
     return this.http.get<Product>(`${this.apiUrl}/${id}`);
-  }
-
-  updateProduct(id: number, product: FormData): Observable<Product> {
-    return this.http.put<Product>(`${this.apiUrl}/${id}`, product);
   }
 
   getProductsByCategory(categoryId: number): Observable<Product[]> {
@@ -36,4 +31,19 @@ export class ProductService {
     return this.http.get<Product[]>(`${this.apiUrl}/category/${categoryId}`);
   }
 
+  searchProduct(query: string): Observable<Product[]> {
+    if (!query.trim()) {
+      return of([]);
+    }
+    return this.http.get<any[]>(`${this.apiUrl}/search?query=${encodeURIComponent(query)}`).pipe(
+      map(response =>
+        response.map(item => ({
+          id: item.id,
+          name: item.name,
+          price: item.price,
+          productImage: item.productImage
+        }))
+      )
+    );
+  }
 }

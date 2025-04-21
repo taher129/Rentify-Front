@@ -10,7 +10,6 @@ import { HttpClientModule } from '@angular/common/http';
 import { InsuranceComponent } from './pages/insurance/insurance.component';
 import { AboutComponent } from './pages/about/about.component';
 import { HomeComponent } from './layout/home/home.component';
-import {ProductAddComponent} from "./product-add/product-add.component";
 
 @Component({
   selector: 'app-root',
@@ -18,7 +17,6 @@ import {ProductAddComponent} from "./product-add/product-add.component";
     RouterOutlet,
     FooterComponent,
     NavbarComponent,
-    ProductAddComponent,
     HttpClientModule
   ],
   templateUrl: './app.component.html',
