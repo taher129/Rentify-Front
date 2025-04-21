@@ -3,6 +3,7 @@ export class ComplaintDTO {
   reportedUserId: number;
   complaintDate: string; // Date ISO
   description: string;
+  descriptionEn: string | undefined;
   complaintType: string;
   evidence: string[];
   status: string;

@@ -20,6 +20,57 @@ export class ComplaintService {
     return this.http.post<ComplaintDTO>('http://localhost:8083/complaints/create', complaintDTO);
   }
   
+  // Nouvelle méthode pour l'upload de fichiers
+  createComplaintWithFiles(complaint: ComplaintDTO, files: File[]): Observable<ComplaintDTO> {
+    const formData = new FormData();
+    
+    // Ajout des données JSON de la plainte
+    formData.append('complaintDTO', new Blob([JSON.stringify(complaint)], {
+      type: 'application/json'
+    }));
+    
+    // Ajout des fichiers
+    if (files && files.length > 0) {
+      for (const file of files) {
+        formData.append('evidence', file);
+      }
+    }
+    
+    return this.http.post<ComplaintDTO>('http://localhost:8083/complaints/create', formData);
+  }
+
+  
+
+
+
+  updateComplaintWithFiles(id: number, complaint: ComplaintDTO, files: File[]): Observable<ComplaintDTO> {
+    const formData = new FormData();
+  
+    // Ajout du corps de la plainte en JSON
+    formData.append('complaintDTO', new Blob([JSON.stringify(complaint)], {
+      type: 'application/json'
+    }));
+  
+    // Ajout des fichiers si présents
+    if (files && files.length > 0) {
+      for (const file of files) {
+        formData.append('evidence', file);
+      }
+    }
+  
+    // Requête PUT vers l'endpoint de mise à jour
+    return this.http.put<ComplaintDTO>(`http://localhost:8083/complaints/update/${id}`, formData);
+  }
+
+
+
+
+
+
+
+
+
+
   getAllComplaints(): Observable<Complaint[]> {
     return this.http.get<Complaint[]>(`${this.apiUrl}/list`);
   }

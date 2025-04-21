@@ -15,12 +15,16 @@ import { ComplaintComponent } from './complaint/complaint.component';
 import { ComplaintAddComponent } from './complaint-add/complaint-add.component';
 import { ComplaintDetailComponent } from './complaint-detail/complaint-detail.component';
 import { ComplaintUpdateComponent } from './complaint-update/complaint-update.component';
+import { ChatbotComplaintComponent } from './chatbot-complaint/chatbot-complaint.component';
+import { ImageToTextComponent } from './image-to-text/image-to-text.component';
+import { ResponseDetailComponent } from './response-detail/response-detail.component';
 
 export const routes: Routes = [
-   // Page d'accueil
-   { path: '', component: HomeComponent },
-   { path: 'home', component: HomeComponent },
+  // Page d'accueil
+  { path: '', component: HomeComponent },
+  { path: 'home', component: HomeComponent },
 
+<<<<<<< HEAD
    // Pages principales
    { path: 'about', component: AboutComponent },
    { path: 'contact', component: ContactUsComponent },
@@ -40,8 +44,70 @@ export const routes: Routes = [
 
    // Redirection vers la page d'accueil par défaut
    { path: '**', redirectTo: '/404', pathMatch: 'full' }
+=======
+  // Pages principales
+  { path: 'about', component: AboutComponent },
+  { path: 'contact', component: ContactUsComponent },
+  { path: 'store-locator', component: StoreLocatorComponent },
+  { path: 'faq', component: FaqComponent },
+  { path: 'coming-soon', component: ComingSoonComponent },
+  { path: 'become-a-lender', component: BecomeALenderComponent },
+  { path: 'insurance', component: InsuranceComponent },
+  { path: 'sustainability', component: SustainabilityComponent },
+
+  // Blog et articles de blog
+  { path: 'blog', component: BlogComponent },
+  { path: 'blog/:id', component: BlogPostComponent },
+
+  //complaints
+  { path: 'complaint', component: ComplaintComponent },
+  { path: 'complaint-add', component: ComplaintAddComponent },
+  { path: 'complaint-add/:id', component: ComplaintAddComponent },
+  { path: 'complaint-detail/:id', component: ComplaintDetailComponent },
+
+  { path: 'complaint/update/:id', component: ComplaintUpdateComponent },
+  { path: 'chatbot-complaint', component: ChatbotComplaintComponent },
+  { path: 'image-to-text', component: ImageToTextComponent },
+
+  {
+    path: 'complaint/detail/:id',
+    loadComponent: () =>
+      import('./complaint-detail/complaint-detail.component').then(
+        (m) => m.ComplaintDetailComponent
+      ),
+  },
+
+
+//Responses
+{
+   path: 'complaintresponse/:id',
+   component: ResponseDetailComponent
+ },
+>>>>>>> b9e88ae (implement AI chatbot and advanced complaint handling features)
 
 
 
 
+<<<<<<< HEAD
 ];
+=======
+
+
+
+
+
+
+
+
+  // {
+  //    path: 'rating',
+  //    loadComponent: () => import('./rating/rating.component').then(m => m.RatingComponent)
+  //  },
+
+  // Page de gestion des erreurs 404
+  { path: '404', component: NotFoundComponent },
+
+  // Redirection vers la page d'accueil par défaut
+  { path: '**', redirectTo: '/404', pathMatch: 'full' },
+];
+>>>>>>> b9e88ae (implement AI chatbot and advanced complaint handling features)
