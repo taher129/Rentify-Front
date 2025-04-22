@@ -1984,7 +1984,7 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-white">
   <div class="container">
     <!-- Brand -->
-    <a class="navbar-brand" href="#" > 
+    <a class="navbar-brand" href="#" >
       <img
       class="mb-1 me-1"
       src="assets/images/flags/logo.png"
@@ -3108,12 +3108,24 @@
       </ul>
 
       <!-- Nav -->
-      <ul class="navbar-nav flex-row">
+      <ul class="navbar-nav flex-row" >
         <li class="nav-item">
           <a class="nav-link" data-bs-toggle="offcanvas" href="#modalSearch">
             <i class="fe fe-search"></i>
           </a>
         </li>
+        <li class="nav-item" (click)="closeAllDropdowns()">
+          <div class="dropdown" (click)="$event.stopPropagation()">
+            <button class="icon-button" (click)="toggleChat($event)">
+              <i class="fa fa-envelope"></i>
+            </button>
+            <!-- Chat Dropdown -->
+            <div class="dropdown-content" [class.show]="isChatOpen">
+              <app-nav-chat-container></app-nav-chat-container>
+            </div>
+          </div>
+        </li>
+
         <li class="nav-item ms-lg-n4">
           <a class="nav-link" href="#">
             <i class="fe fe-user"></i>

@@ -1,0 +1,413 @@
+<div class="main-container">
+  <section class="page-container">
+    <div class="container">
+      <div class="title-container">
+        <div class="info-container">
+          <div class="path-info">
+            <h2 [routerLink]="['/home']">Home</h2>
+            <h2 [routerLink]="['/{{product.productCategory}}']">{{product.productCategory}}</h2>
+            <h2 [routerLink]="['/{{product.productId}}']">{{product.productName}}</h2>
+          </div>
+          <div class="title">
+            <h2>Book your product</h2>
+          </div>
+        </div>
+        <div class="title-img">
+          <img src="/title-img.svg" alt="">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="main-container">
+    <div class="page-container">
+      <!-- Left Column -->
+      <div class="left-column">
+        <!-- Product Information Card -->
+        <div class="card">
+          <div class="card-inner">
+            <div class="product-header">
+              <div class="product-icon">🛠️</div>
+              <h1 class="product-title">Product Information</h1>
+            </div>
+
+            <div class="product-details">
+              <div class="product-image">
+                <img [src]="product.productImgPath" alt="product Image" />
+              </div>
+              <div class="product-info-content">
+                <h2 class="product-name">{{ product.productName }}</h2>
+                <div class="product-address">
+                  <span>📍</span>
+                  <span>{{ product.productAddress }}</span>
+                </div>
+                <div class="rating">
+                  <div class="stars">★★★★☆</div>
+                  <span>{{ product.productRatingValue }}/5.0</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="booking-info">
+              <div class="info-card" (click)="togglePickupDatePicker()">
+                <p class="info-title">Pick Up</p>
+                <h3 class="info-value">{{ formatDate(reservation.startDate) }}</h3>
+                <p class="info-detail">🕒 {{ formatTime(reservation.startDate) }}</p>
+              </div>
+              <div class="info-card" (click)="toggleReturnDatePicker()">
+                <p class="info-title">Return</p>
+                <h3 class="info-value">{{ formatDate(reservation.endDate) }}</h3>
+                <p class="info-detail">🕒 {{ formatTime(reservation.endDate) }}</p>
+              </div>
+              <div class="info-card">
+                <p class="info-title">Renting Duration</p>
+                <h3 class="info-value">{{ product.productCategory }}</h3>
+                <p class="info-detail">✧ {{ reservation.rentingDuration - 1 }} Nights - {{ reservation.rentingDuration }} Days</p>
+              </div>
+            </div>
+            <div class="login-banner unavailable-dates-info" *ngIf="unavailableDates.length > 0">
+              <p><strong>Unavailable dates:</strong> {{ getUnavailableDatesDisplay() }}</p>
+            </div>
+            <div class="room-info">
+              <h3 class="room-title">
+                <span>Product short description</span>
+                <a href="#" class="view-policy">View Cancellation Policy</a>
+              </h3>
+              <div class="price-included" *ngIf="selectedRequests.length > 0">
+                <h3>Price Included</h3>
+                <div class="feature" *ngFor="let item of selectedRequests">
+                  <div class="check-icon">✓</div>
+                  <div>{{ item.label }} — TND{{ item.price }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pickup Date Picker Popup -->
+        <!-- Update the date picker portion of your HTML -->
+        <div class="setting-datecard-overlay" *ngIf="showPickupDatePicker">
+          <div class="setting-datecard">
+            <div class="setting-datecard-header">
+              <h2>Set Pickup Date & Time</h2>
+              <button class="close-btn" (click)="closeDatePicker('pickup')">×</button>
+            </div>
+            <div class="setting-datecard-content">
+              <div class="date-input-group">
+                <label for="pickup-date">Date</label>
+                <input
+                  type="date"
+                  id="pickup-date"
+                  [min]="minDate"
+                  [ngModel]="tempDate.pickup | date:'yyyy-MM-dd'"
+                  (ngModelChange)="setPickupDate($event)"
+                  [ngClass]="{'date-unavailable': isDateUnavailable(tempDate.pickup | date:'yyyy-MM-dd')}"
+                >
+
+                <div class="date-availability-info" *ngIf="nextAvailableStartDate">
+                  <p><strong>Next available date:</strong> {{ formatDate(nextAvailableStartDate) }}</p>
+                </div>
+              </div>
+              <div class="time-input-group">
+                <label for="pickup-time">Time</label>
+                <input
+                  type="time"
+                  id="pickup-time"
+                  [ngModel]="tempDate.pickup | date:'HH:mm'"
+                  (ngModelChange)="setPickupTime($event)"
+                >
+              </div>
+              <div class="error-message" *ngIf="dateError">
+                <p class="text-danger">{{ dateError }}</p>
+              </div>
+            </div>
+            <div class="setting-datecard-footer">
+              <button class="cancel-btn" (click)="closeDatePicker('pickup')">Cancel</button>
+              <button class="save-btn" (click)="savePickupDateTime()">Save</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Return Date Picker Popup -->
+        <div class="setting-datecard-overlay" *ngIf="showReturnDatePicker">
+          <div class="setting-datecard">
+            <div class="setting-datecard-header">
+              <h2>Set Return Date & Time</h2>
+              <button class="close-btn" (click)="closeDatePicker('return')">×</button>
+            </div>
+            <div class="setting-datecard-content">
+              <div class="date-input-group">
+                <label for="return-date">Date</label>
+                <input
+                  type="date"
+                  id="return-date"
+                  [min]="minDate"
+                  [ngModel]="tempDate.return | date:'yyyy-MM-dd'"
+                  (ngModelChange)="setReturnDate($event)"
+                  [class.date-unavailable]="isDateUnavailable(tempDate.return | date:'yyyy-MM-dd')"
+                >
+              </div>
+              <div class="time-input-group">
+                <label for="return-time">Time</label>
+                <input
+                  type="time"
+                  id="return-time"
+                  [ngModel]="tempDate.return | date:'HH:mm'"
+                  (ngModelChange)="setReturnTime($event)"
+                >
+              </div>
+              <div class="error-message" *ngIf="dateError">
+                <p class="text-danger">{{ dateError }}</p>
+              </div>
+            </div>
+            <div class="setting-datecard-footer">
+              <button class="cancel-btn" (click)="closeDatePicker('return')">Cancel</button>
+              <button class="save-btn" (click)="saveReturnDateTime()">Save</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Renter Details Card -->
+        <div class="card">
+          <div class="section-header">
+            <span>👥</span>
+            <h1 class="section-title">Renter Details</h1>
+          </div>
+
+          <div class="card-inner">
+            <form [formGroup]="userDetailsForm">
+              <div class="Renter-section">
+                <h2 class="Renter-title">Main Renter</h2>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label">First Name</label>
+                    <input type="text" class="form-control" formControlName="firstName"
+                           [class.is-invalid]="isFieldInvalid(userDetailsForm, 'firstName')">
+                    <div class="error-message" *ngIf="isFieldInvalid(userDetailsForm, 'firstName')">
+                      {{ getFieldError(userDetailsForm, 'firstName') }}
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label">Last Name</label>
+                    <input type="text" class="form-control" formControlName="lastName"
+                           [class.is-invalid]="isFieldInvalid(userDetailsForm, 'lastName')">
+                    <div class="error-message" *ngIf="isFieldInvalid(userDetailsForm, 'lastName')">
+                      {{ getFieldError(userDetailsForm, 'lastName') }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Email</label>
+                  <input type="email" class="form-control" formControlName="email"
+                         [class.is-invalid]="isFieldInvalid(userDetailsForm, 'email')">
+                  <div class="error-message" *ngIf="isFieldInvalid(userDetailsForm, 'email')">
+                    {{ getFieldError(userDetailsForm, 'email') }}
+                  </div>
+                  <p class="form-note">(Renting voucher will be sent to this email)</p>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Mobile number</label>
+                  <input type="tel" class="form-control" formControlName="phoneNumber"
+                         [class.is-invalid]="isFieldInvalid(userDetailsForm, 'phoneNumber')">
+                  <div class="error-message" *ngIf="isFieldInvalid(userDetailsForm, 'phoneNumber')">
+                    {{ getFieldError(userDetailsForm, 'phoneNumber') }}
+                  </div>
+                </div>
+              </div>
+            </form>
+
+            <div class="login-banner">
+              <p class="login-text">Don't forget to check your profile for rewards and coupons to get discounts!</p>
+            </div>
+
+            <div class="special-requests">
+              <h3 class="special-title">Special request</h3>
+
+              <div class="checkbox-group">
+                <div class="checkbox-item" *ngFor="let request of specialRequests">
+                  <input
+                    type="checkbox"
+                    [id]="request.id"
+                    class="checkbox-input"
+                    [(ngModel)]="request.checked"
+                    (change)="onCheckboxChange(request)"
+                  />
+                  <label [for]="request.id">{{ request.label }} (+TND{{ request.price }})</label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Payment Options Card -->
+        <div class="card">
+          <div class="payment-header">
+            <span class="payment-icon">💳</span>
+            <h1 class="section-title">Payment Options</h1>
+          </div>
+
+          <div class="card-inner">
+            <div class="payment-banner">
+              <div class="wallet-icon">👝</div>
+              <div class="payment-banner-text">
+                <h3 class="payment-banner-title">Get Additional Discount</h3>
+                <p class="payment-banner-subtitle">Complete the survey, and you may receive a coupon!</p>
+              </div>
+              <button class="login-now-btn">Fill it in now</button>
+            </div>
+
+            <div class="payment-method">
+              <div class="payment-method-info">
+                <span class="payment-method-icon">💳</span>
+                <span>Credit or Debit Card</span>
+              </div>
+            </div>
+
+            <div>
+              <div class="form-label">We Accept:</div>
+              <div class="payment-cards">
+                <img src="/assets/images/payment/visa.svg" alt="Visa" class="payment-card-img" />
+                <img src="/assets/images/payment/mastercard.svg" alt="Mastercard" class="payment-card-img" />
+                <img src="/assets/images/payment/expresscard.svg" alt="American Express" class="payment-card-img" />
+              </div>
+
+              <form [formGroup]="paymentForm" class="card-form">
+                <div class="form-group">
+                  <label class="form-label">Card Number *</label>
+                  <div class="card-input-group">
+                    <input type="text" class="card-input" placeholder="XXXX XXXX XXXX XXXX"
+                           formControlName="cardNumber"
+                           [class.is-invalid]="isFieldInvalid(paymentForm, 'cardNumber')">
+                    <img src="/assets/images/payment/visa.svg" alt="Visa" class="card-input-icon" />
+                  </div>
+                  <div class="error-message" *ngIf="isFieldInvalid(paymentForm, 'cardNumber')">
+                    {{ getFieldError(paymentForm, 'cardNumber') }}
+                  </div>
+                </div>
+
+                <div class="form-row-split">
+                  <div class="form-group">
+                    <label class="form-label">Expiration date *</label>
+                    <div class="form-row-split">
+                      <div class="payment-date">
+                        <div class="form-group">
+                          <input type="text" class="card-input" placeholder="MM"
+                                 formControlName="expiryMonth"
+                                 [class.is-invalid]="isFieldInvalid(paymentForm, 'expiryMonth')">
+                          <div class="error-message" *ngIf="isFieldInvalid(paymentForm, 'expiryMonth')">
+                            {{ getFieldError(paymentForm, 'expiryMonth') }}
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <input type="text" class="card-input" placeholder="YYYY"
+                                 formControlName="expiryYear"
+                                 [class.is-invalid]="isFieldInvalid(paymentForm, 'expiryYear')">
+                          <div class="error-message" *ngIf="isFieldInvalid(paymentForm, 'expiryYear')">
+                            {{ getFieldError(paymentForm, 'expiryYear') }}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label">CVV / CVC *</label>
+                    <input type="text" class="card-input" placeholder="xxx"
+                           formControlName="cvv"
+                           [class.is-invalid]="isFieldInvalid(paymentForm, 'cvv')">
+                    <div class="error-message" *ngIf="isFieldInvalid(paymentForm, 'cvv')">
+                      {{ getFieldError(paymentForm, 'cvv') }}
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Name on Card *</label>
+                  <input type="text" class="card-input" placeholder="Enter card holder name"
+                         formControlName="cardholderName"
+                         [class.is-invalid]="isFieldInvalid(paymentForm, 'cardholderName')">
+                  <div class="error-message" *ngIf="isFieldInvalid(paymentForm, 'cardholderName')">
+                    {{ getFieldError(paymentForm, 'cardholderName') }}
+                  </div>
+                </div>
+              </form>
+
+              <div class="payment-total">
+                <div>
+                  <div class="total-amount">TND{{ (product.productPrice * reservation.rentingDuration) + totalExtrasPrice }}</div>
+                  <div class="total-note">Due now</div>
+                </div>
+                <button
+                  class="pay-now-btn"
+                  (click)="processPayment()"
+                  [disabled]="paymentForm.invalid ">
+                  Pay Now
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column -->
+      <div class="right-column">
+        <!-- Price Summary Card -->
+        <div class="card">
+          <div class="card-inner price-summary">
+            <h2>Price Summary</h2>
+
+            <div class="price-row">
+              <div>Renting Charges</div>
+              <div class="price-value">TND{{ product.productPrice * reservation.rentingDuration }}</div>
+            </div>
+
+            <div class="price-row">
+              <div>Total Discount <span class="discount-badge">{{ reservation.couponPrice|percent }}% off</span></div>
+              <div class="price-value discount">-TND{{product.productPrice * reservation.rentingDuration * reservation.couponPrice}}</div>
+            </div>
+
+            <div class="price-row">
+              <div>Price after discount</div>
+              <div class="price-value">{{product.productPrice * reservation.rentingDuration - (product.productPrice * reservation.rentingDuration * reservation.couponPrice )}}</div>
+            </div>
+
+            <div class="price-row">
+              <div>Taxes % Fees</div>
+              <div class="price-value">{{totalExtrasPrice}}</div>
+            </div>
+
+            <div class="price-row price-total">
+              <div>Payable Now</div>
+              <div class="price-value">TND{{ (product.productPrice * reservation.rentingDuration) + totalExtrasPrice }}</div>
+            </div>
+
+            <div class="offer-section">
+              <h2>Offer & Discount</h2>
+
+              <div class="offer-card">
+                <div class="offer-badge">G</div>
+                <div class="offer-content">
+                  <h4 class="offer-title">{{ reservation.couponName }}</h4>
+                  <p class="offer-description">Congratulations! You have saved {{ reservation.couponPrice|percent }} with
+                    {{reservation.couponName}}.</p>
+                  <div class="offer-amount">-{{ reservation.couponPrice|percent }}</div>
+                </div>
+              </div>
+
+              <div class="coupon-form">
+                <input type="text" class="coupon-input" placeholder="Coupon code">
+                <button class="apply-button">Apply</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

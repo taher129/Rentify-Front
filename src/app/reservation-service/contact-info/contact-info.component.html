@@ -1,0 +1,51 @@
+<div class="contact-info-container">
+  <div class="contact-info-header">
+    <button class="back-button" (click)="closeContactInfo()">
+      <i class="fa fa-arrow-left"></i>
+    </button>
+    <span class="header-title">Contact info</span>
+  </div>
+
+  <div class="contact-info-content">
+    <div class="profile-section">
+      <div class="profile-image">
+        <img [src]="user?.avatarUrl || '/assets/default-avatar.jpg'" alt="{{ user?.name }}">
+      </div>
+      <h2 class="user-name">{{ user?.name }}</h2>
+      <p class="user-status">{{ user?.status }}</p>
+    </div>
+
+    <div class="media-section" *ngIf="user?.media && user?.media.length">
+      <h3>Media</h3>
+      <div class="media-grid">
+        <div class="media-item" *ngFor="let mediaItem of user?.media">
+          <img [src]="mediaItem" alt="Shared media">
+        </div>
+      </div>
+    </div>
+
+    <div class="details-section">
+      <h3>Details</h3>
+
+      <div class="detail-item" *ngIf="user?.email">
+        <div class="detail-label">Email</div>
+        <div class="detail-value">{{ user?.email }}</div>
+      </div>
+
+      <div class="detail-item" *ngIf="user?.phone">
+        <div class="detail-label">Phone number</div>
+        <div class="detail-value">{{ user?.phone }}</div>
+      </div>
+
+      <div class="detail-item" *ngIf="user?.title">
+        <div class="detail-label">Title</div>
+        <div class="detail-value">{{ user?.title }}</div>
+      </div>
+
+      <div class="detail-item" *ngIf="user?.company">
+        <div class="detail-label">Company</div>
+        <div class="detail-value">{{ user?.company }}</div>
+      </div>
+    </div>
+  </div>
+</div>

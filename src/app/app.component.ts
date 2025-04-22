@@ -8,6 +8,7 @@ import AOS from 'aos';  // Importation de AOS
 import { InsuranceComponent } from './pages/insurance/insurance.component';
 import { AboutComponent } from './pages/about/about.component';
 import { HomeComponent } from './layout/home/home.component';
+import {ChatBubbleComponent} from "./reservation-service/chat-bubble/chat-bubble.component";
 
 @Component({
   selector: 'app-root',
@@ -15,7 +16,8 @@ import { HomeComponent } from './layout/home/home.component';
   imports: [
     RouterOutlet,
     FooterComponent,
-    NavbarComponent
+    NavbarComponent,
+    ChatBubbleComponent
   ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']

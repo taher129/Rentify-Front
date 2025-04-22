@@ -1,0 +1,64 @@
+<div class="chat-area">
+  <div *ngIf="conversation" class="chat-container" [class.contact-info-open]="showContactInfo">
+    <div class="chat-header">
+      <div class="current-user">
+        <img class="avatar-img" [src]="'/avatar-' + currentOtherUserName + '.jpg'" alt="User" />
+        <span class="username">{{ currentOtherUserName }}</span>
+        <div class="actions">
+          <div class="dropdown-container">
+            <button class="icon-btn" (click)="toggleDropdown($event)">⋮</button>
+            <div class="dropdown-menu" [class.show]="isDropdownOpen">
+              <div class="dropdown-item" (click)="handleMenuAction('contact')">
+                <div class="dropdown-icon">
+                  <i class="fa fa-address-card"></i>
+                </div>
+                <span>Contact info</span>
+              </div>
+              <div class="dropdown-item" (click)="handleMenuAction('report')">
+                <div class="dropdown-icon">
+                  <i class="fa fa-bullhorn"></i>
+                </div>
+                <span>Report User</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="chat-messages" #messagesContainer>
+      <div *ngIf="!conversation.messages || conversation.messages.length === 0" class="empty-messages">
+        No messages yet
+      </div>
+      <ng-container *ngIf="conversation.messages && conversation.messages.length > 0">
+        <ng-container *ngFor="let message of conversation.messages; let i = index">
+          <!-- Date separator -->
+          <div *ngIf="shouldShowDateSeparator(i)" class="date-separator">
+            <div class="date-line"></div>
+            <div class="date-text">{{ formatDateForSeparator(message.timestamp) }}</div>
+            <div class="date-line"></div>
+          </div>
+
+          <!-- Message -->
+          <app-message
+            [message]="message"
+            [isSent]="message.senderId === userId">
+          </app-message>
+        </ng-container>
+      </ng-container>
+    </div>
+
+    <app-message-input class="message-input" (sendMessage)="handleSendMessage($event)"></app-message-input>
+
+    <!-- Contact Info Panel -->
+    <app-contact-info
+      *ngIf="showContactInfo"
+      [user]="contactInfo"
+      (close)="closeContactInfo()">
+    </app-contact-info>
+  </div>
+
+  <div *ngIf="!conversation" class="empty-chat">
+    <p>Select a conversation to start chatting</p>
+  </div>
+</div>

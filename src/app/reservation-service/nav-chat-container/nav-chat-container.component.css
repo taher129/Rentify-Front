@@ -1,0 +1,21 @@
+/* nav-chat-container.component.css */
+:host {
+    display: block;
+    height: 100%;
+    width: 100%;
+}
+
+/* Style adjustments to ensure the child chat-navbar fits correctly */
+:host ::ng-deep .chat-navbar {
+    height: 100%;
+    width: 100%;
+    background-color: #242526;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+:host ::ng-deep .conversations-list {
+    flex: 1;
+    overflow-y: auto;
+}

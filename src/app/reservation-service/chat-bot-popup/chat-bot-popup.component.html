@@ -1,0 +1,66 @@
+<div class="chat-popup" [class.minimized]="isMinimized">
+    <div class="chat-popup-header">
+        <div class="user-info" *ngIf="conversation">
+            <img class="avatar-img" [src]="'/assets/images/payment/lendy.jpg'" alt="User" />
+            <span class="username">{{ currentOtherUserName }}</span>
+        </div>
+        <div class="header-actions">
+            <button class="action-btn" (click)="toggleMinimize()">
+                <i class="fa" [ngClass]="isMinimized ? 'fa-window-maximize' : 'fa-window-minimize'"></i>
+            </button>
+            <div class="dropdown-container">
+                <button class="action-btn" (click)="toggleDropdown($event)">⋮</button>
+                <div class="dropdown-menu" [class.show]="isDropdownOpen">
+                    <div class="dropdown-item" (click)="handleMenuAction('contact')">
+                        <div class="dropdown-icon">
+                            <i class="fa fa-address-card"></i>
+                        </div>
+                        <span>Contact info</span>
+                    </div>
+                    <div class="dropdown-item" (click)="handleMenuAction('report')">
+                        <div class="dropdown-icon">
+                            <i class="fa fa-bullhorn"></i>
+                        </div>
+                        <span>Report User</span>
+                    </div>
+                </div>
+            </div>
+            <button class="action-btn close-btn" (click)="closeChat()">×</button>
+        </div>
+    </div>
+
+    <div class="chat-popup-body" *ngIf="!isMinimized">
+        <div class="chat-container" [class.contact-info-open]="showContactInfo">
+            <div class="chat-messages" #messagesContainer>
+                <div *ngIf="!conversation?.messages || conversation.messages.length === 0" class="empty-messages">
+                    No messages yet
+                </div>
+                <ng-container *ngIf="conversation?.messages && conversation.messages.length > 0">
+                    <ng-container *ngFor="let message of conversation.messages; let i = index">
+                        <!-- Date separator -->
+                        <div *ngIf="shouldShowDateSeparator(i)" class="date-separator">
+                            <div class="date-line"></div>
+                            <div class="date-text">{{ formatDateForSeparator(message.timestamp) }}</div>
+                            <div class="date-line"></div>
+                        </div>
+
+                        <!-- Message -->
+                        <app-message
+                                [message]="message"
+                                [isSent]="message.senderId === userId">
+                        </app-message>
+                    </ng-container>
+                </ng-container>
+            </div>
+
+            <app-message-input class="message-input" (sendMessage)="handleSendMessage($event)"></app-message-input>
+
+            <!-- Contact Info Panel -->
+            <app-contact-info
+                    *ngIf="showContactInfo"
+                    [user]="contactInfo"
+                    (close)="closeContactInfo()">
+            </app-contact-info>
+        </div>
+    </div>
+</div>

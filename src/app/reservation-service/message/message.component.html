@@ -1,0 +1,31 @@
+<div class="message-container" [ngClass]="{ 'sent': isSent, 'received': !isSent }">
+  <!-- Date separator if needed -->
+  <div class="date-separator" *ngIf="showDateSeparator">
+    <div class="date-line">
+      <span class="date-text">{{ formatDate(dateForSeparator) }}</span>
+    </div>
+  </div>
+
+  <!-- For text messages or caption part of image messages -->
+  <ng-container *ngIf="textContent">
+    <div class="message-bubble">
+      <div class="message-content">
+        <div class="message-text">{{ textContent }}</div>
+        <div class="message-status" *ngIf="isSent">
+                    <span class="status-icon" [ngClass]="{'delivered': message.status === 'delivered', 'read': message.status === 'read'}">
+                        <i class="fa" [ngClass]="{'fa-check': message.status === 'sent', 'fa-check-double': message.status === 'delivered' || message.status === 'read'}"></i>
+                    </span>
+        </div>
+      </div>
+      <div class="message-footer">
+        <div class="message-time">{{ formatTime(message.timestamp) }}</div>
+      </div>
+    </div>
+  </ng-container>
+
+  <!-- For image part of image messages -->
+  <div class="standalone-image-container" *ngIf="isImageMessage && imageContent?.imageUrl">
+    <img [src]="imageContent?.imageUrl" alt="Image" class="message-image">
+    <div class="message-time image-time">{{ formatTime(message.timestamp) }}</div>
+  </div>
+</div>

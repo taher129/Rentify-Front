@@ -1,0 +1,41 @@
+<div class="sidebar">
+  <!-- Current User Info -->
+  <div class="current-user">
+    <img class="avatar-img" src="/avatar-{{username}}.jpg" alt="User" />
+    <span class="username">{{ username }}</span>
+  </div>
+
+  <!-- Search Input -->
+  <div class="search-box">
+    <input type="text" placeholder="Search or start new chat"
+           [(ngModel)]="searchQuery"
+           (input)="onSearchChange($event)" />
+  </div>
+
+  <!-- Conversations List -->
+  <div class="conversations-list">
+    <div *ngFor="let conversation of filteredConversations"
+         class="conversation-item"
+         [ngClass]="{'selected': conversation.messageBoxId === selectedConversationId}"
+         (click)="selectConversation(conversation)">
+      <img class="avatar-img" src="/avatar-{{getOtherUser(conversation).name}}.jpg" alt="Avatar" />
+      <div class="conversation-info">
+        <div class="top-row">
+          <span class="conversation-name">{{ getOtherUser(conversation).name }}</span>
+          <span class="message-date">26/04/2021</span>
+        </div>
+        <div class="bottom-row">
+                    <span class="conversation-preview">
+                        {{ conversation.messages?.length > 0 ? conversation.messages[conversation.messages.length - 1].content : 'No messages yet' }}
+                    </span>
+          <span *ngIf="conversation.muted" class="mute-icon">🔇</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- No results message -->
+    <div *ngIf="searchQuery && filteredConversations.length === 0" class="no-results">
+      No conversations found
+    </div>
+  </div>
+</div>

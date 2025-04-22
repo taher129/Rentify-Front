@@ -1,0 +1,254 @@
+.myreservation-section {
+  font-family: Arial, sans-serif;
+  color: #333;
+  padding: 50px;
+}
+
+.bookings-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.bookings-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+}
+
+.tabs {
+  display: flex;
+  border-bottom: 1px solid #e0e0e0;
+  margin-bottom: 20px;
+}
+
+.tab-button {
+  background: none;
+  border: none;
+  padding: 12px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  position: relative;
+  color: #666;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tab-button.active {
+  color: #ff6f61;
+  font-weight: 500;
+}
+
+.tab-button.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background-color: #ff6f61;
+}
+
+.icon {
+  width: 18px;
+  height: 18px;
+  display: inline-block;
+}
+
+.upcoming-icon::before {
+  content: '🗓️';
+}
+
+.canceled-icon::before {
+  content: '❌';
+}
+
+.completed-icon::before {
+  content: '✓';
+}
+
+.booking-category {
+  font-size: 18px;
+  margin-bottom: 16px;
+  font-weight: 500;
+}
+
+.booking-card {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 20px;
+  transition: box-shadow 0.3s ease;
+}
+
+.booking-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.booking-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.booking-icon-container {
+  width: 48px;
+  height: 48px;
+  background-color: #f5f5f5;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 16px;
+  font-size: 24px;
+}
+
+.booking-icon {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.booking-title-section {
+  flex-grow: 1;
+}
+
+.booking-title {
+  font-size: 16px;
+  font-weight: bold;
+  margin: 0 0 6px 0;
+}
+
+.booking-id {
+  font-size: 14px;
+  color: #666;
+  margin: 0;
+}
+
+.manage-button {
+  background-color: #f1eeff;
+  color: #ff6f61;
+  margin-left: 10px;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  font-size: 14px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.2s ease;
+}
+
+.manage-button:hover {
+  background-color: #e5e0ff;
+}
+
+.manage-section {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+
+.cancel-status {
+  color: #e53935;
+  font-size: 14px;
+  margin: 0;
+  font-weight: 500;
+}
+
+.booking-details {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.detail-column {
+  flex: 1;
+  min-width: 200px;
+  margin-bottom: 12px;
+}
+
+.detail-label {
+  font-size: 14px;
+  color: #666;
+  margin: 0 0 4px 0;
+}
+
+.detail-value {
+  font-size: 16px;
+  font-weight: 500;
+  margin: 0;
+}
+
+.empty-bookings {
+  text-align: center;
+  padding: 30px;
+  color: #666;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+}
+
+.loading-state, .error-state {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.retry-button {
+  background-color: #ff6f61;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 16px;
+  transition: background-color 0.2s ease;
+}
+
+.retry-button:hover {
+  background-color: #ff6f61;
+}
+
+@media (max-width: 768px) {
+  .tabs {
+    overflow-x: auto;
+    white-space: nowrap;
+    padding-bottom: 8px;
+  }
+
+  .booking-header {
+    flex-wrap: wrap;
+  }
+
+  .booking-icon-container {
+    margin-bottom: 8px;
+  }
+
+  .booking-title-section {
+    width: calc(100% - 64px);
+    margin-bottom: 12px;
+  }
+
+  .manage-section, .manage-button {
+    width: 100%;
+    text-align: center;
+    margin-top: 8px;
+  }
+
+  .booking-details {
+    flex-direction: column;
+  }
+
+  .detail-column {
+    width: 100%;
+  }
+}

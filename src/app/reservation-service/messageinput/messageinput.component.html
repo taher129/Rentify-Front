@@ -1,0 +1,38 @@
+<div class="chat-input">
+  <div class="input-container">
+    <button class="icon-button" (click)="toggleEmojiPicker()">
+      😊
+    </button>
+
+    <label for="file-upload" class="icon-button">
+      📎
+    </label>
+    <input
+      id="file-upload"
+      type="file"
+      accept="image/*"
+      (change)="onFileSelected($event)"
+      style="display: none;"
+    />
+
+    <input
+      type="text"
+      [(ngModel)]="message"
+      (keyup.enter)="onSendMessage()"
+      placeholder="Type a message..."
+    />
+
+    <button class="icon-button send-button" (click)="onSendMessage()">
+      ➤
+    </button>
+  </div>
+
+  <div *ngIf="showEmojiPicker" class="emoji-picker">
+    <app-emoji-picker (emojiClick)="onEmojiSelect($event)"></app-emoji-picker>
+  </div>
+
+  <div *ngIf="imagePreview" class="image-preview">
+    <img [src]="imagePreview" alt="Selected image" />
+    <button class="remove-image" (click)="removeSelectedFile()">×</button>
+  </div>
+</div>

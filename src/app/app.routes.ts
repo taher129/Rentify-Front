@@ -11,6 +11,10 @@ import { BecomeALenderComponent } from './pages/become-a-lender/become-a-lender.
 import { InsuranceComponent } from './pages/insurance/insurance.component';
 import { SustainabilityComponent } from './pages/sustainability/sustainability.component';
 import { HomeComponent } from './layout/home/home.component';
+import {ReservationComponent} from "./reservation-service/reservation/reservation.component";
+import {MyreservationComponent} from "./reservation-service/myreservation/myreservation.component";
+import {MessegingPageComponent} from "./reservation-service/messeging-page/messeging-page.component";
+
 
 export const routes: Routes = [
    // Page d'accueil
@@ -26,14 +30,18 @@ export const routes: Routes = [
    { path: 'become-a-lender', component: BecomeALenderComponent },
    { path: 'insurance', component: InsuranceComponent },
    { path: 'sustainability', component: SustainabilityComponent },
- 
+ //reservation-service
+  {path: 'myreservation', component: MyreservationComponent},
+  {path: 'chat', component: MessegingPageComponent},
+  {path: 'reservation', component: ReservationComponent},
+
    // Blog et articles de blog
    { path: 'blog', component: BlogComponent },
    { path: 'blog/:id', component: BlogPostComponent },
- 
+
    // Page de gestion des erreurs 404
    { path: '404', component: NotFoundComponent },
- 
+
    // Redirection vers la page d'accueil par défaut
    { path: '**', redirectTo: '/404', pathMatch: 'full' }
 ];

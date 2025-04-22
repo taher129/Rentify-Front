@@ -1,0 +1,182 @@
+<section class="myreservation-section">
+  <div class="bookings-container">
+    <h1 class="bookings-title">My Bookings</h1>
+
+    <div class="tabs">
+      <button
+        class="tab-button"
+        [class.active]="activeTab === 'upcoming'"
+        (click)="setActiveTab('upcoming')">
+        <span class="icon upcoming-icon"></span>Upcoming Booking
+      </button>
+      <button
+        class="tab-button"
+        [class.active]="activeTab === 'canceled'"
+        (click)="setActiveTab('canceled')">
+        <span class="icon canceled-icon"></span>Canceled Booking
+      </button>
+      <button
+        class="tab-button"
+        [class.active]="activeTab === 'completed'"
+        (click)="setActiveTab('completed')">
+        <span class="icon completed-icon"></span>Completed Booking
+      </button>
+    </div>
+
+    <!-- Loading state -->
+    <div *ngIf="isLoading" class="loading-state">
+      <p>Loading your bookings...</p>
+    </div>
+
+    <!-- Error state -->
+    <div *ngIf="error" class="error-state">
+      <p>{{ error }}</p>
+      <button (click)="loadReservations()" class="retry-button">Try Again</button>
+    </div>
+
+    <!-- Completed Bookings -->
+    <div *ngIf="!isLoading && !error && activeTab === 'completed'" class="bookings-list">
+      <h2 class="booking-category">Completed booking ({{ completedBookings.length }})</h2>
+
+      <div *ngIf="completedBookings.length === 0" class="empty-bookings">
+        <p>No completed bookings found</p>
+      </div>
+
+      <div *ngFor="let booking of completedBookings" class="booking-card">
+        <div class="booking-header">
+          <div class="booking-icon-container">
+            <span class="booking-icon">{{ getCategoryIcon(booking.productCategory) }}</span>
+          </div>
+
+          <div class="booking-title-section">
+            <h3 class="booking-title">{{ booking.productName }}</h3>
+            <p class="booking-id">{{ booking.productAddress }} • {{ booking.productCategory }}</p>
+          </div>
+
+        </div>
+
+        <div class="booking-details">
+          <div class="detail-column">
+            <p class="detail-label">Check in</p>
+            <p class="detail-value">{{ formatDate(booking.startDateTime) }}</p>
+          </div>
+          <div class="detail-column">
+            <p class="detail-label">Check out</p>
+            <p class="detail-value">{{ formatDate(booking.endDateTime) }}</p>
+          </div>
+          <div class="detail-column">
+            <p class="detail-label">Duration</p>
+            <p class="detail-value">{{ calculateDuration(booking.startDateTime, booking.endDateTime) }}</p>
+          </div>
+          <div class="detail-column">
+            <p class="detail-label">Booked by</p>
+            <p class="detail-value">{{ booking.bookedBy }}</p>
+          </div>
+          <div class="detail-column">
+            <p class="detail-label">Total price</p>
+            <p class="detail-value">TND{{ booking.totalPrice.toFixed(2) }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Canceled Bookings -->
+    <div *ngIf="!isLoading && !error && activeTab === 'canceled'" class="bookings-list">
+      <h2 class="booking-category">Cancelled booking ({{ canceledBookings.length }})</h2>
+
+      <div *ngIf="canceledBookings.length === 0" class="empty-bookings">
+        <p>No cancelled bookings found</p>
+      </div>
+
+      <div *ngFor="let booking of canceledBookings" class="booking-card">
+        <div class="booking-header">
+          <div class="booking-icon-container">
+            <span class="booking-icon">{{ getCategoryIcon(booking.productCategory) }}</span>
+          </div>
+
+          <div class="booking-title-section">
+            <h3 class="booking-title">{{ booking.productName }}</h3>
+            <p class="booking-id">{{ booking.productAddress }} • {{ booking.productCategory }}</p>
+          </div>
+
+          <div class="manage-section" [ngSwitch]="booking.status">
+            <p *ngSwitchCase="'canceled'" class="cancel-status">Booking cancelled</p>
+            <p *ngSwitchCase="'rejected'" class="cancel-status">Booking rejected</p>
+          </div>
+
+        </div>
+
+        <div class="booking-details">
+          <div class="detail-column">
+            <p class="detail-label">Check in</p>
+            <p class="detail-value">{{ formatDate(booking.startDateTime) }}</p>
+          </div>
+          <div class="detail-column">
+            <p class="detail-label">Check out</p>
+            <p class="detail-value">{{ formatDate(booking.endDateTime) }}</p>
+          </div>
+          <div class="detail-column">
+            <p class="detail-label">Duration</p>
+            <p class="detail-value">{{ calculateDuration(booking.startDateTime, booking.endDateTime) }}</p>
+          </div>
+          <div class="detail-column">
+            <p class="detail-label">Booked by</p>
+            <p class="detail-value">{{ booking.bookedBy }}</p>
+          </div>
+          <div class="detail-column">
+            <p class="detail-label">Total price</p>
+            <p class="detail-value">TND{{ booking.totalPrice.toFixed(2) }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Upcoming Bookings -->
+    <div *ngIf="!isLoading && !error && activeTab === 'upcoming'" class="bookings-list">
+      <h2 class="booking-category">Upcoming booking ({{ upcomingBookings.length }})</h2>
+
+      <div *ngIf="upcomingBookings.length === 0" class="empty-bookings">
+        <p>No upcoming bookings found</p>
+      </div>
+
+      <div *ngFor="let booking of upcomingBookings" class="booking-card">
+        <div class="booking-header">
+          <div class="booking-icon-container">
+            <span class="booking-icon">{{ getCategoryIcon(booking.productCategory) }}</span>
+          </div>
+
+          <div class="booking-title-section">
+            <h3 class="booking-title">{{ booking.productName }}</h3>
+            <p class="booking-id">{{ booking.productAddress }} • {{ booking.productCategory }}</p>
+          </div>
+          <button class="manage-button" (click)="downloadpdf(booking)">Download PDF</button>
+
+          <button class="manage-button" (click)="cancelBooking(booking)">Cancel Booking</button>
+        </div>
+
+        <div class="booking-details">
+          <div class="detail-column">
+            <p class="detail-label">Check in</p>
+            <p class="detail-value">{{ formatDate(booking.startDateTime) }}</p>
+          </div>
+          <div class="detail-column">
+            <p class="detail-label">Check out</p>
+            <p class="detail-value">{{ formatDate(booking.endDateTime) }}</p>
+          </div>
+          <div class="detail-column">
+            <p class="detail-label">Duration</p>
+            <p class="detail-value">{{ calculateDuration(booking.startDateTime, booking.endDateTime) }}</p>
+          </div>
+          <div class="detail-column">
+            <p class="detail-label">Booked by</p>
+            <p class="detail-value">{{ booking.bookedBy }}</p>
+          </div>
+          <div class="detail-column">
+            <p class="detail-label">Total price</p>
+            <p class="detail-value">TND{{ booking.totalPrice.toFixed(2) }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

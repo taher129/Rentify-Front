@@ -1,0 +1,62 @@
+
+.icon-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #fff;
+  border: none;
+  color: #1f1f1f;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+
+.icon-button:hover {
+  color:#ff6f61;
+}
+
+.dropdown-content {
+  position: absolute;
+  top: 56px;
+  right: 0;
+  background-color: #242526;
+  border-radius: 8px;
+  box-shadow: 0 12px 28px 0 rgba(0, 0, 0, 0.2);
+  width: 360px;
+  min-width: 360px;
+  max-height: 600px;
+  display: none;
+  z-index: 1001;
+  overflow: hidden;
+}
+
+.dropdown-content.show {
+  display: block;
+}
+
+.dropdown-content app-nav-chat-container {
+  height: 100%;
+  display: block;
+}
+
+.dropdown-content app-nav-chat-container ::ng-deep .chat-navbar {
+  height: 100%;
+  max-height: 600px;
+  width: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.dropdown-content app-nav-chat-container ::ng-deep .navbar-header {
+  padding: 10px 15px;
+}
+
+.dropdown-content app-nav-chat-container ::ng-deep .chat-popups-container {
+  position: fixed;
+  bottom: 0;
+  right: 20px;
+  z-index: 2000;
+}
