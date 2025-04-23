@@ -1,53 +1,110 @@
-import {Component, Input} from '@angular/core';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+// blog-post.component.ts
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { BlogService } from '../services/blog.service';
 import { CommonModule } from '@angular/common';
-
-interface ProfileData {
-  name: string;
-  position: string;
-  company: string;
-  bio: string;
-  photoUrl: string;
-}
-
+import {CommentComponent} from "../comment/comment.component";
 
 @Component({
-  selector: 'app-blog-post',
-  standalone: true,
-  imports: [CommonModule,RouterModule],
+  selector: 'app-blog-detail',
   templateUrl: './blog-post.component.html',
-  styleUrls: ['./blog-post.component.css']
+  standalone: true,
+  imports: [CommonModule, CommentComponent],
+  styleUrls: ['./blog-post.component.scss']
 })
+export class BlogPostComponent implements OnInit {
+  blogPost: any = null;
+  isLoading = true;
+  error: string | null = null;
+  defaultTags = ['Blog', 'Tour', 'Holidays', 'Ticket Booking', 'Deep learning'];
 
-export class BlogPostComponent {
-  blogPost = {
-    title: 'Ten unconventional tips about startups that you can\'t learn from books',
-    category: 'Hotel service',
-    excerpt: 'Passage its ten led hearted removal cordial. Preference any astonished unreserved Mrs. Prosperous understood Middletons in conviction an uncommonly do.',
-    author: 'Lori Stevens',
-    date: 'Nov 15, 2022',
-    readTime: '5 min read',
-    featuredImage: 'assets/images/mountain-hiker.jpg'
-  };
-  blogContent = {
-    paragraphs: [
-      'Meant balls it if up doubt small purse. Paid mind even sons does he door no. Attended overcame repeated it is perceived Marianne in. I think on style child of. Servants moreover in sensible it ye possible. Required his you put the outlived answered position.',
-      'A pleasure exertion if believed provided to. All led out world this music while asked.',
-      'Warrant private blushes removed an in equally totally if. Delivered dejection necessary objection do Mr prevailed. Mr feeling does chiefly cordial in do. Water timed folly right aware if oh truth.'
-    ],
-    bulletPoints: [
-      'Our Firmament living replenish Them Created after divide said Have to give',
-      'Dominion light without days face saw wherein land',
-      'Fifth have Seas made lights Very Day saw Seed herb sixth light whales',
-      'Saying unto Place it seeds you\'re isn\'t heaven'
-    ],
-    imageUrl: 'assets/beach-woman.jpg'
-  };
-  @Input() profileData: ProfileData = {
-    name: 'Lori Stevens',
-    position: 'editor',
-    company: 'Booking',
-    bio: 'Louis Ferguson has written about government, criminal justice, and the role of money in politics since 2015. Delivered dejection necessary objection do Mr prevailed. Mr feeling does chiefly cordial in do. Water timed folly right aware if oh truth.',
-    photoUrl: '/api/placeholder/80/80'
-  };
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private blogService: BlogService
+  ) { }
+
+  ngOnInit(): void {
+    this.route.paramMap.subscribe(params => {
+      const blogId = params.get('id');
+      if (blogId) {
+        this.loadBlogDetails(blogId);
+      } else {
+        this.error = 'Blog ID not found';
+        this.isLoading = false;
+      }
+    });
+  }
+
+  loadBlogDetails(id: string): void {
+    this.isLoading = true;
+    this.error = null;
+
+    this.blogService.getBlogById(id).subscribe({
+      next: (data) => {
+        this.blogPost = data;
+        // Process the blog data if needed
+        if (this.blogPost.content) {
+          this.blogPost.processedContent = this.processContent(this.blogPost.content);
+        }
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Error loading blog:', error);
+        this.error = 'Failed to load blog details';
+        this.isLoading = false;
+      }
+    });
+  }
+
+  processContent(content: string): any {
+    // If content is HTML, return as is
+    if (content.includes('<')) {
+      return content;
+    }
+
+    // Process plain text content to paragraphs and lists
+    return {
+      paragraphs: this.extractParagraphs(content),
+      bulletPoints: this.extractBulletPoints(content)
+    };
+  }
+
+  extractParagraphs(content: string): string[] {
+    return content.split('\n\n')
+      .map(p => p.trim())
+      .filter(p => p && !p.startsWith('•') && !p.startsWith('-'));
+  }
+
+  extractBulletPoints(content: string): string[] {
+    const lines = content.split('\n');
+    return lines
+      .filter(line => line.startsWith('•') || line.startsWith('-'))
+      .map(line => line.replace(/^[•-]\s*/, '').trim());
+  }
+
+
+  calculateReadTime(content: string): string {
+    if (!content) return '5 min read';
+    const wordsPerMinute = 200;
+    const words = content.trim().split(/\s+/).length;
+    const minutes = Math.ceil(words / wordsPerMinute);
+    return `${minutes} min read`;
+  }
+
+  // Social sharing methods
+  getFacebookShareUrl(): string {
+    const url = encodeURIComponent(window.location.href);
+    return `https://www.facebook.com/sharer/sharer.php?u=${url}`;
+  }
+
+  getTwitterShareUrl(): string {
+    const url = encodeURIComponent(window.location.href);
+    const text = encodeURIComponent(this.blogPost?.title || 'Check out this blog post');
+    return `https://twitter.com/intent/tweet?url=${url}&text=${text}`;
+  }
+
+  getInstagramShareUrl(): string {
+    return '#';
+  }
 }

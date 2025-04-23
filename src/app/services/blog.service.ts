@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Blog } from '../models/blog';
+import {Blog, BlogFormData} from '../models/blog';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +15,28 @@ export class BlogService {
     return this.http.get<Blog[]>(this.apiUrl);
   }
 
-  getBlogById(id: number): Observable<Blog> {
+  getBlogById(id: string): Observable<Blog> {
     return this.http.get<Blog>(`${this.apiUrl}/${id}`);
   }
+  createBlog(formData: FormData): Observable<Blog> {
+    return this.http.post<Blog>(this.apiUrl, formData);
+  }
+
+
+  private questions: Array<Object> = [];
+  private answers: Array<any> = [];
+
+  setQuestions(questions: Array<Object>) {
+    this.questions = [...questions];
+  }
+  getQuestions() {
+    return this.questions;
+  }
+  setAnswers(answers: Array<any>) {
+    this.answers = [...answers];
+  }
+  getAnswers() {
+    return this.answers;
+  }
+
 }

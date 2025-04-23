@@ -1,18 +1,17 @@
 <section class="blog-detail-page">
   <!-- blog-post-header.component.html -->
+  <!-- blog-post-header.component.html -->
   <div class="blog-detail-title">
     <div class="blog-details-title-image">
-      <img src="/assets/images/blog/blog1.jpg" alt="Blog featured image">
+      <img [src]="blogPost.image || '/assets/images/blog/default.jpg'" [alt]="blogPost.title">
     </div>
 
     <div class="blog-detail-title-container">
-      <div class="blog-category">
-        <span class="category-badge">{{ blogPost.category }}</span>
-      </div>
+
 
       <h1 class="blog-title">{{ blogPost.title }}</h1>
 
-      <p class="blog-excerpt">{{ blogPost.excerpt }}</p>
+      <p class="blog-excerpt">{{ blogPost.description }}</p>
 
       <div class="blog-author-info">
         <div class="author-avatar">
@@ -20,14 +19,28 @@
         </div>
 
         <div class="author-details">
-          <div class="author-name">{{ blogPost.author }}</div>
+          <div class="author-name">Lori Stevens</div>
           <div class="post-meta">
-            <span class="post-date">{{ blogPost.date }}</span>
+            <span class="post-date">{{ blogPost.date | date:'MMM d, yyyy' }}</span>
             <span class="dot-separator">•</span>
-            <span class="read-time">{{ blogPost.readTime }}</span>
+            <span class="read-time">5 min read</span>
           </div>
         </div>
       </div>
+    </div>
+  </div>
+
+  <div class="blog-detail-content">
+    <div class="blog-detail-content-text">
+      <div [innerHTML]="blogPost.content"></div>
+    </div>
+  </div>
+
+  <!-- Comments section -->
+  <div class="blog-comments" *ngIf="blogPost.comments">
+    <h3>Comments ({{ blogPost.comments.length }})</h3>
+    <div class="comment" *ngFor="let comment of blogPost.comments">
+      <!-- Display comment content here -->
     </div>
   </div>
   <div class="blog-detail-introduction">
@@ -45,15 +58,15 @@
   <!-- beach-blog.component.html -->
   <div class="blog-detail-content">
     <div class="blog-detail-content-text">
-      <p>{{ blogContent.paragraphs[0] }}</p>
+      <p>{{ blogPost.content.paragraphs[0] }}</p>
 
       <ul>
-        <li *ngFor="let point of blogContent.bulletPoints">{{ point }}</li>
+        <li *ngFor="let point of blogPost.content.bulletPoints">{{ point }}</li>
       </ul>
 
-      <p>{{ blogContent.paragraphs[1] }}</p>
+      <p>{{ blogPost.content.paragraphs[1] }}</p>
 
-      <p>{{ blogContent.paragraphs[2] }}</p>
+      <p>{{ blogPost.content.paragraphs[2] }}</p>
     </div>
 
     <img src="/assets/images/blog/blog1.jpg" alt="Woman sitting on beach with colorful decorations">
@@ -73,19 +86,22 @@
       As hastened oh produced prospect formerly up am. Placing forming nay looking old married few has. Margaret disposed.
     </p>
   </div>
+
+  <app-comment [blogPost]="blogPost"></app-comment>
+
+
   <div class="blog-detail-user">
     <div class="user-card">
       <div class="user-info-container">
         <div class="user-avatar">
-          <img [src]="profileData.photoUrl" alt="{{ profileData.name }}" />
+          <img src="https://example.com/profile.jpg" alt="John Doe" />
         </div>
         <div class="user-details">
-          <h2 class="user-name">{{ profileData.name }}</h2>
-          <p class="user-position">An {{ profileData.position }} at {{ profileData.company }}</p>
-          <p class="user-bio">{{ profileData.bio }}</p>
+          <h2 class="user-name">John Doe</h2>
+          <p class="user-position">An Software Engineer at Tech Corp</p>
+          <p class="user-bio">Passionate about web development and creating user-friendly interfaces. With over 5 years of experience in frontend technologies.</p>
         </div>
       </div>
-      <div class="social-button">
       <div class="user-social">
         <a href="#" class="social-icon facebook">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
@@ -104,7 +120,6 @@
         </a>
       </div>
       <button class="view-articles-btn">View Articles</button>
-    </div>
     </div>
   </div>
   <div class="blog-detail-footer">

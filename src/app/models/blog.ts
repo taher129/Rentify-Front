@@ -12,3 +12,4 @@ export interface Blog {
   viewCount: number;
   comments: Comment[];
 }
+export type BlogFormData = Omit<Blog, 'idBlog' | 'comments' | 'date' | 'likeCount' | 'viewCount'>;

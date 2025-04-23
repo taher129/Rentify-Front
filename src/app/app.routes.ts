@@ -11,6 +11,9 @@ import { BecomeALenderComponent } from './pages/become-a-lender/become-a-lender.
 import { InsuranceComponent } from './pages/insurance/insurance.component';
 import { SustainabilityComponent } from './pages/sustainability/sustainability.component';
 import { HomeComponent } from './layout/home/home.component';
+import {AddBlogComponent} from "./add-blog/add-blog.component";
+import {QuizComponent} from "./quiz/quiz.component";
+import {StatsComponent} from "./stats/stats.component";
 
 export const routes: Routes = [
    // Page d'accueil
@@ -29,7 +32,10 @@ export const routes: Routes = [
 
    // Blog et articles de blog
    { path: 'blog', component: BlogComponent },
-   { path: 'blogpost', component: BlogPostComponent },
+   { path: 'blogpost/:id', component: BlogPostComponent },
+   {path: 'addblog', component: AddBlogComponent},
+   {path: 'quiz', component: QuizComponent },
+   {path: 'stats', component: StatsComponent },
 
    // Page de gestion des erreurs 404
    { path: '404', component: NotFoundComponent },

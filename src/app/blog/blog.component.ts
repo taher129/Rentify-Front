@@ -6,6 +6,8 @@ import { BlogService } from '../services/blog.service';
 import { Blog } from '../models/blog';
 import { Router } from '@angular/router';
 
+
+
 @Component({
   selector: 'app-blog',
   standalone: true,
@@ -14,6 +16,7 @@ import { Router } from '@angular/router';
   styleUrls: ['./blog.component.css']
 })
 export class BlogComponent implements OnInit {
+
   blogs: Blog[] = [];
   featuredBlogs: Blog[] = [];
   latestBlogs: Blog[] = [];
@@ -78,14 +81,7 @@ export class BlogComponent implements OnInit {
     );
   }
 
-  getCategoryFromContent(blog: Blog): string {
-    // Extract category from content if not provided
-    if (blog.content.toLowerCase().includes('technology')) return 'Technology';
-    if (blog.content.toLowerCase().includes('business')) return 'Business';
-    if (blog.content.toLowerCase().includes('history')) return 'History';
-    if (blog.content.toLowerCase().includes('research')) return 'Research';
-    if (blog.content.toLowerCase().includes('adventure')) return 'Adventure';
-    if (blog.content.toLowerCase().includes('hotel')) return 'Hotel Service';
-    return 'General';
-  }
+
+
+
 }
