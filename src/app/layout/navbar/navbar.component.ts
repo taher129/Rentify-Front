@@ -132,4 +132,5 @@ export class NavbarComponent {
       this.cdr.detectChanges(); // Force change detection
     }
   }
+
 }

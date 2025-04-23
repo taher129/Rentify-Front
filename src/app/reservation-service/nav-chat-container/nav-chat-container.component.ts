@@ -69,4 +69,5 @@ export class NavChatContainerComponent implements OnInit, OnDestroy {
     // Disconnect from WebSocket service
     this.websocketService.disconnect();
   }
+
 }
