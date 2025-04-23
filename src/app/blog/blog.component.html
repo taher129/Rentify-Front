@@ -1,14 +1,150 @@
-<div class="blog-container">
-    <h1 class="blog-title">Latest Blog Posts</h1>
-    <div class="blog-grid">
-      <div *ngFor="let post of blogPosts" class="blog-card">
-        <img [src]="post.images[0]" alt="{{ post.title }}" class="blog-image">
-        <div class="blog-content">
-          <h2>{{ post.title }}</h2>
-          <p>{{ post.excerpt }}</p>
-          <a [routerLink]="['/blog', post.id]" class="read-more">Read More</a>
+<section class="blog-page">
+  <div class="blog-page-title">
+    <h2>The Blog</h2>
+    <button class="create-blog-button" [routerLink]="['/addblog']">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="12" y1="5" x2="12" y2="19"></line>
+        <line x1="5" y1="12" x2="19" y2="12"></line>
+      </svg>
+      Create Blog
+    </button>
+  </div>
+
+  <!-- Search container -->
+  <div class="search-container">
+    <div class="search-field">
+      <input type="text" class="search-input" placeholder="Search blogs..." [(ngModel)]="searchQuery" (input)="onSearch()">
+      <button class="search-button">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Featured blogs -->
+  <div class="blog-highlight" *ngIf="featuredBlogs.length > 0">
+    <!-- Featured blog post (first item - most viewed) -->
+    <div class="blog-suggestion featured" *ngIf="featuredBlogs[0]">
+      <div class="blog-image-container">
+        <a [routerLink]="['/blogpost', featuredBlogs[0].idBlog]">
+          <img [src]="featuredBlogs[0].image || '/assets/images/blog/default.jpg'"
+               [alt]="featuredBlogs[0].title"
+               class="blog-image">
+        </a>
+        <span class="view-badge">{{ featuredBlogs[0].viewCount }} views</span>
+      </div>
+
+      <div class="blog-content">
+        <div class="blog-meta">
+          <span class="date-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+            {{ featuredBlogs[0].date | date: 'MMM d, yyyy' }}
+          </span>
+        </div>
+
+        <h2 class="blog-title">
+          <a [routerLink]="['/blogpost', featuredBlogs[0].idBlog]">{{ featuredBlogs[0].title }}</a>
+        </h2>
+
+        <p class="blog-subtitle">{{ featuredBlogs[0].description || 'No description available' }}</p>
+
+        <div class="blog-footer">
+          <span class="like-count">{{ featuredBlogs[0].likeCount }} likes</span>
+          <a [routerLink]="['/blogpost', featuredBlogs[0].idBlog]" class="read-more">Read more
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Blog suggestions list (remaining featured blogs) -->
+    <div class="blog-suggestion-list" *ngIf="featuredBlogs.length > 1">
+      <div class="blog-suggestion suggestion-item" *ngFor="let blog of featuredBlogs.slice(1)">
+        <div class="suggestion-content">
+          <div class="suggestion-image">
+            <a [routerLink]="['/blogpost', blog.idBlog]">
+              <img [src]="blog.image || '/assets/images/blog/default.jpg'"
+                   [alt]="blog.title">
+            </a>
+          </div>
+
+          <div class="suggestion-details">
+            <div class="blog-meta">
+              <span class="date-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                  <line x1="16" y1="2" x2="16" y2="6"></line>
+                  <line x1="8" y1="2" x2="8" y2="6"></line>
+                  <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+                {{ blog.date | date: 'MMM d, yyyy' }}
+              </span>
+            </div>
+
+            <h3 class="suggestion-title">
+              <a [routerLink]="['/blogpost', blog.idBlog]">{{ blog.title }}</a>
+            </h3>
+
+            <div class="suggestion-meta">
+              <span class="like-count">{{ blog.likeCount }} likes</span>
+              <a [routerLink]="['/blogpost', blog.idBlog]" class="read-more">Read more
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                  <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+              </a>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
-  
+
+  <!-- Latest articles -->
+  <div class="blog-page-title">
+    <h3>Latest Articles</h3>
+  </div>
+
+  <div class="blog-list">
+    <!-- Display blogs in rows of 3 -->
+    <div class="blog-row" *ngFor="let row of blogRows">
+      <div class="blog-card" *ngFor="let blog of row">
+        <div class="blog-image">
+          <a [routerLink]="['/blogpost', blog.idBlog]">
+            <img [src]="blog.image || '/assets/images/blog/default.jpg'"
+                 [alt]="blog.title">
+          </a>
+        </div>
+        <div class="blog-content">
+          <h2 class="blog-title">
+            <a [routerLink]="['/blogpost', blog.idBlog]">{{ blog.title }}</a>
+          </h2>
+          <p class="blog-excerpt" *ngIf="blog.description">{{ blog.description }}</p>
+          <div class="blog-meta">
+            <p class="blog-date">{{ blog.date | date: 'MMM d, yyyy' }}</p>
+            <div class="blog-stats">
+              <span class="view-count">{{ blog.viewCount }} views</span>
+              <span class="like-count">{{ blog.likeCount }} likes</span>
+            </div>
+          </div>
+          <a [routerLink]="['/blogpost', blog.idBlog]" class="read-more-button">Read More</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- No results message -->
+  <div class="no-results" *ngIf="filteredBlogs.length === 0 && searchQuery">
+    <p>No blogs found matching "{{ searchQuery }}"</p>
+  </div>
+</section>

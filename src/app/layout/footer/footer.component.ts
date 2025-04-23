@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { NgbActiveModal, NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
+import {HttpClientModule} from "@angular/common/http";
 
 
 @Component({
@@ -11,15 +12,16 @@ import { NgbActiveModal, NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
     imports: [
       NgbModalModule,
       CommonModule,
-      RouterModule, // Ajouté aux imports
+      RouterModule,
+      HttpClientModule// Ajouté aux imports
     ],
-    
+
   templateUrl: './footer.component.html',
   styleUrls: ['./footer.component.scss']
 })
 export class FooterComponent {
   currentYear: number = new Date().getFullYear();
-  
+
   // Données pour les liens du footer
   supportLinks = [
     { text: 'Contact Us', link: '/contact' },
