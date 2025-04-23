@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { RatingComponent } from "../../rating/rating.component";
+import {NavChatContainerComponent} from "../../reservation-service/nav-chat-container/nav-chat-container.component";
 
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [RouterModule],
+  imports: [RouterModule, NavChatContainerComponent],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.css'
 })

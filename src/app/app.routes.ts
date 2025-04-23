@@ -11,20 +11,23 @@ import { BecomeALenderComponent } from './pages/become-a-lender/become-a-lender.
 import { InsuranceComponent } from './pages/insurance/insurance.component';
 import { SustainabilityComponent } from './pages/sustainability/sustainability.component';
 import { HomeComponent } from './layout/home/home.component';
-import { ComplaintComponent } from './complaint/complaint.component';
-import { ComplaintAddComponent } from './complaint-add/complaint-add.component';
-import { ComplaintDetailComponent } from './complaint-detail/complaint-detail.component';
-import { ComplaintUpdateComponent } from './complaint-update/complaint-update.component';
-import { ChatbotComplaintComponent } from './chatbot-complaint/chatbot-complaint.component';
-import { ImageToTextComponent } from './image-to-text/image-to-text.component';
-import { ResponseDetailComponent } from './response-detail/response-detail.component';
+import {ReservationComponent} from "./reservation-service/reservation/reservation.component";
+import {MyreservationComponent} from "./reservation-service/myreservation/myreservation.component";
+import {MessegingPageComponent} from "./reservation-service/messeging-page/messeging-page.component";
+import {ResponseDetailComponent} from "./response-detail/response-detail.component";
+import {ComplaintComponent} from "./complaint/complaint.component";
+import {ComplaintAddComponent} from "./complaint-add/complaint-add.component";
+import {ComplaintDetailComponent} from "./complaint-detail/complaint-detail.component";
+import {ComplaintUpdateComponent} from "./complaint-update/complaint-update.component";
+import {ChatbotComplaintComponent} from "./chatbot-complaint/chatbot-complaint.component";
+import {ImageToTextComponent} from "./image-to-text/image-to-text.component";
+
 
 export const routes: Routes = [
-  // Page d'accueil
-  { path: '', component: HomeComponent },
-  { path: 'home', component: HomeComponent },
+   // Page d'accueil
+   { path: '', component: HomeComponent },
+   { path: 'home', component: HomeComponent },
 
-<<<<<<< HEAD
    // Pages principales
    { path: 'about', component: AboutComponent },
    { path: 'contact', component: ContactUsComponent },
@@ -34,17 +37,20 @@ export const routes: Routes = [
    { path: 'become-a-lender', component: BecomeALenderComponent },
    { path: 'insurance', component: InsuranceComponent },
    { path: 'sustainability', component: SustainabilityComponent },
+ //reservation-service
+  {path: 'myreservation', component: MyreservationComponent},
+  {path: 'chat', component: MessegingPageComponent},
+  {path: 'reservation', component: ReservationComponent},
 
    // Blog et articles de blog
    { path: 'blog', component: BlogComponent },
    { path: 'blog/:id', component: BlogPostComponent },
- 
+
    // Page de gestion des erreurs 404
    { path: '404', component: NotFoundComponent },
 
    // Redirection vers la page d'accueil par défaut
-   { path: '**', redirectTo: '/404', pathMatch: 'full' }
-=======
+   { path: '**', redirectTo: '/404', pathMatch: 'full' },
   // Pages principales
   { path: 'about', component: AboutComponent },
   { path: 'contact', component: ContactUsComponent },
@@ -83,14 +89,6 @@ export const routes: Routes = [
    path: 'complaintresponse/:id',
    component: ResponseDetailComponent
  },
->>>>>>> b9e88ae (implement AI chatbot and advanced complaint handling features)
-
-
-
-
-<<<<<<< HEAD
-];
-=======
 
 
 
@@ -110,4 +108,3 @@ export const routes: Routes = [
   // Redirection vers la page d'accueil par défaut
   { path: '**', redirectTo: '/404', pathMatch: 'full' },
 ];
->>>>>>> b9e88ae (implement AI chatbot and advanced complaint handling features)
