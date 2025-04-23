@@ -17,10 +17,8 @@ import {NavChatContainerComponent} from "../../reservation-service/nav-chat-cont
     RouterLink,
     NgForOf,
     FormsModule,
-    CurrencyPipe
+    CurrencyPipe,RouterModule, NavChatContainerComponent
   ],
-  templateUrl: './navbar.component.html'
-  imports: [RouterModule, NavChatContainerComponent],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.css'
 })

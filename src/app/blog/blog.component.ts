@@ -36,15 +36,20 @@ export class BlogComponent implements OnInit {
   loadBlogs(): void {
     this.blogService.getAllBlogs().subscribe({
       next: (blogs) => {
-        this.blogs = blogs;
-        this.filteredBlogs = blogs;
+        // Fix image paths just like in loadCategories
+        this.blogs = blogs.map(blog => {
+          blog.image = 'http://localhost:8087' + blog.image;
+          return blog;
+        });
+
+        this.filteredBlogs = this.blogs;
 
         // Sort by view count for featured blogs (most viewed)
-        const sortedByViews = [...blogs].sort((a, b) => b.viewCount - a.viewCount);
+        const sortedByViews = [...this.blogs].sort((a, b) => b.viewCount - a.viewCount);
         this.featuredBlogs = sortedByViews.slice(0, 3);
 
         // Sort by date for latest blogs (most recent)
-        const sortedByDate = [...blogs].sort((a, b) =>
+        const sortedByDate = [...this.blogs].sort((a, b) =>
           new Date(b.date).getTime() - new Date(a.date).getTime()
         );
         this.latestBlogs = sortedByDate.slice(3);
@@ -57,6 +62,7 @@ export class BlogComponent implements OnInit {
       }
     });
   }
+
 
   // Helper function to chunk array into rows
   chunkArray(array: Blog[], size: number): Blog[][] {

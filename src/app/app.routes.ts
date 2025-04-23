@@ -44,10 +44,6 @@ export const routes: Routes = [
    { path: 'insurance', component: InsuranceComponent },
    { path: 'sustainability', component: SustainabilityComponent },
 
-   // Blog et articles de blog
-   { path: 'blog', component: BlogComponent },
-   { path: 'blog/:id', component: BlogPostComponent },
-
   //Product et categories
   { path: 'products/category/:categoryId', component: ProductListComponent },
   { path: 'categories', component: CategoryListComponent },
@@ -57,19 +53,12 @@ export const routes: Routes = [
 
 
 
-  // Page de gestion des erreurs 404
-   { path: '404', component: NotFoundComponent },
 
-   // Redirection vers la page d'accueil par défaut
-   { path: '**', redirectTo: '/404', pathMatch: 'full' }
  //reservation-service
   {path: 'myreservation', component: MyreservationComponent},
   {path: 'chat', component: MessegingPageComponent},
   {path: 'reservation', component: ReservationComponent},
 
-   // Blog et articles de blog
-   { path: 'blog', component: BlogComponent },
-   { path: 'blog/:id', component: BlogPostComponent },
 
 
   // Pages principales
