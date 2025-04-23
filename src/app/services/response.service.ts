@@ -20,7 +20,9 @@ export class ResponseService {
     return this.http.get<ComplaintResponse>(`${this.apiUrl}/${id}`);
   }
 
- 
+  getResponseByComplaintId(complaintId: number): Observable<ComplaintResponse> {
+    return this.http.get<ComplaintResponse>(`${this.apiUrl}/complaint/${complaintId}`);
+  }
  
 
 }

@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core'; 
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ResponseService } from '../services/response.service';
 import { ComplaintService } from '../services/complaint.service';
@@ -73,7 +73,11 @@ export class ResponseDetailComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (data: ComplaintResponse) => {
           this.response = data;
-          this.complaintId = data.complaintId;
+          // Use the correct property name 'id' instead of 'responseId'
+          if (data.id) {
+            this.responseId = data.id;
+          }
+          // Use complaintId from the response to load the complaint details
           this.loadComplaintDetails(data.complaintId);
         },
         error: err => {

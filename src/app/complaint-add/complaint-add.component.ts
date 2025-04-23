@@ -6,13 +6,15 @@ import { HttpErrorResponse, HttpClient, HttpClientModule } from '@angular/common
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { trigger, transition, style, animate } from '@angular/animations';
+import { ChatbotpopupcomplaintService } from '../services/chatbotpopupcomplaint.service';
+import { ChatbotComplaintComponent } from '../chatbot-complaint/chatbot-complaint.component';
 
 @Component({
   selector: 'app-complaint-add',
   templateUrl: './complaint-add.component.html',
   styleUrls: ['./complaint-add.component.css'],
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, HttpClientModule],
+  imports: [CommonModule, FormsModule, RouterModule, HttpClientModule,ChatbotComplaintComponent],
   animations: [
     trigger('fadeIn', [
       transition(':enter', [
@@ -46,7 +48,9 @@ export class ComplaintAddComponent implements OnInit {
   constructor(
     public router: Router, 
     private complaintService: ComplaintService,
-    private http: HttpClient
+    private http: HttpClient,
+    public chatbotPopupService: ChatbotpopupcomplaintService
+    
   ) {}
   
   ngOnInit(): void {
@@ -180,4 +184,12 @@ export class ComplaintAddComponent implements OnInit {
       }, 300);
     }, 3000);
   }
+
+  openChatbot(): void {
+    this.chatbotPopupService.openChatbot();
+  }
+
+
+
+
 }

@@ -335,10 +335,17 @@ tr:hover {
   100% { transform: scale(1); }
 }
 
-button:active {
-  animation: buttonPress 0.2s ease;
+@keyframes pulse {
+  0% {
+    box-shadow: 0 5px 20px rgba(56, 178, 172, 0.3);
+  }
+  50% {
+    box-shadow: 0 5px 30px rgba(56, 178, 172, 0.5);
+  }
+  100% {
+    box-shadow: 0 5px 20px rgba(56, 178, 172, 0.3);
+  }
 }
-
 /* Pagination styling */
 .pagination-controls {
   display: flex;
@@ -682,3 +689,45 @@ transform: translateY(1px);
 }
 
 
+.addComplaint-button {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: linear-gradient(90deg, #38b2ac 0%, #4299e1 100%);
+  color: white;
+  border: none;
+  border-radius: 50px;
+  padding: 0.8rem 1.5rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 5px 20px rgba(56, 178, 172, 0.3);
+  z-index: 1000;
+  animation: pulse 2s infinite;
+}
+
+.addComplaint-button:hover {
+  background: linear-gradient(90deg, #319795 0%, #3182ce 100%);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(56, 178, 172, 0.4);
+  animation: none;
+}
+
+.addComplaint-button:active {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(56, 178, 172, 0.4);
+}
+
+.addComplaint-button svg {
+  width: 18px;
+  height: 18px;
+  transition: transform 0.3s ease;
+}
+
+.addComplaint-button:hover svg {
+  transform: rotate(90deg);
+}
