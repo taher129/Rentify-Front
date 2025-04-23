@@ -4,6 +4,7 @@
   padding: 10px;
   border-top: 1px solid #e5e7eb;
   background-color: #f9fafb;
+  position: relative;
 }
 
 .input-container {
@@ -44,9 +45,8 @@
   bottom: 70px;
   left: 10px;
   z-index: 100;
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  width: 320px;
+  height: 320px;
 }
 
 .image-preview {

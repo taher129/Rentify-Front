@@ -28,7 +28,7 @@
   </div>
 
   <div *ngIf="showEmojiPicker" class="emoji-picker">
-    <app-emoji-picker (emojiClick)="onEmojiSelect($event)"></app-emoji-picker>
+    <app-emoji-picker (emojiSelect)="onEmojiSelect($event)"></app-emoji-picker>
   </div>
 
   <div *ngIf="imagePreview" class="image-preview">

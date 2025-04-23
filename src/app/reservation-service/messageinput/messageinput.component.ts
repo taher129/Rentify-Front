@@ -22,8 +22,7 @@ export class MessageInputComponent {
     this.showEmojiPicker = !this.showEmojiPicker;
   }
 
-  onEmojiSelect(event: any) {
-    const emoji = event.emoji.native;
+  onEmojiSelect(emoji: string) {
     this.message += emoji;
     this.showEmojiPicker = false;
   }
