@@ -36,17 +36,33 @@ export class BlogPostComponent implements OnInit {
     });
   }
 
+  // In blog-post.component.ts
   loadBlogDetails(id: string): void {
     this.isLoading = true;
     this.error = null;
 
-    this.blogService.getBlogById(id).subscribe({
+    // Convert string ID to number
+    const numericId = Number(id);
+    if (isNaN(numericId)) {
+      this.error = 'Invalid blog ID';
+      this.isLoading = false;
+      return;
+    }
+
+    this.blogService.getBlogById(numericId).subscribe({
       next: (data) => {
+        // Fix image path
+        if (data.image) {
+          data.image = 'http://localhost:8087' + data.image;
+        }
+
         this.blogPost = data;
-        // Process the blog data if needed
+
+        // Process the blog content if needed
         if (this.blogPost.content) {
           this.blogPost.processedContent = this.processContent(this.blogPost.content);
         }
+
         this.isLoading = false;
       },
       error: (error) => {
@@ -82,7 +98,6 @@ export class BlogPostComponent implements OnInit {
       .filter(line => line.startsWith('•') || line.startsWith('-'))
       .map(line => line.replace(/^[•-]\s*/, '').trim());
   }
-
 
   calculateReadTime(content: string): string {
     if (!content) return '5 min read';

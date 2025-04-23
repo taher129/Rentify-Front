@@ -1,0 +1,32 @@
+<div class="user-blogs-container">
+  <h2>My Blogs</h2>
+
+  <div *ngIf="isLoading" class="loading-message">
+    Loading blogs...
+  </div>
+
+  <div *ngIf="!isLoading && userBlogs.length === 0" class="no-blogs-message">
+    You haven't written any blogs yet.
+  </div>
+
+  <div class="blogs-grid" *ngIf="!isLoading && userBlogs.length > 0">
+    <div class="blog-card" *ngFor="let blog of userBlogs">
+      <div class="blog-image">
+        <img [src]="blog.image" [alt]="blog.title">
+      </div>
+      <div class="blog-content">
+        <h3 class="blog-title">{{ blog.title }}</h3>
+        <p class="blog-date">{{ blog.date | date:'mediumDate' }}</p>
+        <p class="blog-description">{{ blog.description || 'No description available' }}</p>
+        <div class="blog-meta">
+          <span class="views">{{ blog.viewCount }} views</span>
+          <div class="blog-actions">
+            <a [routerLink]="['/blogpost', blog.idBlog]" class="read-more">Read More</a>
+            <a [routerLink]="['/editblog', blog.idBlog]" class="edit-btn">Edit</a>
+            <button (click)="deleteBlog(blog.idBlog)" class="delete-btn">Delete</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

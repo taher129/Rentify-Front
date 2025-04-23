@@ -27,6 +27,8 @@ import {ChatbotComplaintComponent} from "./chatbot-complaint/chatbot-complaint.c
 import {ImageToTextComponent} from "./image-to-text/image-to-text.component";
 import {AddBlogComponent} from "./add-blog/add-blog.component";
 import {QuizComponent} from "./quiz/quiz.component";
+import {MyblogsComponent} from "./myblogs/myblogs.component";
+import {EditBlogComponent} from "./editblog/editblog.component";
 
 
 export const routes: Routes = [
@@ -73,9 +75,11 @@ export const routes: Routes = [
 
   // Blog et articles de blog
   { path: 'blog', component: BlogComponent },
-  { path: 'blog/:id', component: BlogPostComponent },
+  { path: 'blogpost/:id', component: BlogPostComponent },
   { path: 'addblog', component: AddBlogComponent },
-  {path: 'quiz', component: QuizComponent },
+  { path: 'quiz', component: QuizComponent },
+  { path: 'myblogs', component: MyblogsComponent },
+  {path: 'editblog/:id', component: EditBlogComponent},
 
   //complaints
   { path: 'complaint', component: ComplaintComponent },

@@ -15,13 +15,17 @@ export class BlogService {
     return this.http.get<Blog[]>(this.apiUrl);
   }
 
-  getBlogById(id: string): Observable<Blog> {
+  getBlogById(id: number): Observable<Blog> {  // Change parameter type to number
     return this.http.get<Blog>(`${this.apiUrl}/${id}`);
   }
+
+  getBlogsByUserId(userId: number): Observable<Blog[]> {
+    return this.http.get<Blog[]>(`${this.apiUrl}/user/${userId}`);
+  }
+
   createBlog(formData: FormData): Observable<Blog> {
     return this.http.post<Blog>(this.apiUrl, formData);
   }
-
 
   private questions: Array<Object> = [];
   private answers: Array<any> = [];
@@ -37,6 +41,15 @@ export class BlogService {
   }
   getAnswers() {
     return this.answers;
+  }
+
+  deleteBlog(id: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${id}`);
+  }
+
+  // blog.service.ts
+  updateBlog(id: number, formData: FormData): Observable<Blog> {
+    return this.http.put<Blog>(`${this.apiUrl}/${id}`, formData);
   }
 
 }
