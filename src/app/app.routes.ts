@@ -21,6 +21,8 @@ import {ComplaintDetailComponent} from "./complaint-detail/complaint-detail.comp
 import {ComplaintUpdateComponent} from "./complaint-update/complaint-update.component";
 import {ChatbotComplaintComponent} from "./chatbot-complaint/chatbot-complaint.component";
 import {ImageToTextComponent} from "./image-to-text/image-to-text.component";
+import {AddBlogComponent} from "./add-blog/add-blog.component";
+import {QuizComponent} from "./quiz/quiz.component";
 
 
 export const routes: Routes = [
@@ -46,11 +48,7 @@ export const routes: Routes = [
    { path: 'blog', component: BlogComponent },
    { path: 'blog/:id', component: BlogPostComponent },
 
-   // Page de gestion des erreurs 404
-   { path: '404', component: NotFoundComponent },
 
-   // Redirection vers la page d'accueil par défaut
-   { path: '**', redirectTo: '/404', pathMatch: 'full' },
   // Pages principales
   { path: 'about', component: AboutComponent },
   { path: 'contact', component: ContactUsComponent },
@@ -64,6 +62,8 @@ export const routes: Routes = [
   // Blog et articles de blog
   { path: 'blog', component: BlogComponent },
   { path: 'blog/:id', component: BlogPostComponent },
+  { path: 'addblog', component: AddBlogComponent },
+  {path: 'quiz', component: QuizComponent },
 
   //complaints
   { path: 'complaint', component: ComplaintComponent },
