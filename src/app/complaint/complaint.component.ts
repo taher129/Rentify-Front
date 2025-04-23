@@ -6,7 +6,9 @@ import { FormsModule } from '@angular/forms';
 import { map, catchError, throwError } from 'rxjs';
 import { Complaint } from '../models/complaint';
 import { ComplaintService } from '../services/complaint.service';
+import { ResponseService } from '../services/response.service';
 import { TranslationService } from '../services/translation.service';
+import { ComplaintResponse } from '../models/ComplaintResponse';
 
 @Component({
   selector: 'app-complaint',
@@ -16,6 +18,7 @@ import { TranslationService } from '../services/translation.service';
   styleUrls: ['./complaint.component.scss']
 })
 export class ComplaintComponent implements OnInit {
+  response?: ComplaintResponse;
   complaints: Complaint[] = [];
   filteredComplaints: Complaint[] = [];
   selectedStatus: string = '';
@@ -45,6 +48,7 @@ export class ComplaintComponent implements OnInit {
 
   constructor(
     private complaintService: ComplaintService,
+    private responseService : ResponseService,
     private router: Router,
     private translationService: TranslationService
   ) {}
@@ -369,6 +373,24 @@ applySort(): void {
     }
   });
 }
+
+ // Navigate to add complaint page
+ goToAddComplaint(): void {
+  this.router.navigate(['/complaint-add']);
+}
+
+
+
+
+// This would be a method in your component
+showResponse(complaintId: number): void {
+  this.responseService.getResponseByComplaintId(complaintId).subscribe(response => {
+    if (response) {
+      this.router.navigate(['/complaintresponse', response.id]);
+    }
+  });
+}
+
 
 
 
