@@ -1,0 +1,141 @@
+.box {
+  .curr {
+    margin: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #393746;
+    color: #fff;
+    width: 80px;
+    height: 40px;
+    margin: 16px 0;
+    border-radius: 100px;
+    position: absolute;
+    top: 0px;
+    right: 16px;
+  }
+}
+
+.navigate {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 40px);
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  gap: 16px;
+  margin: 16px 0;
+  div {
+    width: 40px;
+    aspect-ratio: 1;
+    border-radius: 100%;
+    border: 1px dashed #696872;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    &:hover {
+      cursor: pointer;
+      border: 1px dashed #393746;
+    }
+  }
+}
+.attempted {
+  background-color: #393746;
+  color: #fff;
+}
+.question {
+  font-size: 24px;
+  font-weight: 500;
+  color: #393746;
+  line-height: 1.5;
+  min-height: 72px;
+}
+.options {
+  margin: 16px 0;
+  font-size: 16px;
+  list-style: none;
+  width: 100%;
+  font-weight: 400;
+  li {
+    border: 1px dashed #696872;
+    padding: 16px;
+    margin-bottom: 8px;
+    border-radius: 12px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 16px;
+    i {
+      font-size: 24px;
+      color: #696872;
+    }
+    &:hover {
+      cursor: pointer;
+      border: 1px solid #393746;
+    }
+    span {
+      color: #696872;
+    }
+  }
+}
+.optionActive {
+  border: 1px solid #696872 !important;
+  background-color: #f3f4f6;
+  i {
+    color: #393746 !important;
+  }
+  span {
+    color: #393746 !important;
+  }
+}
+.buttons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 24px;
+  button {
+    width: 48px;
+    aspect-ratio: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 100%;
+    border: none;
+    background-color: #393746;
+    color: #fff;
+    &:nth-child(2) {
+      border: 1px solid #dae3ec;
+      color: #696872;
+      background-color: #f3f4f6;
+    }
+  }
+  div {
+    width: 150px;
+    height: 48px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 100px;
+    border: none;
+    background-color: #393746;
+    color: #fff;
+    margin: 0 auto;
+    &:hover {
+      cursor: pointer;
+    }
+  }
+}
+.disable {
+  background-color: #f3f4f6 !important;
+  color: #dae3ec !important;
+  border: 1px solid #dae3ec !important;
+  &:hover {
+    cursor: default;
+  }
+}
+@media only screen and (max-width: 768px) {
+  /* Tablet */
+  .navigate {
+    gap: 8px;
+    margin: 8px 0;
+  }
+}

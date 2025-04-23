@@ -1,0 +1,35 @@
+<!-- stats.component.html -->
+<div class="stats-container">
+  <h2>User Response Statistics</h2>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-state">
+    <p>Loading statistics...</p>
+
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error" class="error-state">
+    <p>Failed to load statistics. Please try again later.</p>
+    <button mat-button color="primary" (click)="loadStats()">Retry</button>
+  </div>
+
+  <!-- Data Display -->
+  <div *ngIf="!loading && !error" class="stats-display">
+    <div *ngFor="let question of statsData; let i = index" class="question-card">
+      <h3>{{ question.questionText }}</h3>
+      <p class="total-responses">Total responses: {{ question.totalResponses || 0 }}</p>
+
+      <div class="option-row" *ngFor="let option of [0,1,2,3]">
+        <span class="option-label">Option {{ option + 1 }}:</span>
+        <div class="progress-container">
+          <div class="progress-bar"
+               [style.width.%]="question.percentages[option] || 0">
+            {{ question.percentages[option] || 0 }}%
+          </div>
+        </div>
+        <span class="count">({{ question.responseCounts[option] || 0 }})</span>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,122 @@
+<!-- blog-create.component.html -->
+<div class="blog-create-container">
+  <h2>Create New Blog Post</h2>
+
+  <form [formGroup]="blogForm" (ngSubmit)="onSubmit()" class="blog-form" enctype="multipart/form-data">
+    <!-- Add this at the top of your form -->
+    <div *ngIf="blogForm.invalid && blogForm.touched" class="form-error-summary">
+      Please correct the errors in the form before submitting.
+    </div>
+    <!-- Title Field -->
+    <div class="form-group">
+      <label for="title">Title *</label>
+      <input
+        type="text"
+        id="title"
+        formControlName="title"
+        class="form-control"
+        [class.is-invalid]="formControls['title'].invalid && (formControls['title'].touched || formControls['title'].dirty)"
+      >
+      <div class="error-message" *ngIf="formControls['title'].invalid && (formControls['title'].touched || formControls['title'].dirty)">
+        <span *ngIf="formControls['title'].errors?.['required']">Title is required</span>
+        <span *ngIf="formControls['title'].errors?.['minlength']">Title must be at least 5 characters</span>
+        <span *ngIf="formControls['title'].errors?.['maxlength']">Title cannot exceed 100 characters</span>
+      </div>
+    </div>
+
+    <!-- Description Field -->
+    <div class="form-group">
+      <label for="description">Description</label>
+      <textarea
+        id="description"
+        formControlName="description"
+        class="form-control"
+        rows="3"
+        [class.is-invalid]="formControls['description'].invalid && (formControls['description'].touched || formControls['description'].dirty)"
+      ></textarea>
+      <div class="error-message" *ngIf="formControls['description'].invalid && (formControls['description'].touched || formControls['description'].dirty)">
+        <span *ngIf="formControls['description'].errors?.['maxlength']">Description cannot exceed 255 characters</span>
+      </div>
+      <div class="character-count">
+        {{ formControls['description'].value?.length || 0 }}/255
+      </div>
+    </div>
+
+    <!-- Content Field -->
+    <div class="form-group">
+      <label for="content">Content *</label>
+      <textarea
+        id="content"
+        formControlName="content"
+        class="form-control content-textarea"
+        rows="10"
+        [class.is-invalid]="formControls['content'].invalid && (formControls['content'].touched || formControls['content'].dirty)"
+      ></textarea>
+      <div class="error-message" *ngIf="formControls['content'].invalid && (formControls['content'].touched || formControls['content'].dirty)">
+        <span *ngIf="formControls['content'].errors?.['required']">Content is required</span>
+        <span *ngIf="formControls['content'].errors?.['minlength']">Content must be at least 20 characters</span>
+      </div>
+      <div class="character-count">
+        {{ formControls['content'].value?.length || 0 }} characters
+      </div>
+    </div>
+
+    <!-- Image Field -->
+    <div class="form-group">
+      <label for="image">Featured Image</label>
+      <div class="image-upload">
+        <input
+          type="file"
+          id="image"
+          accept="image/*"
+          (change)="onFileSelected($event)"
+          #fileInput
+          hidden
+        >
+        <button
+          type="button"
+          class="btn-upload"
+          (click)="fileInput.click()"
+        >
+          Choose Image
+        </button>
+        <span *ngIf="selectedFile" class="file-name">
+          {{ selectedFile.name }}
+        </span>
+      </div>
+
+      <!-- Image Preview -->
+      <div class="image-preview" *ngIf="previewImage">
+        <img [src]="previewImage" alt="Preview">
+        <button
+          type="button"
+          class="btn-remove"
+          (click)="removeImage()"
+        >
+          Remove
+        </button>
+      </div>
+      <small class="form-text text-muted">Supported formats: JPEG, PNG (Max 5MB)</small>
+    </div>
+
+    <!-- Submit Button -->
+    <div class="form-actions">
+      <button type="submit"
+              class="btn-submit"
+              (click)="blogForm.markAllAsTouched()"
+              [disabled]="blogForm.invalid || isSubmitting">
+
+        <span *ngIf="!isSubmitting">Create Blog Post</span>
+        <span *ngIf="isSubmitting">Creating...</span>
+      </button>
+      <button
+        type="button"
+        class="btn-cancel"
+        (click)="onCancel()"
+        [disabled]="isSubmitting"
+      >
+        Cancel
+      </button>
+    </div>
+  </form>
+</div>

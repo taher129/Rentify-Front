@@ -1,0 +1,38 @@
+<div class="box">
+  <div class="navigate">
+    <div
+      *ngFor="let answer of answers; let i = index"
+      [ngClass]="answers[i] != null ? 'attempted' : ''"
+      (click)="this.setQuestion(i)"
+    >
+      {{ i + 1 }}
+    </div>
+  </div>
+  <span class="curr">{{ questionNo + 1 }} / 10</span>
+
+  <h1 class="question">{{ question.text }}</h1>
+  <ul class="options">
+    <li
+      *ngFor="let option of question.options; let i = index"
+      (click)="setAnswer(questionNo, i)"
+      [ngClass]="i == answers[questionNo] ? 'optionActive' : ''"
+    >
+      <i class="fa-regular fa-circle" *ngIf="i != answers[questionNo]"></i>
+      <i class="fa-solid fa-circle-check" *ngIf="i == answers[questionNo]"></i>
+      <span>{{ option }}</span>
+    </li>
+  </ul>
+  <div class="buttons">
+    <button (click)="prevQue()" [ngClass]="questionNo == 0 ? 'disable' : ''">
+      <i class="fa-solid fa-arrow-left"></i>
+    </button>
+    <button (click)="clear()"><i class="fa-solid fa-broom"></i></button>
+    <button (click)="nextQue()" [ngClass]="questionNo == 9 ? 'disable' : ''">
+      <i class="fa-solid fa-arrow-right"></i>
+    </button>
+  </div>
+
+  <div class="buttons" *ngIf="questionNo == 9">
+    <div (click)="submit()" class="submit">Submit Quiz</div>
+  </div>
+</div>
