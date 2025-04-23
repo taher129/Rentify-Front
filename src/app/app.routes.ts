@@ -11,6 +11,10 @@ import { BecomeALenderComponent } from './pages/become-a-lender/become-a-lender.
 import { InsuranceComponent } from './pages/insurance/insurance.component';
 import { SustainabilityComponent } from './pages/sustainability/sustainability.component';
 import { HomeComponent } from './layout/home/home.component';
+import { CategoryListComponent } from './category-list/category-list.component';
+import {ProductListComponent} from "./product-list/product-list.component";
+import {ProductDetailComponent} from "./product-detail/product-detail.component";
+import {LeafletComponent} from "./leaflet/leaflet.component";
 import {ReservationComponent} from "./reservation-service/reservation/reservation.component";
 import {MyreservationComponent} from "./reservation-service/myreservation/myreservation.component";
 import {MessegingPageComponent} from "./reservation-service/messeging-page/messeging-page.component";
@@ -39,6 +43,25 @@ export const routes: Routes = [
    { path: 'become-a-lender', component: BecomeALenderComponent },
    { path: 'insurance', component: InsuranceComponent },
    { path: 'sustainability', component: SustainabilityComponent },
+
+   // Blog et articles de blog
+   { path: 'blog', component: BlogComponent },
+   { path: 'blog/:id', component: BlogPostComponent },
+
+  //Product et categories
+  { path: 'products/category/:categoryId', component: ProductListComponent },
+  { path: 'categories', component: CategoryListComponent },
+  { path: 'product/:id', component: ProductDetailComponent },
+  { path: 'products', component: ProductListComponent },
+  { path: 'leaflet', component: LeafletComponent },
+
+
+
+  // Page de gestion des erreurs 404
+   { path: '404', component: NotFoundComponent },
+
+   // Redirection vers la page d'accueil par défaut
+   { path: '**', redirectTo: '/404', pathMatch: 'full' }
  //reservation-service
   {path: 'myreservation', component: MyreservationComponent},
   {path: 'chat', component: MessegingPageComponent},

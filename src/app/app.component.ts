@@ -5,6 +5,8 @@ import { NavbarComponent } from "./layout/navbar/navbar.component";
 import { FooterComponent } from "./layout/footer/footer.component";
 import { FormsModule } from '@angular/forms';
 import AOS from 'aos';  // Importation de AOS
+import { HttpClientModule } from '@angular/common/http';
+
 
 import { InsuranceComponent } from './pages/insurance/insurance.component';
 import { AboutComponent } from './pages/about/about.component';
@@ -18,7 +20,8 @@ import {ChatBubbleComponent} from "./reservation-service/chat-bubble/chat-bubble
     RouterOutlet,
     FooterComponent,
     NavbarComponent,
-    ChatBubbleComponent
+    HttpClientModule,
+    ChatBubbleComponent,
   ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
