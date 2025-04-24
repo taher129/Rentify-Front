@@ -1,71 +1,35 @@
-
-
-<!-- Comments section -->
+<!-- comment.component.html -->
 <div class="comments-container">
-  <div class="blog-comments">
-    <h3>Comments (3)</h3>
+  <h3>Comments ({{comments.length}})</h3>
 
-    <!-- Display existing comments -->
-    <div class="comments-list">
-      <div class="comment">
-        <div class="comment-header">
-          <div class="comment-avatar">
-            <img src="assets/images/avatars/default-avatar.png" alt="User avatar">
+  <!-- Debug output -->
+  <div *ngIf="false" class="debug-info">
+    <!-- Set to true temporarily for debugging -->
+    <p>Blog ID: {{blogId}}</p>
+    <pre>{{comments | json}}</pre>
+  </div>
+
+  <div *ngIf="isLoading" class="loading">Loading comments...</div>
+
+  <div *ngIf="error" class="error">{{error}}</div>
+
+  <div *ngIf="!isLoading && comments.length === 0" class="no-comments">
+    No comments yet.
+  </div>
+
+  <div class="comments-list">
+    <div *ngFor="let comment of comments" class="comment">
+      <div class="comment-header">
+        <img src="assets/images/default-avatar.png" alt="User avatar" width="40">
+        <div class="comment-meta">
+          <div class="user">User #{{comment.userId}}</div>
+          <div class="comment-body">
+            {{comment.content}}
           </div>
-          <div class="comment-meta">
-            <div class="commenter-name">User #123</div>
-            <div class="comment-date">Jun 15, 2024, 10:30 AM</div>
-          </div>
-        </div>
-        <div class="comment-body">
-          <p>This is a great post! I really enjoyed reading it.</p>
+          <div class="date">{{comment.createdAt | date:'medium'}}</div>
         </div>
       </div>
 
-      <div class="comment">
-        <div class="comment-header">
-          <div class="comment-avatar">
-            <img src="assets/images/avatars/default-avatar.png" alt="User avatar">
-          </div>
-          <div class="comment-meta">
-            <div class="commenter-name">User #456</div>
-            <div class="comment-date">Jun 16, 2024, 2:45 PM</div>
-          </div>
-        </div>
-        <div class="comment-body">
-          <p>I have a question about the second point you made. Could you elaborate?</p>
-        </div>
-      </div>
-
-      <div class="comment">
-        <div class="comment-header">
-          <div class="comment-avatar">
-            <img src="assets/images/avatars/default-avatar.png" alt="User avatar">
-          </div>
-          <div class="comment-meta">
-            <div class="commenter-name">User #789</div>
-            <div class="comment-date">Jun 17, 2024, 9:15 AM</div>
-          </div>
-        </div>
-        <div class="comment-body">
-          <p>Thanks for sharing this valuable information!</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Add new comment form -->
-    <div class="add-comment-section">
-      <h4>Add a Comment</h4>
-      <form>
-        <div class="form-group">
-          <textarea
-            class="comment-textarea"
-            placeholder="Write your comment here..."
-            rows="4"
-          ></textarea>
-        </div>
-        <button type="submit" class="submit-comment-btn">Post Comment</button>
-      </form>
     </div>
   </div>
 </div>
