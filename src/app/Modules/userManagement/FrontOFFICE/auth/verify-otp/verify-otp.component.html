@@ -1,0 +1,7 @@
+<div class="reset-container">
+  <h2>Verify OTP</h2>
+  <input type="text" [(ngModel)]="otp" placeholder="Enter OTP" />
+  <button (click)="verify()">Verify</button>
+  <div *ngIf="message" class="success">{{ message }}</div>
+  <div *ngIf="error" class="error">{{ error }}</div>
+</div>

@@ -1,0 +1,253 @@
+<div class="container">
+  <div class="form-container">
+    <div class="form-wrapper">
+      <h1>Get Started Now</h1>
+
+      <!-- Success message overlay -->
+      <div *ngIf="showSuccessMessage" @fadeInOut class="success-overlay">
+        <div @slideInOut class="success-card">
+          <svg class="success-icon" viewBox="0 0 24 24">
+            <path fill="currentColor" d="M12 2C6.5 2 2 6.5 2 12S6.5 22 12 22 22 17.5 22 12 17.5 2 12 2M10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z" />
+          </svg>
+          <h2>Registration Successful!</h2>
+          <p>{{ successMessage }}</p>
+          <div class="loading-bar">
+            <div class="loading-progress"></div>
+          </div>
+          <p class="redirect-text">You'll be redirected to login shortly...</p>
+        </div>
+      </div>
+
+      <!-- Loading overlay -->
+      <div *ngIf="isLoading" @fadeInOut class="loading-overlay">
+        <div class="loading-content">
+          <div class="loading-spinner"></div>
+          <p>Sending verification email...</p>
+        </div>
+      </div>
+
+      <!-- Face Registration Toggle -->
+      <div class="face-reg-toggle">
+        <label>
+          <input type="checkbox" [(ngModel)]="showFaceReg" (change)="toggleFaceReg()">
+          Register with Face ID
+        </label>
+      </div>
+      <!-- Face Capture Modal -->
+      <div *ngIf="showFaceCaptureModal" class="modal-overlay">
+        <div class="modal-content">
+          <h3>Register Face ID</h3>
+          <p>We'll capture {{totalCaptures}} images with different angles</p>
+
+          <div class="camera-preview">
+            <video #videoElement autoplay playsinline></video>
+
+            <div *ngIf="isCapturingFace" class="capture-overlay">
+              <div class="progress-container">
+                <div class="progress-bar" [style.width.%]="captureProgress"></div>
+              </div>
+
+              <div class="capture-guidance">
+                <p class="instruction">{{currentMessage}}</p>
+                <p class="counter">Capture {{currentCapture}} of {{totalCaptures}}</p>
+              </div>
+            </div>
+
+            <div *ngIf="!isCameraActive" class="camera-error">
+              <i class="icon-camera-off"></i>
+              <p>Camera could not be initialized</p>
+            </div>
+          </div>
+
+          <div class="modal-buttons">
+            <button *ngIf="!isCapturingFace"
+                    (click)="captureFaceImages()"
+                    [disabled]="!isCameraActive"
+                    class="btn-primary">
+              {{faceImages.length > 0 ? 'Retake Photos' : 'Start Capture'}}
+            </button>
+
+            <button (click)="closeFaceCapture()"
+                    [disabled]="isCapturingFace"
+                    class="btn-secondary">
+              {{faceImages.length > 0 ? 'Use These Photos' : 'Cancel'}}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <form [formGroup]="signupForm" (ngSubmit)="onSubmit()">
+        <!-- Personal Info -->
+        <div class="form-row">
+          <div class="form-group">
+            <label for="firstName">First Name</label>
+            <input id="firstName" formControlName="firstName" type="text" placeholder="Enter your first name">
+            <span *ngIf="shouldShowError('firstName')" class="error">First name is required and must be at least 2 characters.</span>
+          </div>
+
+          <div class="form-group">
+            <label for="lastName">Last Name</label>
+            <input id="lastName" formControlName="lastName" type="text" placeholder="Enter your last name">
+            <span *ngIf="shouldShowError('lastName')" class="error">Last name is required and must be at least 2 characters.</span>
+          </div>
+        </div>
+
+        <!-- Gender -->
+        <div class="form-row">
+          <div class="form-group"[formGroup]="signupForm">
+            <label>Gender</label>
+            <div class="radio-group">
+              <label>
+                <input type="radio" value="MALE" formControlName="gender"> Male
+              </label>
+              <label>
+                <input type="radio" value="FEMALE" formControlName="gender"> Female
+              </label>
+            </div>
+            <span *ngIf="shouldShowError('gender')" class="error">Gender is required.</span>
+          </div>
+        </div>
+
+        <!-- Address -->
+        <div formGroupName="address">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="city">City</label>
+              <input id="city" formControlName="city" type="text" placeholder="Enter your city">
+              <span *ngIf="shouldShowError('address.city')" class="error">City is required.</span>
+            </div>
+            <div class="form-group">
+              <label for="state">State</label>
+              <input id="state" formControlName="state" type="text" placeholder="Enter your state">
+              <span *ngIf="shouldShowError('address.state')" class="error">State is required.</span>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="country">Country</label>
+              <input id="country" formControlName="country" type="text" placeholder="Enter your country">
+              <span *ngIf="shouldShowError('address.country')" class="error">Country is required.</span>
+            </div>
+            <div class="form-group">
+              <label for="zipCode">Zip Code</label>
+              <input id="zipCode" formControlName="zipCode" type="text" placeholder="Enter your zip code">
+              <span *ngIf="shouldShowError('address.zipCode')" class="error">Zip code must be 4 digits.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Contact Info -->
+        <div class="form-row">
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input id="email" formControlName="email" type="email" placeholder="Enter your email">
+            <span *ngIf="shouldShowError('email')" class="error">Enter a valid email.</span>
+          </div>
+
+          <div class="form-group">
+            <label for="phoneNumber">Phone Number</label>
+            <input id="phoneNumber" formControlName="phoneNumber" type="tel" placeholder="Enter your phone number">
+            <span *ngIf="shouldShowError('phoneNumber')" class="error">Phone must be 8 digits.</span>
+          </div>
+        </div>
+
+        <!-- Passwords -->
+        <div class="form-row">
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input id="password" formControlName="password" type="password" placeholder="Enter your password">
+            <span *ngIf="shouldShowError('password')" class="error">{{ getPasswordErrors() }}</span>
+          </div>
+
+          <div class="form-group">
+            <label for="confirmPassword">Confirm Password</label>
+            <input id="confirmPassword" formControlName="confirmPassword" type="password" placeholder="Confirm your password">
+            <span *ngIf="signupForm.errors?.['mismatch'] && (signupForm.touched || formSubmitted)">
+              Passwords do not match.
+            </span>
+          </div>
+        </div>
+
+        <!-- Registration Buttons -->
+        <div class="registration-buttons">
+          <button type="button" class="signup-btn face-id-btn" (click)="registerWithFace()" [disabled]="signupForm.invalid || registrationInProgress">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z" fill="currentColor"/>
+            </svg>
+            Register with Face ID
+          </button>
+
+          <button type="submit" class="signup-btn">
+            <span *ngIf="!isLoading">Sign Up</span>
+            <span *ngIf="isLoading" class="button-loading">
+              <span class="spinner"></span>
+              Processing...
+            </span>
+          </button>
+        </div>
+      </form>
+
+      <div *ngIf="serverError" class="server-error">{{ serverError }}</div>
+
+      <!-- Divider -->
+      <div class="divider">
+        <span>Or</span>
+      </div>
+
+      <!-- Social Login Buttons -->
+      <div class="social-login">
+        <!-- Google -->
+        <button class="social-button google-button" (click)="loginWithGoogle()">
+          <svg
+            width="18"
+            height="18"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+              fill="#4285F4"
+            />
+            <path
+              d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+              fill="#34A853"
+            />
+            <path
+              d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+              fill="#FBBC05"
+            />
+            <path
+              d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+              fill="#EA4335"
+            />
+            <path d="M1 1h22v22H1z" fill="none" />
+          </svg>
+          <span>Sign in with Google</span>
+        </button>
+
+        <!-- Apple -->
+        <button class="social-button apple-button">
+          <svg
+            width="18"
+            height="18"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 384 512"
+          >
+            <path
+              d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"
+              fill="#000"
+            />
+          </svg>
+          <span>Sign in with Apple</span>
+        </button>
+      </div>
+
+      <!-- Sign Up Link -->
+      <div class="signup-link">
+        <span>Already have an account</span>
+        <a href="/login">Login</a>
+      </div>
+    </div>
+  </div>
+</div>

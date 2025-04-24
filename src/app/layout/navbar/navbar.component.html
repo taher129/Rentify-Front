@@ -297,7 +297,7 @@
                       data-target="#modalProductColorCaption"
                       value="White"
                       style="
-                        background-image: url(assets/images/products/product-7.jpg);
+                        background-image: url(assets/images/products/product-21.jpg);
                       "
                       checked
                     />
@@ -312,7 +312,7 @@
                       data-target="#modalProductColorCaption"
                       value="Black"
                       style="
-                        background-image: url(assets/images/products/product-49.jpg);
+                        background-image: url(assets/images/products/product-17.jpg);
                       "
                     />
                   </div>
@@ -1984,7 +1984,7 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-white">
   <div class="container">
     <!-- Brand -->
-    <a class="navbar-brand" href="#" > 
+    <a class="navbar-brand" href="#" >
       <img
       class="mb-1 me-1"
       src="assets/images/flags/logo.png"
@@ -3074,36 +3074,12 @@
         </li>
         <li class="nav-item dropdown">
           <!-- Toggle -->
-          <a class="nav-link" data-bs-toggle="dropdown" href="#">
-            Learn more</a>
-
-          <!-- Menu -->
-          <div class="dropdown-menu">
-            <div class="card card-lg">
-              <div class="card-body">
-                <ul class="list-styled fs-sm">
-                  <li class="list-styled-item">
-                    <a class="list-styled-link" routerLink="/about">How it works</a>
-                  </li>
-                  <li class="list-styled-item">
-                    <a class="list-styled-link" [routerLink]="['/insurance']">Insurance</a>
-                  </li>
-                  <li class="list-styled-item">
-                    <a class="list-styled-link" [routerLink]="['/become-a-lender']">Become a Lender</a>
-                  </li>
-                  <li class="list-styled-item">
-                    <a class="list-styled-link" [routerLink]="['/sustainability']">Sustainability</a>
-                  </li>
-                  <li class="list-styled-item">
-                    <a class="list-styled-link" [routerLink]="['/coming-soon']">Coming Soon</a>
-                  </li>
-                  <li class="list-styled-item">
-                    <a class="list-styled-link" [routerLink]="['/404']">404</a>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
+          <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">
+            Account
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="#" (click)="logout()">Log out</a></li>
+          </ul>
         </li>
       </ul>
 
