@@ -1,87 +1,78 @@
-<div class="chat-navbar">
-    <!-- Header -->
-    <div class="navbar-header">
-        <h1>Chats</h1>
-        <div class="header-actions">
-            <button class="icon-btn" [routerLink]="['/chat']">
-                <i class="fa fa-users"></i>
-            </button>
+<div class="chat-navbar" #navbarContainer>
+  <!-- Header -->
+  <div class="navbar-header">
+    <h1>Chats</h1>
+    <div class="header-actions">
+      <button class="icon-btn" [routerLink]="['/chat']">
+        <i class="fa fa-users"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Search Bar -->
+  <div class="search-container">
+    <div class="search-box">
+      <i class="fa fa-search search-icon"></i>
+      <input
+        type="text"
+        placeholder="Search Messenger"
+        [(ngModel)]="searchQuery"
+        (input)="onSearchChange()"
+      />
+    </div>
+  </div>
+
+  <!-- Tab Navigation -->
+  <div class="tab-navigation">
+    <button
+      class="tab-btn"
+      [class.active]="activeTab === 'chats'"
+      (click)="switchTab('chats')"
+    >
+      Inbox
+    </button>
+  </div>
+
+  <!-- Conversations List -->
+  <div class="conversations-list" *ngIf="activeTab === 'chats'">
+    <div
+      *ngFor="let conversation of filteredConversations"
+      class="conversation-item"
+      (click)="selectConversation(conversation)"
+    >
+      <div class="avatar-container">
+        <img
+          class="avatar-img"
+          [src]="'/avatar-' + getOtherUser(conversation).name + '.jpg'"
+          alt="User Avatar"
+        />
+      </div>
+
+      <div class="conversation-info">
+        <div class="conversation-name">
+          {{ getOtherUser(conversation).name }}
         </div>
-    </div>
-
-    <!-- Search Bar -->
-    <div class="search-container">
-        <div class="search-box">
-            <i class="fa fa-search search-icon"></i>
-            <input
-                    type="text"
-                    placeholder="Search Messenger"
-                    [(ngModel)]="searchQuery"
-                    (input)="onSearchChange()"
-            />
+        <div class="conversation-preview">
+          <span class="preview-text">{{ getLastMessagePreview(conversation) }}</span>
+          <span class="message-time">· {{ formatMessageTime(getLastMessageTime(conversation)) }}</span>
         </div>
+      </div>
     </div>
 
-    <!-- Tab Navigation -->
-    <div class="tab-navigation">
-        <button
-                class="tab-btn"
-                [class.active]="activeTab === 'chats'"
-                (click)="switchTab('chats')"
-        >
-            Inbox
-        </button>
-
+    <!-- Empty state -->
+    <div *ngIf="filteredConversations.length === 0" class="empty-state">
+      <p *ngIf="searchQuery">No conversations match your search</p>
+      <p *ngIf="!searchQuery">No conversations yet</p>
     </div>
+  </div>
 
-    <!-- Conversations List -->
-    <div class="conversations-list" *ngIf="activeTab === 'chats'">
-        <div
-                *ngFor="let conversation of filteredConversations"
-                class="conversation-item"
-                (click)="selectConversation(conversation)"
-        >
-            <div class="avatar-container">
-                <img
-                        class="avatar-img"
-                        [src]="'/avatar-' + getOtherUser(conversation).name + '.jpg'"
-                        alt="User Avatar"
-                />
-
-            </div>
-
-            <div class="conversation-info">
-                <div class="conversation-name">
-                    {{ getOtherUser(conversation).name }}
-                </div>
-                <div class="conversation-preview">
-                    <span class="preview-text">{{ getLastMessagePreview(conversation) }}</span>
-                    <span class="message-time">· {{ formatMessageTime(getLastMessageTime(conversation)) }}</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Empty state -->
-        <div *ngIf="filteredConversations.length === 0" class="empty-state">
-            <p *ngIf="searchQuery">No conversations match your search</p>
-            <p *ngIf="!searchQuery">No conversations yet</p>
-        </div>
-    </div>
-
-    <!-- Communities tab (placeholder) -->
-    <div class="communities-list" *ngIf="activeTab === 'communities'">
-        <div class="empty-state">
-            <p>Communities feature coming soon</p>
-        </div>
-    </div>
-
-    <!-- Active Chat Popups -->
-    <div class="chat-popups-container">
-        <app-chat-popup
-                *ngFor="let chat of activeChats"
-                [conversation]="chat.conversation"
-                [currentOtherUserName]="chat.otherUserName"
-                (close)="closeChat(chat.messageBoxId)"
-        ></app-chat-popup>
-    </div>
+  <!-- Active Chat Popups -->
+  <div class="chat-popups-container">
+    <app-chat-popup
+      *ngFor="let chat of activeChats"
+      [conversation]="chat.conversation"
+      [currentOtherUserName]="chat.otherUserName"
+      (close)="closeChat(chat.messageBoxId)"
+    ></app-chat-popup>
+  </div>
 </div>
