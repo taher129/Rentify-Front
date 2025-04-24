@@ -1,10 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from "@angular/router";
-import {DatePipe, NgClass, NgForOf, NgIf, PercentPipe} from "@angular/common";
+import { DatePipe, NgClass, NgForOf, NgIf, PercentPipe } from "@angular/common";
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from "@angular/forms";
 import { StripeService } from "../../services/stripe.service";
 import { ReservationService } from "../../services/reservation.service";
-import {Reservation,SpecialRequest} from "../../models/reservation";
+import { Reservation, SpecialRequest } from "../../models/reservation";
+import { ProductService } from "../../services/product.service";
+import {CategoryService} from "../../services/category.service";
+import {WebsocketService} from "../../services/websocket.service";
+import {Subscription, take} from "rxjs";
+
 export interface Product {
   productId: number | null;
   productName: string;
@@ -12,9 +17,12 @@ export interface Product {
   productPrice: number;
   productImgPath: string;
   productCategory: string;
+  categoryId: number;
   productRatingValue: number;
   productShortDescription: string;
+  ownerId?: number;
 }
+
 export interface User {
   userId: number | null;
   firstName: string;
@@ -23,8 +31,6 @@ export interface User {
   phoneNumber: number;
   isLoggedIn: boolean;
 }
-
-
 
 @Component({
   selector: 'app-reservation',
@@ -43,30 +49,32 @@ export interface User {
   styleUrl: './reservation.component.css'
 })
 export class ReservationComponent implements OnInit {
+  // Static user data as requested
   user: User = {
-    userId: 1,
-    firstName: 'Taher',
-    lastName: 'Ezzine',
+    userId: 15,
+    firstName: 'abdou',
+    lastName: 'bouafif',
     email: 'taherezzine@gmail.com',
     phoneNumber: 56142979,
     isLoggedIn: true
   };
 
   product: Product = {
-    productId: 1,
-    productName: 'Bosh Blower',
-    productAddress: 'Rue Abdelwaheb El Hafsi, 7000, street 3',
-    productPrice: 5,
-    productImgPath: '/blower.png',
-    productCategory: 'Gardening',
-    productRatingValue: 4.4,
-    productShortDescription: 'Bosh Blower with high intensity for blowing leafs'
+    productId: null,
+    productName: '',
+    productAddress: 'Rue Abdelwaheb El Hafsi, 7000, street 3', // Static address
+    productPrice: 0,
+    productImgPath: '',
+    productCategory: '',
+    categoryId: 0,  // Initialize categoryId
+    productRatingValue: 4.4, // Static rating
+    productShortDescription: ''
   };
 
   reservation: Reservation = {
-    id:null,
+    id: null,
     userId: this.user.userId,
-    productId: this.product.productId,
+    productId: null, // Will be set once product is loaded
     couponName: 'First Time User',
     couponPrice: 0.05,
     rentingDuration: 5,
@@ -89,7 +97,7 @@ export class ReservationComponent implements OnInit {
   existingReservations: Reservation[] = [];
   unavailableDates: Date[] = [];
   nextAvailableStartDate: Date | null = null;
-  datePickerDisabledDates: string[] = []; // ISO format dates that should be disabled
+  datePickerDisabledDates: string[] = [];
 
   paymentForm!: FormGroup;
   userDetailsForm!: FormGroup;
@@ -112,20 +120,12 @@ export class ReservationComponent implements OnInit {
     private stripeService: StripeService,
     private formBuilder: FormBuilder,
     private route: ActivatedRoute,
-    private rs: ReservationService
+    private rs: ReservationService,
+    private productService: ProductService,
+    private categoryService: CategoryService,
+    private websocketService: WebsocketService
+
   ) {
-    const state = this.router.getCurrentNavigation()?.extras.state as {
-      productId: number;
-      price: number;
-      userId: number;
-    };
-
-    if (state) {
-      this.product.productId = state.productId;
-      this.product.productPrice = state.price;
-      this.user.userId = state.userId;
-    }
-
     // Set minimum date to today's date in YYYY-MM-DD format
     const today = new Date();
     this.minDate = today.toISOString().split('T')[0];
@@ -154,6 +154,53 @@ export class ReservationComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // Load product from route params
+    const productId = Number(this.route.snapshot.paramMap.get('id'));
+    if (productId) {
+      this.productService.getProductById(productId).subscribe({
+        next: (data) => {
+          // Set product details from the API response
+          this.product.productId = data.id || null;
+          this.product.ownerId= data.userId;
+          this.product.productName = data.name || '';
+          this.product.productPrice = data.price || 0;
+          this.product.productShortDescription = data.description || '';
+          this.product.categoryId = data.categoryId || 0;  // Get categoryId from data
+
+          if (data.productImage) {
+            this.product.productImgPath = data.productImage.startsWith('http')
+              ? data.productImage
+              : 'http://localhost:8084' + data.productImage;
+          }
+          this.hasContactedOwner = false;
+          if (this.user.userId && this.product.ownerId) {
+            this.websocketService.conversations$.subscribe(conversations => {
+              const existingConversation = conversations.find(
+                conv => (conv.user1Id === this.product.ownerId || conv.user2Id === this.product.ownerId) &&
+                  (conv.user1Id === this.user.userId || conv.user2Id === this.user.userId)
+              );
+
+              if (existingConversation) {
+                this.hasContactedOwner = true;
+              }
+            });
+          }
+          // Fetch category name using categoryId
+          if (this.product.categoryId) {
+            this.getCategoryName(this.product.categoryId);
+          }
+
+          // Update reservation product ID
+          this.reservation.productId = this.product.productId;
+          // Load existing reservations for this product
+          this.loadExistingReservations();
+        },
+        error: (err) => {
+          console.error('Error fetching product:', err);
+        }
+      });
+    }
+
     this.tempDate.pickup = new Date(this.reservation.startDate);
     this.tempDate.return = new Date(this.reservation.endDate);
     this.calculateRentingDuration();
@@ -164,9 +211,53 @@ export class ReservationComponent implements OnInit {
     }).catch(error => {
       console.error("❌ Failed to initialize Stripe:", error);
     });
+  }
+  startConversationWithOwner(): void {
+    // If we don't have owner ID in the product, we can't start a conversation
+    if (!this.product.ownerId) {
+      console.error('Owner ID not available in product data');
+      return;
+    }
 
-    // Load existing reservations for this product
-    this.loadExistingReservations();
+    // Static owner data since user integration is not complete
+    const ownerId = 16;
+    const ownerName = 'Product Owner'; // Static name, you can update this when you have real data
+
+    // Set user info in WebsocketService
+    this.websocketService.setUserInfo(this.user.userId as number, `${this.user.firstName} ${this.user.lastName}`);
+
+    // Start a new conversation
+    this.websocketService.startNewConversation(ownerId, ownerName);
+
+    // We can also send an initial message about the reservation
+    // First we need to wait for the conversation to be created and get its ID
+    // This is a simplified approach - in a real app you might need a more robust solution
+    setTimeout(() => {
+      // Get the conversation list
+      this.websocketService.conversations$.subscribe(conversations => {
+        // Find the conversation with the owner
+        const ownerConversation = conversations.find(
+          conv => (conv.user1Id === ownerId || conv.user2Id === ownerId) &&
+            (conv.user1Id === this.user.userId || conv.user2Id === this.user.userId)
+        );
+
+        if (ownerConversation) {
+          // Send a message about the reservation
+          const message = `Hi, I've just reserved your ${this.product.productName} from ${this.formatDate(this.reservation.startDate)} to ${this.formatDate(this.reservation.endDate)}. Looking forward to it!`;
+          this.websocketService.sendMessage(message, ownerConversation.messageBoxId);
+        }
+      });
+    }, 1000); // Give it a second to create the conversation
+  }
+  getCategoryName(categoryId: number): void {
+    this.categoryService.getCategoryById(categoryId).subscribe({
+      next: (category) => {
+        this.product.productCategory = category.category_Name || '';
+      },
+      error: (err) => {
+        console.error('Error fetching category:', err);
+      }
+    });
   }
 
   loadExistingReservations() {
@@ -183,6 +274,7 @@ export class ReservationComponent implements OnInit {
         }
       });
     }
+
   }
 
   calculateUnavailableDates() {
@@ -293,6 +385,7 @@ export class ReservationComponent implements OnInit {
 
     return this.datePickerDisabledDates.includes(date);
   }
+
   getFormattedUnavailableDates(): string {
     if (!this.unavailableDates || this.unavailableDates.length === 0) {
       return 'No unavailable dates';
@@ -334,7 +427,7 @@ export class ReservationComponent implements OnInit {
       }
     }).join(', ');
   }
-  // Add this method to the component class
+
   isDateDisabled(dateString: string): boolean {
     if (!dateString) return false;
 
@@ -352,13 +445,14 @@ export class ReservationComponent implements OnInit {
       this.isSameDay(dateToCheck, unavailableDate)
     );
   }
+
   dateFilter = (date: Date | null): boolean => {
     if (!date) return false;
     return !this.unavailableDates.some(unavailableDate =>
       this.isSameDay(date, unavailableDate)
     );
   }
-// Update the HTML template to show unavailable dates list
+
   getUnavailableDatesDisplay(): string {
     if (this.unavailableDates.length === 0) return 'All dates available';
 
@@ -372,6 +466,7 @@ export class ReservationComponent implements OnInit {
 
     return displayRanges.join(', ');
   }
+
   onCheckboxChange(option: any) {
     if (option.checked) {
       this.selectedRequests.push({ label: option.label, price: option.price });
@@ -431,6 +526,10 @@ export class ReservationComponent implements OnInit {
       return;
     }
 
+    // Add a check to see if the user has already contacted the owner
+    // If not, send an initial message
+    this.checkAndSendInitialMessage();
+
     try {
       const amount = this.totalPrice;
       const productName = this.product.productName;
@@ -454,7 +553,7 @@ export class ReservationComponent implements OnInit {
 
       // Create the reservation object using the model
       const reservation: Reservation = {
-        id:null,
+        id: null,
         productId: this.product.productId as number,
         userId: this.user.userId as number,
         couponName: this.reservation.couponName,
@@ -463,12 +562,15 @@ export class ReservationComponent implements OnInit {
         totalPrice: this.totalPrice,
         startDate: new Date(startDate),
         endDate: new Date(endDate),
-        status:'upcoming'
+        status: 'upcoming'
       };
 
       // Pass the reservation object to the backend
       this.rs.createReservation(reservation).subscribe({
         next: () => {
+          // Confirm the reservation with the owner
+          this.sendReservationConfirmation();
+
           this.router.navigate(['/myreservation'], {
             state: {
               product: this.product,
@@ -489,7 +591,6 @@ export class ReservationComponent implements OnInit {
       this.isLoading = false;
     }
   }
-
   hasDateConflict(startDate: Date, endDate: Date): boolean {
     // Create copies to avoid mutating original dates
     const start = new Date(startDate);
@@ -511,9 +612,138 @@ export class ReservationComponent implements OnInit {
 
     return false; // No conflicts
   }
+  sendReservationConfirmation(): void {
+    // If we don't have owner ID in the product, we can't start a conversation
+    if (!this.product.ownerId) {
+      console.error('Owner ID not available in product data');
+      return;
+    }
 
+    // Set user info in WebsocketService if not already set
+    this.websocketService.setUserInfo(this.user.userId as number, `${this.user.firstName} ${this.user.lastName}`);
+
+    // Check if a conversation already exists with this owner
+    this.websocketService.conversations$.subscribe(conversations => {
+      const existingConversation = conversations.find(
+        conv => (conv.user1Id === this.product.ownerId || conv.user2Id === this.product.ownerId) &&
+          (conv.user1Id === this.user.userId || conv.user2Id === this.user.userId)
+      );
+
+      if (existingConversation) {
+        // If conversation exists, just send a confirmation message
+        const message = `Great news! I've confirmed my reservation for your ${this.product.productName} from ${this.formatDate(this.reservation.startDate)} to ${this.formatDate(this.reservation.endDate)}. Looking forward to it!`;
+        this.websocketService.sendMessage(message, existingConversation.messageBoxId);
+      } else {
+        // If no conversation exists yet, create one and send the message
+        if (this.product.ownerId != null) {
+          this.websocketService.startNewConversation(this.product.ownerId, 'Product Owner');
+        }
+
+        setTimeout(() => {
+          this.websocketService.conversations$.subscribe(updatedConversations => {
+            const newConversation = updatedConversations.find(
+              conv => (conv.user1Id === this.product.ownerId || conv.user2Id === this.product.ownerId) &&
+                (conv.user1Id === this.user.userId || conv.user2Id === this.user.userId)
+            );
+
+            if (newConversation) {
+              const message = `Hi there! I've just made a reservation for your ${this.product.productName} from ${this.formatDate(this.reservation.startDate)} to ${this.formatDate(this.reservation.endDate)}. Looking forward to it!`;
+              this.websocketService.sendMessage(message, newConversation.messageBoxId);
+            }
+          });
+        }, 1000);
+      }
+    });
+  }
   private formatDateForBackend(date: Date): string {
     return date.toISOString().split('T')[0];
+  }
+  private hasContactedOwner: boolean = false;
+  checkAndSendInitialMessage(): void {
+    if (this.hasContactedOwner || !this.product.ownerId) {
+      return; // Skip if already contacted or no owner ID
+    }
+
+    // Set user info in WebsocketService
+    this.websocketService.setUserInfo(this.user.userId as number, `${this.user.firstName} ${this.user.lastName}`);
+
+    // Check if a conversation already exists
+    this.websocketService.conversations$.subscribe(conversations => {
+      const existingConversation = conversations.find(
+        conv => (conv.user1Id === this.product.ownerId || conv.user2Id === this.product.ownerId) &&
+          (conv.user1Id === this.user.userId || conv.user2Id === this.user.userId)
+      );
+
+      if (existingConversation) {
+        // Conversation exists, mark as contacted
+        this.hasContactedOwner = true;
+      } else {
+        // No conversation exists, create one and send initial message
+        if (this.product.ownerId != null) {
+          this.websocketService.startNewConversation(this.product.ownerId, 'Product Owner');
+        }
+
+        setTimeout(() => {
+          this.websocketService.conversations$.subscribe(updatedConversations => {
+            const newConversation = updatedConversations.find(
+              conv => (conv.user1Id === this.product.ownerId || conv.user2Id === this.product.ownerId) &&
+                (conv.user1Id === this.user.userId || conv.user2Id === this.user.userId)
+            );
+
+            if (newConversation) {
+              const message = `Hello, I just launched a demand to rent your product ${this.product.productName}. Can we talk?`;
+              this.websocketService.sendMessage(message, newConversation.messageBoxId);
+              this.hasContactedOwner = true;
+            }
+          });
+        }, 1000);
+      }
+    });
+  }
+// Add a property to track the subscription
+  private ownerNotificationSubscription: Subscription | null = null;
+
+  notifyOwnerOfInterest(): void {
+    // If we don't have owner ID in the product, we can't start a conversation
+    if (!this.product.ownerId) {
+      console.error('Owner ID not available in product data');
+      return;
+    }
+
+    // Set the flag to indicate user has contacted owner
+    this.hasContactedOwner = true;
+
+    // Set user info in WebsocketService
+    this.websocketService.setUserInfo(this.user.userId as number, `${this.user.firstName} ${this.user.lastName}`);
+
+    // Start a new conversation with the owner
+    this.websocketService.startNewConversation(this.product.ownerId, 'Product Owner');
+
+    // Clean up any existing subscription first
+    if (this.ownerNotificationSubscription) {
+      this.ownerNotificationSubscription.unsubscribe();
+      this.ownerNotificationSubscription = null;
+    }
+
+    // Send initial interest message
+    setTimeout(() => {
+      // Get the conversation list - using take(1) to auto-complete after first emission
+      this.ownerNotificationSubscription = this.websocketService.conversations$.pipe(
+        take(1) // This will auto-complete the subscription after one emission
+      ).subscribe(conversations => {
+        // Find the conversation with the owner
+        const ownerConversation = conversations.find(
+          conv => (conv.user1Id === this.product.ownerId || conv.user2Id === this.product.ownerId) &&
+            (conv.user1Id === this.user.userId || conv.user2Id === this.user.userId)
+        );
+
+        if (ownerConversation) {
+          // Send a message showing interest in the product
+          const message = `Hi, I'm interested in your ${this.product.productName}. Is it still available for rent? I'm looking at dates from ${this.formatDate(this.reservation.startDate)} to ${this.formatDate(this.reservation.endDate)}.`;
+          this.websocketService.sendMessage(message, ownerConversation.messageBoxId);
+        }
+      });
+    }, 1000);
   }
 
   calculateRentingDuration(): void {
@@ -737,4 +967,8 @@ export class ReservationComponent implements OnInit {
   }
 
   protected readonly Date = Date;
+
+
+
+
 }

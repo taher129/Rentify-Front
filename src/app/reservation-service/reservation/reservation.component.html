@@ -5,8 +5,8 @@
         <div class="info-container">
           <div class="path-info">
             <h2 [routerLink]="['/home']">Home</h2>
-            <h2 [routerLink]="['/{{product.productCategory}}']">{{product.productCategory}}</h2>
-            <h2 [routerLink]="['/{{product.productId}}']">{{product.productName}}</h2>
+            <h2 [routerLink]="['/products/category/{{product.productCategory}}']">Category</h2>
+            <h2 >{{product.productName}}</h2>
           </div>
           <div class="title">
             <h2>Book your product</h2>
@@ -407,7 +407,33 @@
             </div>
           </div>
         </div>
-      </div>
+        <div class="card">
+
+
+            <div class="offer-section">
+              <div class="offer-card">
+                <div class="offer-badge"></div>
+                <div class="offer-content">
+                  <h4 class="offer-title">Contact Owner</h4>
+                  <p class="offer-description">
+                    Send a message to the owner to inquire about this product before making a reservation.
+                  </p>
+                  <div class="offer-amount">
+                    <button
+                      (click)="notifyOwnerOfInterest()"
+                      class="apply-button"
+                      type="button">
+                      <i class="fas fa-comment-dots mr-2"></i>
+                      Contact Owner About Availability
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+        </div>
+
+
+        </div>
     </div>
   </section>
 </div>

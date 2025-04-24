@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import {ActivatedRoute, RouterLink} from '@angular/router';
 import { ProductService } from '../services/product.service';
 import { Product } from '../models/product';
 import {CurrencyPipe, NgIf} from "@angular/common";
@@ -14,7 +14,8 @@ import {LeafletComponent} from "../leaflet/leaflet.component";
   imports: [
     CurrencyPipe,
     NgIf,
-    LeafletComponent
+    LeafletComponent,
+    RouterLink
   ],
   styleUrls: ['./product-detail.component.css']
 })

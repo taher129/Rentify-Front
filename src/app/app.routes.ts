@@ -59,7 +59,7 @@ export const routes: Routes = [
  //reservation-service
   {path: 'myreservation', component: MyreservationComponent},
   {path: 'chat', component: MessegingPageComponent},
-  {path: 'reservation', component: ReservationComponent},
+  {path: 'reservation/:id', component: ReservationComponent},
 
 
 

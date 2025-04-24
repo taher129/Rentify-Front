@@ -7,7 +7,7 @@
       <h2>{{ product.name }}</h2>
       <p class="description">{{ product.description }}</p>
       <h4 class="price">{{ product.price | currency }}</h4>
-      <button class="book-btn">Book Now</button>
+      <button class="book-btn" [routerLink]="['/reservation', product.id]">Book Now</button>
     </div>
     <div class="product-location">
       <h4>Location</h4>

@@ -4,10 +4,11 @@ import { Category } from "../../models/category";
 import { CategoryService } from "../../services/category.service";
 import { ProductService } from "../../services/product.service";
 import { RouterLink } from "@angular/router";
-import { CurrencyPipe, NgForOf } from "@angular/common";
+import {CurrencyPipe, NgForOf, NgIf} from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from '@angular/router';
 import {NavChatContainerComponent} from "../../reservation-service/nav-chat-container/nav-chat-container.component";
+import {MessageService} from "../../services/message.service";
 
 
 @Component({
@@ -17,7 +18,7 @@ import {NavChatContainerComponent} from "../../reservation-service/nav-chat-cont
     RouterLink,
     NgForOf,
     FormsModule,
-    CurrencyPipe,RouterModule, NavChatContainerComponent
+    CurrencyPipe, RouterModule, NavChatContainerComponent, NgIf
   ],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.css'
@@ -26,6 +27,7 @@ export class NavbarComponent {
   isChatOpen: boolean = false;
   isNotificationsOpen: boolean = false;
   isProfileOpen: boolean = false;
+  unreadMessages: number = 0;
 
   products: Product[] = [];
   selectedCategoryId: number | null = null;
@@ -35,6 +37,7 @@ export class NavbarComponent {
   constructor(
     private productService: ProductService,
     private categoryService: CategoryService,
+    private messageService: MessageService,
     private cdr: ChangeDetectorRef
   ) {
   }
@@ -44,6 +47,12 @@ export class NavbarComponent {
   toggleChat(event: Event): void {
     event.stopPropagation();
     this.isChatOpen = !this.isChatOpen;
+
+    // Reset unread count when opening chat
+    if (this.isChatOpen) {
+      this.messageService.resetUnreadCount();
+    }
+
     // Close other dropdowns
     this.isNotificationsOpen = false;
     this.isProfileOpen = false;
@@ -76,8 +85,14 @@ export class NavbarComponent {
       next: (data: Category[]) => (this.categories = data),
       error: (err: any) => console.error('Failed to load categories', err),
     });
-  }
 
+    // Subscribe to unread message count
+    this.messageService.unreadMessages$.subscribe(count => {
+      console.log('NavbarComponent: Received unread count update:', count);
+      this.unreadMessages = count;
+      this.cdr.detectChanges();
+    });
+  }
   onCategoryChange(event: Event): void {
     const value = (event.target as HTMLSelectElement).value;
     this.selectedCategoryId = value !== '' ? parseInt(value, 10) : null;

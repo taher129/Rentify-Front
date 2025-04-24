@@ -2679,6 +2679,7 @@
           <div class="dropdown" (click)="$event.stopPropagation()">
             <button class="icon-button" (click)="toggleChat($event)">
               <i class="fa fa-envelope"></i>
+              <span class="message-badge" *ngIf="unreadMessages > 0">{{unreadMessages}}</span>
             </button>
             <!-- Chat Dropdown -->
             <div class="dropdown-content" [class.show]="isChatOpen">
