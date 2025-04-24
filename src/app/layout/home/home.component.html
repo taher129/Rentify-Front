@@ -17,75 +17,30 @@
 
 <!-- CATEGORIES -->
 <section>
-  <div
-    class="row gx-0 d-block d-lg-flex flickity flickity-lg-none"
-    data-flickity='{"watchCSS": true}'
-  >
-    <!-- Item -->
-    <div
-      class="col-12 col-md-6 col-lg-4 d-flex flex-column bg-cover"
-      style="background-image: url(assets/images/covers/cover-22.jpg)"
-    >
-      <div
-        class="card bg-dark-5 bg-hover text-white text-center"
-        style="min-height: 470px"
-      >
-        <div class="card-body mt-auto mb-n11 py-8">
-          <!-- Heading -->
-          <h1 class="mb-0 fw-bolder">Home</h1>
-        </div>
-        <div class="card-body mt-auto py-8">
-          <!-- Button -->
-          <a class="btn btn-white stretched-link" href="#">
-            Discover More <i class="fe fe-arrow-right ms-2"></i>
-          </a>
-        </div>
-      </div>
-    </div>
+  <div class="category-carousel">
+    <ngx-slick-carousel class="carousel" #slickModal="slick-carousel" [config]="slideConfig">
+      <div ngxSlickItem *ngFor="let category of categories" class="slide">
+        <div class="card text-white" style="min-height: 400px;">
+          <!-- Background with full URL image -->
+          <div class="card-bg">
+            <div class="card-bg-img bg-cover"
+                 [style.background-image]="'url(' + category.categoryImage + ')'"></div>
+          </div>
 
-    <!-- Card -->
-    <div
-      class="col-12 col-md-6 col-lg-4 d-flex flex-column bg-cover"
-      style="background-image: url(assets/images/covers/cover-11.png)"
-    >
-      <div
-        class="card bg-dark-5 bg-hover text-white text-center"
-        style="min-height: 470px"
-      >
-        <div class="card-body mt-auto mb-n11 py-8">
-          <!-- Heading -->
-          <h1 class="mb-0 fw-bolder">Car</h1>
-        </div>
-        <div class="card-body mt-auto py-8">
-          <!-- Button -->
-          <a class="btn btn-white stretched-link" href="#">
-            Discover More <i class="fe fe-arrow-right ms-2"></i>
-          </a>
-        </div>
-      </div>
-    </div>
+          <!-- Body -->
+          <div class="card-body my-auto text-center">
+            <!-- Heading -->
+            <h4 class="mb-0">{{ category.category_Name }}</h4>
 
-    <!-- Card -->
-    <div
-      class="col-12 col-md-6 col-lg-4 d-flex flex-column bg-cover"
-      style="background-image: url(assets/images/covers/cover-33.jpg)"
-    >
-      <div
-        class="card bg-dark-5 bg-hover text-white text-center"
-        style="min-height: 470px"
-      >
-        <div class="card-body mt-auto mb-n11 py-8">
-          <!-- Heading -->
-          <h1 class="mb-0 fw-bolder">IT & Multimedia</h1>
-        </div>
-        <div class="card-body mt-auto py-8">
-          <!-- Button -->
-          <a class="btn btn-white stretched-link" href="#">
-            Discover More <i class="fe fe-arrow-right ms-2"></i>
-          </a>
+            <!-- Link -->
+            <a class="btn btn-link stretched-link text-reset"
+               [routerLink]="['/products/category/', category.id_Category]">
+              Discover More <i class="fe fe-arrow-right ms-2"></i>
+            </a>
+          </div>
         </div>
       </div>
-    </div>
+    </ngx-slick-carousel>
   </div>
 </section>
 
@@ -184,115 +139,32 @@
         </div>
       </div>
       <div class="row">
-        <div class="col-12 col-md-5 col-lg-4 d-flex flex-column">
-
+        <div
+          class="col-12 col-md-6 col-lg-6 d-flex flex-column"
+          *ngFor="let category of randomCategories"
+        >
           <!-- Card -->
-          <div class="card mb-7 text-white" style="min-height: 400px; background-image: url(assets/images/products/product-17.jpg)">
+          <div class="card mb-7 text-white" style="min-height: 400px;" [ngStyle]="{'background-image': 'url(' + category.categoryImage + ')'}">
 
             <!-- Background -->
             <div class="card-bg">
-              <div class="card-bg-img bg-cover" style="background-image: url(assets/images/products/product-60.jpg);"></div>
+              <div
+                class="card-bg-img bg-cover"
+                [ngStyle]="{ 'background-image': 'url(' + category.categoryImage + ')' }"
+              ></div>
             </div>
 
             <!-- Body -->
             <div class="card-body my-auto text-center">
-
               <!-- Heading -->
-              <h4 class="mb-0">Building </h4>
+              <h4 class="mb-0 text-black">{{ category.category_Name }}</h4>
 
               <!-- Link -->
-              <a class="btn btn-link stretched-link text-reset" href="#">
+              <a class="btn btn-link stretched-link text-black" [routerLink]="['/products/category/', category.id_Category]">
                 Book Now <i class="fe fe-arrow-right ms-2"></i>
               </a>
-
             </div>
-
           </div>
-
-        </div>
-        <div class="col-12 col-md-7 col-lg-8 d-flex flex-column">
-
-          <!-- Card -->
-          <div class="card mb-7 text-body" style="min-height: 400px;">
-
-            <!-- Background -->
-            <div class="card-bg">
-              <div class="card-bg-img bg-cover" style="background-image: url(assets/images/products/product-33.jpg);"></div>
-            </div>
-
-            <!-- Body -->
-            <div class="card-body my-auto px-md-10 text-center text-md-start">
-
-              <!-- Circle -->
-              <div class="card-circle card-circle-lg card-circle-end">
-                <strong>save</strong>
-                <span class="fs-4 fw-bold">30%</span>
-              </div>
-
-              <!-- Heading -->
-              <h4 class="mb-0">Camping Rentals</h4>
-
-              <!-- Link -->
-              <a class="btn btn-link stretched-link px-0 text-reset" href="#">
-                Book Now <i class="fe fe-arrow-right ms-2"></i>
-              </a>
-
-            </div>
-
-          </div>
-
-        </div>
-        <div class="col-12 col-md-7 col-lg-8 d-flex flex-column">
-
-          <!-- Card -->
-          <div class="card mb-7 mb-md-0 text-body" style="min-height: 400px;">
-
-            <!-- Background -->
-            <div class="card-bg">
-              <div class="card-bg-img bg-cover" style="background-image: url(assets/images/products/product-32.jpg);"></div>
-            </div>
-
-            <!-- Body -->
-            <div class="card-body my-auto px-md-10 text-center text-md-start">
-
-              <!-- Heading -->
-              <h4 class="mb-0">Eco-Friendly Mobility</h4>
-
-              <!-- Link -->
-              <a class="btn btn-link stretched-link px-0 text-reset" href="#">
-                Book Now <i class="fe fe-arrow-right ms-2"></i>
-              </a>
-
-            </div>
-
-          </div>
-
-        </div>
-        <div class="col-12 col-md-5 col-lg-4 d-flex flex-column">
-
-          <!-- Card -->
-          <div class="card text-white" style="min-height: 400px;">
-
-            <!-- Background -->
-            <div class="card-bg">
-              <div class="card-bg-img bg-cover" style="background-image: url(assets/images/products/product-44.jpg);"></div>
-            </div>
-
-            <!-- Body -->
-            <div class="card-body my-auto text-center">
-
-              <!-- Heading -->
-              <h4 class="mb-0 text-black"> Computers & Accessories</h4>
-
-              <!-- Link -->
-              <a class="btn btn-link stretched-link text-black" href="#">
-                Book Now <i class="fe fe-arrow-right ms-2"></i>
-              </a>
-
-            </div>
-
-          </div>
-
         </div>
       </div>
     </div>

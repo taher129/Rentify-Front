@@ -4,4 +4,89 @@
     height: 250px; /* Hauteur fixe pour toutes les images */
     width: 100%; /* Largeur de l'image pour qu'elle occupe toute la largeur du conteneur */
   }
-  
+/* Ensure slick carousel styles are properly applied */
+.category-carousel {
+  margin: 20px 0;
+  width: 100%;
+}
+
+.carousel {
+  width: 100%;
+  margin: 0 auto;
+}
+
+.slide {
+  padding: 0 15px;
+  box-sizing: border-box;
+}
+
+/* Card styling */
+.card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.card-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.card-bg-img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-size: cover;
+  background-position: center;
+  transition: transform 0.3s ease;
+}
+
+.card:hover .card-bg-img {
+  transform: scale(1.05);
+}
+
+.card-body {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* Slick carousel customizations */
+.slick-prev:before,
+.slick-next:before {
+  color: #fff;
+  font-size: 30px;
+  text-shadow: 0 0 5px rgba(0,0,0,0.5);
+}
+
+.slick-prev {
+  left: 15px;
+  z-index: 1;
+}
+
+.slick-next {
+  right: 15px;
+}
+
+.slick-dots {
+  bottom: 20px;
+}
+
+.slick-dots li button:before {
+  color: #fff;
+  opacity: 0.5;
+  font-size: 12px;
+}
+
+.slick-dots li.slick-active button:before {
+  color: #fff;
+  opacity: 1;
+}
