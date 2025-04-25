@@ -1,0 +1,16 @@
+<div class="add-comment-section">
+  <h4>Add a Comment</h4>
+  <form (ngSubmit)="submitComment()">
+    <div class="form-group">
+      <textarea
+        class="comment-textarea"
+        [(ngModel)]="commentContent"
+        name="comment"
+        placeholder="Write your comment here..."
+        rows="4"
+        required
+      ></textarea>
+    </div>
+    <button type="submit" class="submit-comment-btn">Post Comment</button>
+  </form>
+</div>
