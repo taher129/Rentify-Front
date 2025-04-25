@@ -2,19 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { ReservationService } from '../../services/reservation.service';
+import { ProductService } from '../../services/product.service';
+import { Product } from '../../models/product';
+import { forkJoin, Observable, of } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 
 import jsPDF from "jspdf";
-import {Reservation} from "../../models/reservation";
-export interface Product {
-  productId: number | null;
-  productName: string;
-  productAddress: string;
-  productPrice: number;
-  productImgPath: string;
-  productCategory: string;
-  productRatingValue: number;
-  productShortDescription: string;
-}
+import { Reservation } from "../../models/reservation";
+
 export interface User {
   userId: number | null;
   firstName: string;
@@ -23,6 +18,7 @@ export interface User {
   phoneNumber: number;
   isLoggedIn: boolean;
 }
+
 interface BookingViewModel {
   id?: number;
   productName: string;
@@ -30,10 +26,10 @@ interface BookingViewModel {
   startDateTime: Date;
   endDateTime: Date;
   bookedBy: string;
-  status: 'upcoming' | 'completed' | 'canceled'|'rejected';
+  status: 'upcoming' | 'completed' | 'canceled' | 'rejected';
   totalPrice: number;
   productImgPath: string;
-  productCategory: string;
+  productCategory?: number;  // Changed to optional
   reservationDetails: Reservation;
   productDetails?: Product;
   userDetails?: User;
@@ -57,17 +53,20 @@ export class MyreservationComponent implements OnInit {
   isLoading: boolean = true;
   error: string | null = null;
 
-  // Mock user with userId = 1
+  // Mock user with userId = 15
   mockUser: User = {
-    userId: 1,
-    firstName: 'John',
-    lastName: 'Doe',
-    email: 'john.doe@example.com',
-    phoneNumber: 1234567890,
+    userId: 15,
+    firstName: 'abdou',
+    lastName: 'bouafif',
+    email: 'abdou.bouafif@gmail.com',
+    phoneNumber: 56142979,
     isLoggedIn: true
   };
 
-  constructor(private reservationService: ReservationService) {}
+  constructor(
+    private reservationService: ReservationService,
+    private productService: ProductService
+  ) {}
 
   ngOnInit(): void {
     this.loadReservations();
@@ -78,7 +77,6 @@ export class MyreservationComponent implements OnInit {
     this.reservationService.showMyBookingByUserId(this.mockUser.userId).subscribe({
       next: (reservations: Reservation[]) => {
         this.processReservations(reservations);
-        this.isLoading = false;
       },
       error: (err) => {
         this.error = 'Failed to load reservations. Please try again later.';
@@ -95,90 +93,118 @@ export class MyreservationComponent implements OnInit {
     this.completedBookings = [];
     this.canceledBookings = [];
 
-    // Mock data for products (in real app, you'd fetch this)
-    const mockProducts: { [key: number]: Product } = {
-      1: {
-        productId: 1,
-        productName: 'Luxury Beach Villa',
-        productAddress: '123 Ocean Drive, Miami Beach',
-        productPrice: 450,
-        productImgPath: '/assets/beach-villa.jpg',
-        productCategory: 'Villa',
-        productRatingValue: 4.8,
-        productShortDescription: 'Beachfront villa with private pool'
-      },
-      2: {
-        productId: 2,
-        productName: 'Downtown Apartment',
-        productAddress: '456 Main St, New York',
-        productPrice: 200,
-        productImgPath: '/assets/downtown-apt.jpg',
-        productCategory: 'Apartment',
-        productRatingValue: 4.5,
-        productShortDescription: 'Modern apartment in city center'
-      },
-      3: {
-        productId: 3,
-        productName: 'Mountain Cabin',
-        productAddress: '789 Pine Trail, Aspen',
-        productPrice: 350,
-        productImgPath: '/assets/mountain-cabin.jpg',
-        productCategory: 'Cabin',
-        productRatingValue: 4.9,
-        productShortDescription: 'Cozy cabin with mountain view'
+    if (reservations.length === 0) {
+      this.isLoading = false;
+      return;
+    }
+
+    // Create an array of product ID observables
+    const productObservables: Observable<Product>[] = [];
+
+    // Collect unique product IDs
+    const uniqueProductIds = new Set<number>();
+    reservations.forEach(reservation => {
+      if (reservation.productId) {
+        uniqueProductIds.add(reservation.productId);
       }
-    };
+    });
 
-    // Process each reservation
-    reservations.forEach((reservation: Reservation) => {
-      const productId = reservation.productId || 1;
-      const userId = reservation.userId || 1;
+    // Create an observable for each product ID
+    uniqueProductIds.forEach(productId => {
+      productObservables.push(
+        this.productService.getProductById(productId).pipe(
+          catchError(error => {
+            console.error(`Error fetching product with ID ${productId}:`, error);
+            // Return a default product in case of error
+            return of({
+              id: productId,
+              name: 'Unknown Product',
+              price: 0,
+              description: 'Product information not available',
+              productImage: '/assets/placeholder.jpg'
+            } as Product);
+          })
+        )
+      );
+    });
 
-      const product = mockProducts[productId];
+    // If there are no products to fetch, finish loading
+    if (productObservables.length === 0) {
+      this.isLoading = false;
+      return;
+    }
 
-      // Check if product is defined before accessing its properties
-      const bookedBy = `${this.mockUser.firstName} ${this.mockUser.lastName}`;
+    // Fetch all products in parallel
+    forkJoin(productObservables).subscribe({
+      next: (products: Product[]) => {
+        // Create a map of productId to Product
+        const productMap = new Map<number, Product>();
+        products.forEach(product => {
+          if (product.id) {
+            productMap.set(product.id, product);
+          }
+        });
 
-      const startDate = new Date(reservation.startDate);
-      const endDate = new Date(reservation.endDate);
+        // Process each reservation with the fetched product data
+        reservations.forEach((reservation: Reservation) => {
+          const productId = reservation.productId;
+          if (!productId) return;
 
-      // Determine status based on reservation status
-      let status: 'upcoming' | 'completed' | 'canceled' | 'rejected';
-      if (reservation.status === 'canceled') {
-        status = 'canceled';
-      } else if (reservation.status === 'rejected') {
-        status = 'rejected';
-      } else if (endDate < new Date()) {
-        status = 'completed';
-      } else {
-        status = 'upcoming';
-      }
+          const product = productMap.get(productId);
+          if (!product) return;
 
-      // Ensure status is correctly set before pushing into the booking array
-      const booking: BookingViewModel = {
-        productName: product.productName,
-        productAddress: product.productAddress,
-        startDateTime: startDate,
-        endDateTime: endDate,
-        bookedBy: bookedBy,
-        status: status,
-        totalPrice: reservation.totalPrice || 0,
-        productImgPath: product.productImgPath,
-        productCategory: product.productCategory,
-        reservationDetails: reservation,
-        productDetails: product,
-        userDetails: this.mockUser
-      };
+          const bookedBy = `${this.mockUser.firstName} ${this.mockUser.lastName}`;
+          const startDate = new Date(reservation.startDate);
+          const endDate = new Date(reservation.endDate);
 
-      this.allBookings.push(booking);
+          // Determine status based on reservation status
+          let status: 'upcoming' | 'completed' | 'canceled' | 'rejected';
+          if (reservation.status === 'canceled') {
+            status = 'canceled';
+          } else if (reservation.status === 'rejected') {
+            status = 'rejected';
+          } else if (endDate < new Date()) {
+            status = 'completed';
+          } else {
+            status = 'upcoming';
+          }
 
-      // Add to appropriate collection based on status
-      if (status === 'upcoming') {
-        this.upcomingBookings.push(booking);
-      } else if (status === 'completed') {
-        this.completedBookings.push(booking);
-      } else if (status === 'canceled'|| status === 'rejected') {
-        this.canceledBookings.push(booking);
+          // Get the category name from the product or use a default
+          const categoryName = product.categoryId ? `Category ${product.categoryId}` : 'Uncategorized';
+
+          const booking: BookingViewModel = {
+            productName: product.name || 'Unnamed Product',
+            productAddress: product.description?.split('\n')[0] || 'No address available',
+            startDateTime: startDate,
+            endDateTime: endDate,
+            bookedBy: bookedBy,
+            status: status,
+            totalPrice: reservation.totalPrice || 0,
+            productImgPath: product.productImage || '/assets/placeholder.jpg',
+            productCategory: product.categoryId ,
+            reservationDetails: reservation,
+            productDetails: product,
+            userDetails: this.mockUser
+          };
+
+          this.allBookings.push(booking);
+
+          // Add to appropriate collection based on status
+          if (status === 'upcoming') {
+            this.upcomingBookings.push(booking);
+          } else if (status === 'completed') {
+            this.completedBookings.push(booking);
+          } else if (status === 'canceled' || status === 'rejected') {
+            this.canceledBookings.push(booking);
+          }
+        });
+
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error('Error fetching products:', err);
+        this.error = 'Failed to load product information. Please try again later.';
+        this.isLoading = false;
       }
     });
   }
@@ -223,16 +249,28 @@ export class MyreservationComponent implements OnInit {
     }
   }
 
-  getCategoryIcon(category: string): string {
-    const categoryIcons: { [key: string]: string } = {
-      'Villa': '🏡',
-      'Apartment': '🏢',
-      'Cabin': '🌲',
-      'Hotel': '🏨',
-      'House': '🏠'
+  getCategoryIcon(categoryId: number | null | undefined): string {
+    // Handle null/undefined case right away
+    if (categoryId == null) {  // This covers both null and undefined
+      return '📦'; // Default icon
+    }
+
+    // Map category IDs to their respective icons
+    const categoryIcons: { [key: number]: string } = {
+      1: '🚗', // Car
+      2: '💻', // IT & Multimedia
+      3: '🏠', // Home
+      4: '⛺', // Camping
+      5: '🏗️', // Building
+      6: '🚲', // Eco-Friendly Mobility
+      7: '⚽', // Sports
+      8: '🎉', // Events & Party
+      9: '🧹', // Cleaning Equipment
+      10: '💼'  // Work & Office
     };
 
-    return categoryIcons[category] || '🏠';
+    // Return the icon for the given category ID, or a default icon if not found
+    return categoryIcons[categoryId] || '📦';
   }
   cancelBooking(booking: BookingViewModel): void {
     const reservationId = booking.reservationDetails.id;
@@ -254,7 +292,6 @@ export class MyreservationComponent implements OnInit {
       });
   }
 
-
   downloadpdf(booking: BookingViewModel): void {
     // Create a new PDF document
     const doc = new jsPDF('p', 'mm', 'a4');
@@ -263,9 +300,8 @@ export class MyreservationComponent implements OnInit {
     doc.setFillColor(248, 249, 250);
     doc.rect(0, 0, 210, 297, 'F');
 
-
     const img = new Image();
-    img.src = booking.productImgPath ;
+    img.src = booking.productImgPath;
     img.onload = () => {
       doc.addImage(img, 'JPEG', 0, 0, 210, 80);
       this.continuePdfGeneration(doc, booking);
@@ -282,8 +318,6 @@ export class MyreservationComponent implements OnInit {
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(0, 0, 0);
 
-
-
     // Add destination title
     doc.setFontSize(18);
     doc.setFont('helvetica', 'bold');
@@ -292,7 +326,7 @@ export class MyreservationComponent implements OnInit {
 
     // Create a table-like structure for booking details
     const startY = 135;
-    const middleCol=60;
+    const middleCol = 60;
     const leftCol = 25;
     const rightCol = 160;
     const lineHeight = 12;
@@ -314,7 +348,7 @@ export class MyreservationComponent implements OnInit {
     doc.text('Date:', rightCol - 65, startY);
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(0, 0, 0);
-    doc.text(new Date().toLocaleDateString(), rightCol  - 30 , startY);
+    doc.text(new Date().toLocaleDateString(), rightCol - 30, startY);
 
     // Booked by
     doc.setFont('helvetica', 'normal');
@@ -340,8 +374,6 @@ export class MyreservationComponent implements OnInit {
     doc.setTextColor(0, 0, 0);
     doc.text('Credit card', middleCol, startY + lineHeight * 2);
 
-
-
     // Total Price
     doc.setFont('helvetica', 'normal');
     doc.setTextColor(100, 100, 100);
@@ -364,7 +396,6 @@ export class MyreservationComponent implements OnInit {
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(0, 0, 0);
     doc.text(booking.productAddress, leftCol + 60, accommodationY + lineHeight);
-
 
     // Pick-up
     doc.setFont('helvetica', 'normal');

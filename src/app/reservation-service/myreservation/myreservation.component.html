@@ -45,7 +45,7 @@
       <div *ngFor="let booking of completedBookings" class="booking-card">
         <div class="booking-header">
           <div class="booking-icon-container">
-            <span class="booking-icon">{{ getCategoryIcon(booking.productCategory) }}</span>
+            <span class="booking-icon">{{ getCategoryIcon(booking.productDetails?.categoryId) }}</span>
           </div>
 
           <div class="booking-title-section">
@@ -91,7 +91,7 @@
       <div *ngFor="let booking of canceledBookings" class="booking-card">
         <div class="booking-header">
           <div class="booking-icon-container">
-            <span class="booking-icon">{{ getCategoryIcon(booking.productCategory) }}</span>
+            <span class="booking-icon">{{ getCategoryIcon(booking.productDetails?.categoryId) }}</span>
           </div>
 
           <div class="booking-title-section">
@@ -142,7 +142,7 @@
       <div *ngFor="let booking of upcomingBookings" class="booking-card">
         <div class="booking-header">
           <div class="booking-icon-container">
-            <span class="booking-icon">{{ getCategoryIcon(booking.productCategory) }}</span>
+            <span class="booking-icon">{{ getCategoryIcon(booking.productDetails?.categoryId) }}</span>
           </div>
 
           <div class="booking-title-section">
