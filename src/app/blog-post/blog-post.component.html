@@ -62,7 +62,11 @@
 
 
 
-
+  <!-- In your parent component's template -->
+  <app-add-comment
+    [blogId]="blogId"
+    (commentAdded)="handleNewComment($event)">
+  </app-add-comment>
 
 
 
@@ -103,15 +107,18 @@
     <div class="blog-detail-share">
       <h3>Share on:</h3>
       <div class="social-buttons">
-        <a href="#" class="social-button facebook">
+        <button (click)="shareOnFacebook()" class="social-button facebook">
           <i class="fa fa-facebook"></i> Facebook
-        </a>
-        <a href="#" class="social-button instagram">
+        </button>
+        <button (click)="shareOnInstagram()" class="social-button instagram">
           <i class="fa fa-instagram"></i> Instagram
-        </a>
-        <a href="#" class="social-button twitter">
+        </button>
+        <button (click)="shareOnTwitter()" class="social-button twitter">
           <i class="fa fa-twitter"></i> Twitter
-        </a>
+        </button>
+        <button (click)="copyToClipboard()" class="social-button">
+          <i class="fa fa-link"></i> Copy Link
+        </button>
       </div>
     </div>
     <div class="blog-detail-tags">

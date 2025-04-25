@@ -183,3 +183,55 @@ app-comment {
   background-color: #f9f9f9;
   border-radius: 10px;
 }
+/* Add to your existing CSS */
+.social-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 15px;
+
+  .social-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 15px;
+    border-radius: 4px;
+    color: white;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    transition: all 0.3s ease;
+
+    i {
+      font-size: 16px;
+    }
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    &.facebook {
+      background-color: #3b5998;
+    }
+
+    &.twitter {
+      background-color: #1da1f2;
+    }
+
+    &.linkedin {
+      background-color: #0077b5;
+    }
+
+    &.instagram {
+      background: linear-gradient(45deg, #405de6, #5851db, #833ab4, #c13584, #e1306c, #fd1d1d);
+    }
+
+    &.copy {
+      background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+      &:hover {
+        opacity: 0.9;
+      }
+    }
+  }
+}

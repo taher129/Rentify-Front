@@ -4,12 +4,15 @@ import { BlogService } from '../services/blog.service';
 import { CommonModule } from '@angular/common';
 import { CommentComponent } from "../comment/comment.component";
 import { CommentService } from "../services/comment.service";
+import { AddCommentComponent } from "../add-comment/add-comment.component";
+import { BlogComment } from "../models/BlogComment";
+import { ShareService } from '../services/share.service'; // New import
 
 @Component({
   selector: 'app-blog-detail',
   templateUrl: './blog-post.component.html',
   standalone: true,
-  imports: [CommonModule, CommentComponent],
+  imports: [CommonModule, CommentComponent, AddCommentComponent],
   styleUrls: ['./blog-post.component.scss']
 })
 export class BlogPostComponent implements OnInit, AfterViewInit {
@@ -18,15 +21,20 @@ export class BlogPostComponent implements OnInit, AfterViewInit {
   error: string | null = null;
   defaultTags = ['Blog', 'Tour', 'Holidays', 'Ticket Booking', 'Deep learning'];
   blogId: number = -1;
+  comments: BlogComment[] = [];
+  currentUrl: string = '';
+  shareText: string = 'Check out this blog post: ';
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private blogService: BlogService,
-    private commentService: CommentService
+    private commentService: CommentService,
+    private shareService: ShareService // New service
   ) {}
 
   ngOnInit(): void {
+    this.currentUrl = window.location.href;
     this.route.paramMap.subscribe(params => {
       const blogId = params.get('id');
       if (blogId) {
@@ -56,7 +64,8 @@ export class BlogPostComponent implements OnInit, AfterViewInit {
         }
 
         this.blogPost = data;
-        this.blogId = data.idBlog;  // Save blog ID for comment component
+        this.blogId = data.idBlog;
+        this.shareText += data.title; // Update share text with blog title
 
         if (this.blogPost.content) {
           this.blogPost.processedContent = this.processContent(this.blogPost.content);
@@ -72,11 +81,31 @@ export class BlogPostComponent implements OnInit, AfterViewInit {
     });
   }
 
+  // Social sharing methods
+  shareOnFacebook(): void {
+    this.shareService.shareOnFacebook(this.currentUrl);
+  }
+
+  shareOnTwitter(): void {
+    this.shareService.shareOnTwitter(this.currentUrl, this.shareText);
+  }
+
+  shareOnLinkedIn(): void {
+    this.shareService.shareOnLinkedIn(this.currentUrl);
+  }
+
+  shareOnInstagram(): void {
+    this.shareService.shareOnInstagram();
+  }
+
+
+
+
+  // Content processing methods
   processContent(content: string): any {
     if (content.includes('<')) {
       return content;
     }
-
     return {
       paragraphs: this.extractParagraphs(content),
       bulletPoints: this.extractBulletPoints(content)
@@ -104,22 +133,24 @@ export class BlogPostComponent implements OnInit, AfterViewInit {
     return `${minutes} min read`;
   }
 
-  getFacebookShareUrl(): string {
-    const url = encodeURIComponent(window.location.href);
-    return `https://www.facebook.com/sharer/sharer.php?u=${url}`;
-  }
-
-  getTwitterShareUrl(): string {
-    const url = encodeURIComponent(window.location.href);
-    const text = encodeURIComponent(this.blogPost?.title || 'Check out this blog post');
-    return `https://twitter.com/intent/tweet?url=${url}&text=${text}`;
-  }
-
-  getInstagramShareUrl(): string {
-    return '#';
-  }
-
   ngAfterViewInit() {
     console.log('BlogPost ID being passed to comments:', this.blogId);
+  }
+
+  handleNewComment(comment: BlogComment) {
+    this.comments = [comment, ...this.comments];
+  }
+
+  handleCommentDeleted(commentId: number) {
+    this.comments = this.comments.filter(c => c.id !== commentId);
+  }
+
+  copyToClipboard(): void {
+    navigator.clipboard.writeText(this.currentUrl).then(() => {
+      alert('Link copied to clipboard!');
+    });
+  }
+  shareOnWhatsApp(): void {
+    window.open(`https://wa.me/?text=${encodeURIComponent(this.shareText + ' ' + this.currentUrl)}`, '_blank');
   }
 }

@@ -52,4 +52,8 @@ export class BlogService {
     return this.http.put<Blog>(`${this.apiUrl}/${id}`, formData);
   }
 
+  searchBlogs(title: string): Observable<Blog[]> {
+    return this.http.get<Blog[]>(`${this.apiUrl}/search?title=${encodeURIComponent(title)}`);
+  }
+
 }

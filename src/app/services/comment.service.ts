@@ -18,4 +18,16 @@ export class CommentService {
     }
     return this.http.get<BlogComment[]>(`${this.apiUrl}/blog/${blogId}`);
   }
+  addComment(formData: FormData): Observable<BlogComment> {
+    return this.http.post<BlogComment>(`${this.apiUrl}`, formData).pipe(
+      tap(comment => console.log('Added comment:', comment))
+    );
+  }
+  deleteComment(commentId: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${commentId}`);
+  }
+  updateComment(commentId: number, content: string): Observable<BlogComment> {
+    return this.http.put<BlogComment>(`${this.apiUrl}/${commentId}`, { content });
+  }
+
 }

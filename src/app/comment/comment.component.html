@@ -1,10 +1,8 @@
-<!-- comment.component.html -->
 <div class="comments-container">
   <h3>Comments ({{comments.length}})</h3>
 
   <!-- Debug output -->
   <div *ngIf="false" class="debug-info">
-    <!-- Set to true temporarily for debugging -->
     <p>Blog ID: {{blogId}}</p>
     <pre>{{comments | json}}</pre>
   </div>
@@ -18,18 +16,45 @@
   </div>
 
   <div class="comments-list">
-    <div *ngFor="let comment of comments" class="comment">
+    <div *ngFor="let comment of comments" class="comment" [class.current-user]="comment.userId === 1">
       <div class="comment-header">
         <img src="assets/images/default-avatar.png" alt="User avatar" width="40">
         <div class="comment-meta">
           <div class="user">User #{{comment.userId}}</div>
-          <div class="comment-body">
+
+          <!-- Display content or edit form -->
+          <div *ngIf="!editingStates[comment.id]" class="comment-body">
             {{comment.content}}
           </div>
+
+          <div *ngIf="editingStates[comment.id]" class="edit-form">
+            <textarea [(ngModel)]="editContents[comment.id]"
+                      class="edit-textarea"
+                      rows="3"></textarea>
+            <div class="edit-actions">
+              <button (click)="saveEdit(comment.id)" class="save-btn">Save</button>
+              <button (click)="cancelEdit(comment.id)" class="cancel-btn">Cancel</button>
+            </div>
+          </div>
+
           <div class="date">{{comment.createdAt | date:'medium'}}</div>
         </div>
       </div>
 
+      <!-- Action buttons (only shown for current user's comments) -->
+      <div *ngIf="comment.userId === 1" class="comment-actions">
+        <button *ngIf="!editingStates[comment.id]"
+                class="edit-btn"
+                (click)="startEdit(comment)"
+                aria-label="Edit comment">
+          <i class="fas fa-edit"></i>
+        </button>
+        <button class="delete-btn"
+                (click)="deleteComment(comment.id)"
+                aria-label="Delete comment">
+          <i class="fas fa-trash"></i>
+        </button>
+      </div>
     </div>
   </div>
 </div>
