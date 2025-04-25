@@ -1,15 +1,17 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Product } from '../models/product';
-import {map, Observable, of} from 'rxjs';
+import {forkJoin, map, Observable, of} from 'rxjs';
 import { environment } from "../environments/environment";
 import {Category} from "../models/category";
+import {TopProductDTO} from "../models/TopProductDTO";
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProductService {
   private apiUrl = 'http://localhost:8084/api/products'; // Update the API URL as needed
+  private apiUrlReservation = 'http://localhost:8086/api/reservations'; // Update the API URL as needed
 
   constructor(private http: HttpClient) {
   }
@@ -46,4 +48,37 @@ export class ProductService {
       )
     );
   }
+
+  // Get top reserved products (from reservation service)
+  getTopReservedProducts(): Observable<{productId: number, reservationCount: number}[]> {
+    return this.http.get<{productId: number, reservationCount: number}[]>(
+      `${this.apiUrlReservation}/top-products`
+    );
+  }
+
+  // Get combined top products with details
+  getTopProductsWithDetails(limit: number = 5): Observable<(Product & {reservationCount: number})[]> {
+    return forkJoin({
+      topProducts: this.getTopReservedProducts(),
+      allProducts: this.getAllProducts()
+    }).pipe(
+      map(({topProducts, allProducts}) => {
+        // Create product map for quick lookup
+        const productMap = new Map<number, Product>();
+        allProducts.forEach(product => {
+          if (product.id) productMap.set(product.id, product);
+        });
+
+        // Combine data and limit results
+        return topProducts
+          .map(item => ({
+            ...productMap.get(item.productId),
+            reservationCount: item.reservationCount
+          }))
+          .filter(product => product.id) // Filter out undefined products
+          .slice(0, limit); // Get top N products
+      })
+    );
+  }
 }
+

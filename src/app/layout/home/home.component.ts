@@ -2,9 +2,14 @@
 import { Component, OnInit } from '@angular/core';
 import { CategoryService } from '../../services/category.service';
 import { Category } from '../../models/category';
-import {NgForOf, NgStyle} from "@angular/common";
+import {CurrencyPipe, NgForOf, NgIf, NgStyle} from "@angular/common";
 import {RouterLink} from "@angular/router";
 import {SlickCarouselModule} from "ngx-slick-carousel";
+import {TopProductDTO} from "../../models/TopProductDTO";
+import { HttpClient } from '@angular/common/http';
+import {Product} from "../../models/product";
+import {ProductService} from "../../services/product.service";
+
 
 @Component({
   selector: 'app-home',
@@ -14,13 +19,19 @@ import {SlickCarouselModule} from "ngx-slick-carousel";
     NgStyle,
     NgForOf,
     RouterLink,
-    SlickCarouselModule
+    SlickCarouselModule,
+    NgIf,
+    CurrencyPipe
   ],
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit {
   randomCategories: Category[] = [];
   categories: any[] = [];
+  topProducts: (Product & {reservationCount: number})[] = [];
+  isLoading = true;
+  error: string | null = null;
+
 
   slideConfig = {
     slidesToShow: 4,
@@ -51,10 +62,12 @@ export class HomeComponent implements OnInit {
       }
     ]
   };
-  constructor(private categoryService: CategoryService) {}
+  constructor(private categoryService: CategoryService , private productService: ProductService) {}
 
   ngOnInit(): void {
     this.loadCategories();
+    this.loadTopProducts();
+
     this.categoryService.getAllCategories().subscribe({
       next: (categories: Category[]) => {
         const fullUrlCategories = categories.map(cat => ({
@@ -85,5 +98,35 @@ export class HomeComponent implements OnInit {
       },
       error: (err) => console.error('Error loading categories', err)
     });
+  }
+
+  loadTopProducts(): void {
+    this.isLoading = true;
+    this.error = null;
+
+    this.productService.getTopProductsWithDetails(8).subscribe({
+      next: (products: (Product & { reservationCount: number; })[]) => {
+        this.topProducts = products;
+        this.isLoading = false;
+      },
+      error: (err: any) => {
+        console.error('Failed to load top products:', err);
+        this.error = 'Could not load popular products. Please try again later.';
+        this.isLoading = false;
+      }
+    });
+  }
+  getProductImage(product: Product): string {
+    if (!product?.productImage) {
+      return 'assets/images/default-product.png'; // Fallback image
+    }
+
+    // If image already has full URL, return as-is
+    if (product.productImage.startsWith('http')) {
+      return product.productImage;
+    }
+
+    // Prepend base URL for relative paths
+    return `http://localhost:8084${product.productImage}`;
   }
 }
