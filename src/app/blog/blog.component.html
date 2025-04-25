@@ -22,6 +22,9 @@
       </button>
     </div>
   </div>
+  <div class="blog-page-title">
+    <h3>Featured Blogs</h3>
+  </div>
 
   <!-- Featured blogs -->
   <div class="blog-highlight" *ngIf="featuredBlogs.length > 0">
@@ -69,7 +72,7 @@
 
     <!-- Blog suggestions list (remaining featured blogs) -->
     <div class="blog-suggestion-list" *ngIf="featuredBlogs.length > 1">
-      <div class="blog-suggestion suggestion-item" *ngFor="let blog of featuredBlogs.slice(1)">
+      <div class="blog-suggestion suggestion-item" *ngFor="let blog of featuredBlogs.slice(1, 4)">
         <div class="suggestion-content">
           <div class="suggestion-image">
             <a [routerLink]="['/blogpost', blog.idBlog]">
@@ -108,7 +111,7 @@
         </div>
       </div>
     </div>
-  </div>
+  </div> <!-- This is the missing closing div for blog-highlight -->
 
   <!-- Latest articles -->
   <div class="blog-page-title">

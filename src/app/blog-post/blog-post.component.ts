@@ -1,9 +1,9 @@
-// blog-post.component.ts
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BlogService } from '../services/blog.service';
 import { CommonModule } from '@angular/common';
-import {CommentComponent} from "../comment/comment.component";
+import { CommentComponent } from "../comment/comment.component";
+import { CommentService } from "../services/comment.service";
 
 @Component({
   selector: 'app-blog-detail',
@@ -12,17 +12,19 @@ import {CommentComponent} from "../comment/comment.component";
   imports: [CommonModule, CommentComponent],
   styleUrls: ['./blog-post.component.scss']
 })
-export class BlogPostComponent implements OnInit {
+export class BlogPostComponent implements OnInit, AfterViewInit {
   blogPost: any = null;
   isLoading = true;
   error: string | null = null;
   defaultTags = ['Blog', 'Tour', 'Holidays', 'Ticket Booking', 'Deep learning'];
+  blogId: number = -1;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private blogService: BlogService
-  ) { }
+    private blogService: BlogService,
+    private commentService: CommentService
+  ) {}
 
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
@@ -36,12 +38,10 @@ export class BlogPostComponent implements OnInit {
     });
   }
 
-  // In blog-post.component.ts
   loadBlogDetails(id: string): void {
     this.isLoading = true;
     this.error = null;
 
-    // Convert string ID to number
     const numericId = Number(id);
     if (isNaN(numericId)) {
       this.error = 'Invalid blog ID';
@@ -51,14 +51,13 @@ export class BlogPostComponent implements OnInit {
 
     this.blogService.getBlogById(numericId).subscribe({
       next: (data) => {
-        // Fix image path
         if (data.image) {
           data.image = 'http://localhost:8087' + data.image;
         }
 
         this.blogPost = data;
+        this.blogId = data.idBlog;  // Save blog ID for comment component
 
-        // Process the blog content if needed
         if (this.blogPost.content) {
           this.blogPost.processedContent = this.processContent(this.blogPost.content);
         }
@@ -74,12 +73,10 @@ export class BlogPostComponent implements OnInit {
   }
 
   processContent(content: string): any {
-    // If content is HTML, return as is
     if (content.includes('<')) {
       return content;
     }
 
-    // Process plain text content to paragraphs and lists
     return {
       paragraphs: this.extractParagraphs(content),
       bulletPoints: this.extractBulletPoints(content)
@@ -107,7 +104,6 @@ export class BlogPostComponent implements OnInit {
     return `${minutes} min read`;
   }
 
-  // Social sharing methods
   getFacebookShareUrl(): string {
     const url = encodeURIComponent(window.location.href);
     return `https://www.facebook.com/sharer/sharer.php?u=${url}`;
@@ -121,5 +117,9 @@ export class BlogPostComponent implements OnInit {
 
   getInstagramShareUrl(): string {
     return '#';
+  }
+
+  ngAfterViewInit() {
+    console.log('BlogPost ID being passed to comments:', this.blogId);
   }
 }

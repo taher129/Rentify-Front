@@ -32,62 +32,39 @@
 
   <div class="blog-detail-content">
     <div class="blog-detail-content-text">
-      <div [innerHTML]="blogPost.content"></div>
-    </div>
-  </div>
+      <!-- Safe content rendering -->
+      <div *ngIf="blogPost?.content">
+        <!-- Handle both HTML and processed content -->
+        <div *ngIf="blogPost.content.includes('<')" [innerHTML]="blogPost.content"></div>
 
-  <!-- Comments section -->
-  <div class="blog-comments" *ngIf="blogPost.comments">
-    <h3>Comments ({{ blogPost.comments.length }})</h3>
-    <div class="comment" *ngFor="let comment of blogPost.comments">
-      <!-- Display comment content here -->
-    </div>
-  </div>
-  <div class="blog-detail-introduction">
-    <div class="text-container">
-      <div class="initial-letter">P</div>
-      <div class="content">
-        erceived voice share led him to widen noisy young. At weddings believed laughing although the material does the exercise
-        of. Warrant private blushes removed an in equally totally if. Delivered dejection necessary objection do Mr prevailed. Mr
-        feeling does chiefly cordial in do. Water timed folly right aware if oh truth. Up attempt offered ye civilly so sitting to. Her
-        new gets living within Elinor joy. Her rapturous suffering was concealed. Demesne far-hearted suppose venture excited see had
-        has. Dependent on so extremely delivered by. Yet no jokes worse her why.
+        <div *ngIf="!blogPost.content.includes('<')">
+          <!-- Processed paragraphs -->
+          <p *ngFor="let paragraph of (blogPost.processedContent?.paragraphs || [])">
+            {{paragraph}}
+          </p>
+
+          <!-- Processed bullet points -->
+          <ul *ngIf="blogPost.processedContent?.bulletPoints?.length">
+            <li *ngFor="let point of blogPost.processedContent.bulletPoints">{{point}}</li>
+          </ul>
+        </div>
       </div>
+
+
     </div>
   </div>
-  <!-- beach-blog.component.html -->
-  <div class="blog-detail-content">
-    <div class="blog-detail-content-text">
-      <p>{{ blogPost.content.paragraphs[0] }}</p>
 
-      <ul>
-        <li *ngFor="let point of blogPost.content.bulletPoints">{{ point }}</li>
-      </ul>
 
-      <p>{{ blogPost.content.paragraphs[1] }}</p>
+  <!-- Add null check -->
 
-      <p>{{ blogPost.content.paragraphs[2] }}</p>
-    </div>
+  <app-comment [blogId]="blogId"></app-comment>
 
-    <img src="/assets/images/blog/blog1.jpg" alt="Woman sitting on beach with colorful decorations">
-  </div>
-  <div class="blog-detail-conclusion">
-    <p>
-      Concluded boy perpetual old supposing. <span class="emphasis">But discretion frequently sir she instruments unaffected admiration everything.</span>
-      Farther-related bed and passage comfort civilly. Dashwoods see frankness objection abilities. As hastened oh produced prospect
-      formerly up am. Placing forming nay looking old married few has. Margaret disposed of.
-    </p>
-    <p>
-      Delivered dejection necessary objection do Mr prevailed. Mr feeling does chiefly cordial in do. Water timed folly right aware if oh
-      truth. Up attempt offered ye civilly so sitting to. Her new gets living within Elinor joy. Her rapturous suffering was concealed.
-      Demesne far-hearted suppose venture excited see had has. Dependent on so extremely delivered by. Yet no jokes worse her why.
-    </p>
-    <p>
-      As hastened oh produced prospect formerly up am. Placing forming nay looking old married few has. Margaret disposed.
-    </p>
-  </div>
 
-  <app-comment [blogPost]="blogPost"></app-comment>
+
+
+
+
+
 
 
   <div class="blog-detail-user">

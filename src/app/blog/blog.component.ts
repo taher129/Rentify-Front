@@ -6,8 +6,6 @@ import { BlogService } from '../services/blog.service';
 import { Blog } from '../models/blog';
 import { Router } from '@angular/router';
 
-
-
 @Component({
   selector: 'app-blog',
   standalone: true,
@@ -16,7 +14,6 @@ import { Router } from '@angular/router';
   styleUrls: ['./blog.component.css']
 })
 export class BlogComponent implements OnInit {
-
   blogs: Blog[] = [];
   featuredBlogs: Blog[] = [];
   latestBlogs: Blog[] = [];
@@ -36,26 +33,25 @@ export class BlogComponent implements OnInit {
   loadBlogs(): void {
     this.blogService.getAllBlogs().subscribe({
       next: (blogs) => {
-        // Fix image paths just like in loadCategories
+        // Fix image paths
         this.blogs = blogs.map(blog => {
           blog.image = 'http://localhost:8087' + blog.image;
           return blog;
         });
 
-        this.filteredBlogs = this.blogs;
+        this.filteredBlogs = [...this.blogs];
 
         // Sort by view count for featured blogs (most viewed)
-        const sortedByViews = [...this.blogs].sort((a, b) => b.viewCount - a.viewCount);
-        this.featuredBlogs = sortedByViews.slice(0, 3);
+        this.featuredBlogs = [...this.blogs]
+          .sort((a, b) => b.viewCount - a.viewCount)
+          .slice(0, 4); // Get top 4 most viewed (1 featured + 3 suggestions)
 
-        // Sort by date for latest blogs (most recent)
-        const sortedByDate = [...this.blogs].sort((a, b) =>
-          new Date(b.date).getTime() - new Date(a.date).getTime()
-        );
-        this.latestBlogs = sortedByDate.slice(3);
+        // Sort by date for latest blogs (newest first)
+        this.latestBlogs = [...this.blogs]
+          .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
-        // Create rows of 3 blogs each
-        this.blogRows = this.chunkArray(this.latestBlogs, 3);
+        // Create rows of 3 blogs each for display
+        this.updateBlogRows();
       },
       error: (error) => {
         console.error('Error loading blogs:', error);
@@ -63,6 +59,13 @@ export class BlogComponent implements OnInit {
     });
   }
 
+  updateBlogRows(): void {
+    // Use filteredBlogs for search functionality, but sort by date
+    const sortedFiltered = [...this.filteredBlogs]
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+    this.blogRows = this.chunkArray(sortedFiltered, 3);
+  }
 
   // Helper function to chunk array into rows
   chunkArray(array: Blog[], size: number): Blog[][] {
@@ -75,19 +78,17 @@ export class BlogComponent implements OnInit {
 
   onSearch(): void {
     if (!this.searchQuery.trim()) {
-      this.filteredBlogs = this.blogs;
-      return;
+      this.filteredBlogs = [...this.blogs];
+    } else {
+      const query = this.searchQuery.toLowerCase();
+      this.filteredBlogs = this.blogs.filter(blog =>
+        blog.title.toLowerCase().includes(query) ||
+        (blog.description && blog.description.toLowerCase().includes(query)) ||
+        blog.content.toLowerCase().includes(query)
+      );
     }
 
-    const query = this.searchQuery.toLowerCase();
-    this.filteredBlogs = this.blogs.filter(blog =>
-      blog.title.toLowerCase().includes(query) ||
-      (blog.description && blog.description.toLowerCase().includes(query)) ||
-      blog.content.toLowerCase().includes(query)
-    );
+    // Update rows with sorted and filtered results
+    this.updateBlogRows();
   }
-
-
-
-
 }

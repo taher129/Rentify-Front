@@ -1,73 +1,49 @@
+// comment.component.ts
 import { Component, Input, OnInit } from '@angular/core';
-import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
-import {DatePipe, NgIf} from "@angular/common";
-
-export interface Comment {
-  id: number;
-  content: string;
-  userId: number;
-  createdAt: Date;
-}
+import { CommentService } from '../services/comment.service';
+import { BlogComment } from '../models/BlogComment';
+import {DatePipe, JsonPipe, NgForOf, NgIf} from "@angular/common";
 
 @Component({
   selector: 'app-comment',
   templateUrl: './comment.component.html',
   standalone: true,
   imports: [
+    NgForOf,
     NgIf,
-    ReactiveFormsModule,
-    DatePipe
+    DatePipe,
+    JsonPipe
   ],
   styleUrls: ['./comment.component.css']
 })
 export class CommentComponent implements OnInit {
-  @Input() blogPost: any;
-  commentForm: FormGroup;
+  @Input() blogId!: number;  // Blog ID input to fetch comments
+  comments: BlogComment[] = [];
+  isLoading = false;
+  error: string | null = null;
 
-  // Simulating a logged-in user ID (in a real app, you would get this from authentication service)
-  currentUserId = 123;
-
-  constructor(private fb: FormBuilder) {
-    this.commentForm = this.fb.group({
-      content: ['', [Validators.required, Validators.minLength(2)]]
-    });
-  }
+  constructor(private commentService: CommentService) {}
 
   ngOnInit(): void {
-    // Initialize comments array if it doesn't exist
-    if (!this.blogPost.comments) {
-      this.blogPost.comments = [];
+    if (this.blogId) {
+      this.loadComments();
     }
   }
 
-  submitComment(): void {
-    if (this.commentForm.valid) {
-      // Create a new comment
-      const newComment: Comment = {
-        id: this.generateCommentId(),
-        content: this.commentForm.value.content,
-        userId: this.currentUserId,
-        createdAt: new Date()
-      };
+  loadComments(): void {
+    this.isLoading = true;
+    this.error = null;
 
-      // Add the comment to the blog post
-      this.blogPost.comments.unshift(newComment);
-
-      // Reset the form
-      this.commentForm.reset();
-
-      // In a real application, you would save this to your backend:
-      // this.commentService.addComment(this.blogPost.id, newComment).subscribe(response => {
-      //   console.log('Comment added successfully', response);
-      // });
-    }
-  }
-
-  private generateCommentId(): number {
-    // In a real app, the backend would generate IDs
-    // This is just a simple client-side implementation for demo purposes
-    return this.blogPost.comments.length > 0
-      ? Math.max(...this.blogPost.comments.map((c: Comment) => c.id)) + 1
-      : 1;
+    this.commentService.getCommentsByBlogId(this.blogId).subscribe({
+      next: (data: BlogComment[]) => {
+        this.comments = data;
+        this.isLoading = false;
+      },
+      error: (err) => {
+        this.error = 'Failed to load comments';
+        this.isLoading = false;
+        console.error(err);
+      }
+    });
   }
 }

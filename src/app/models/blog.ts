@@ -1,4 +1,4 @@
-import { Comment } from './Comment';
+import { BlogComment } from './BlogComment';
 
 export interface Blog {
   idBlog: number;
@@ -10,6 +10,6 @@ export interface Blog {
   date: Date;
   likeCount: number;
   viewCount: number;
-  comments: Comment[];
+  comments: BlogComment[];
 }
 export type BlogFormData = Omit<Blog, 'idBlog' | 'comments' | 'date' | 'likeCount' | 'viewCount'>;
