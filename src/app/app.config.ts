@@ -5,9 +5,9 @@ import { routes } from './app.routes';
 import { provideClientHydration } from '@angular/platform-browser';
 import {HTTP_INTERCEPTORS, provideHttpClient, withFetch} from "@angular/common/http";
 import {ReactiveFormsModule} from "@angular/forms";
-import {JwtInterceptor} from "./Modules/userManagement/FrontOFFICE/interceptors/jwt.interceptor";
 import {provideAnimationsAsync} from "@angular/platform-browser/animations/async";
-import {AuthGuard} from "./Modules/userManagement/FrontOFFICE/auth/guards/auth.guard";
+import {AuthGuard} from "./userManagement/auth/guards/auth.guard";
+import {JwtInterceptor} from "./userManagement/interceptors/jwt.interceptor";
 
 
 export const appConfig: ApplicationConfig = {

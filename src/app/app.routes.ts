@@ -9,33 +9,35 @@ import { BecomeALenderComponent } from './pages/become-a-lender/become-a-lender.
 import { InsuranceComponent } from './pages/insurance/insurance.component';
 import { SustainabilityComponent } from './pages/sustainability/sustainability.component';
 import { HomeComponent } from './layout/home/home.component';
-import {SignupComponent} from "./Modules/userManagement/FrontOFFICE/auth/signup/signup.component";
-import {LoginComponent} from "./Modules/userManagement/FrontOFFICE/auth/login/login.component";
-import {DashboardComponent} from "./Modules/userManagement/FrontOFFICE/dashboard/dashboard.component";
-import {VerifyEmailComponent} from "./Modules/userManagement/FrontOFFICE/auth/verify-email/verify-email.component";
+import {SignupComponent} from "./userManagement/auth/signup/signup.component";
+import {LoginComponent} from "./userManagement/auth/login/login.component";
+import {DashboardComponent} from "./userManagement/dashboard/dashboard.component";
+import {VerifyEmailComponent} from "./userManagement/auth/verify-email/verify-email.component";
+import {VerifyOtpComponent} from "./userManagement/auth/verify-otp/verify-otp.component";
+import {ProfileComponent} from "./userManagement/profile/profile.component";
+import {AuthGuard} from "./userManagement/auth/guards/auth.guard";
+import {VisitorHomeComponent} from "./visitor-home/visitor-home.component";
 import {
-  ResetPasswordRequestComponent
-} from "./Modules/userManagement/FrontOFFICE/auth/reset-password-request/reset-password-request.component";
-import {VerifyOtpComponent} from "./Modules/userManagement/FrontOFFICE/auth/verify-otp/verify-otp.component";
-import {ProfileComponent} from "./Modules/userManagement/FrontOFFICE/profile/profile.component";
-import {
-  ResetPasswordComponent
-} from "./Modules/userManagement/FrontOFFICE/auth/reset-password/reset-password.component";
-import {AuthGuard} from "./Modules/userManagement/FrontOFFICE/auth/guards/auth.guard";
+  Oauth2RedirectComponent
+} from "./userManagement/auth/oauth2-redirect/oauth2-redirect.component";
+
 
 export const routes: Routes = [
   // Page d'accueil
-  { path: '', redirectTo: '/login', pathMatch: 'full'  ,data: { hideNavbar: true }},  // Redirect to login if no path is matched
+  { path: '', redirectTo: 'visit', pathMatch: 'full' },
+  { path: 'visit', component: VisitorHomeComponent },
 
   // Pages principales
-  { path: 'about', component: AboutComponent },
-  { path: 'contact', component: ContactUsComponent },
-  { path: 'store-locator', component: StoreLocatorComponent },
-  { path: 'faq', component: FaqComponent },
-  { path: 'coming-soon', component: ComingSoonComponent },
-  { path: 'become-a-lender', component: BecomeALenderComponent },
-  { path: 'insurance', component: InsuranceComponent },
-  { path: 'sustainability', component: SustainabilityComponent },
+  { path: 'about', component: AboutComponent, canActivate: [AuthGuard] },
+  { path: 'contact', component: ContactUsComponent , canActivate: [AuthGuard]},
+  { path: 'store-locator', component: StoreLocatorComponent , canActivate: [AuthGuard]},
+  { path: 'faq', component: FaqComponent, canActivate: [AuthGuard] },
+  { path: 'coming-soon', component: ComingSoonComponent, canActivate: [AuthGuard] },
+  { path: 'become-a-lender', component: BecomeALenderComponent , canActivate: [AuthGuard]},
+  { path: 'insurance', component: InsuranceComponent , canActivate: [AuthGuard]},
+  { path: 'sustainability', component: SustainabilityComponent, canActivate: [AuthGuard] },
+  { path: 'verify-otp', component: VerifyOtpComponent },
+
 
   // user pages
 
@@ -44,13 +46,12 @@ export const routes: Routes = [
   { path: 'home', component: HomeComponent, canActivate: [AuthGuard] },
   { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
   { path: 'verify-email', component: VerifyEmailComponent,data: { hideNavbar: true } },
-  { path: 'reset-password-request', component: ResetPasswordRequestComponent ,data: { hideNavbar: true }  },
   { path: 'verify-otp', component: VerifyOtpComponent ,data: { hideNavbar: true }  },
-  { path: 'reset-password', component: ResetPasswordComponent ,data: { hideNavbar: true }  },
   { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard] },
   { path: 'profile/:userId', component: ProfileComponent, canActivate: [AuthGuard]},
 
-  { path: '**', redirectTo: '/login' }, // Redirect to login if path does not exist
+  { path: '**', redirectTo: 'visit' },
+  { path: 'oauth2-redirect', component: Oauth2RedirectComponent },
 
   // Page de gestion des erreurs 404
   { path: '404', component: NotFoundComponent },

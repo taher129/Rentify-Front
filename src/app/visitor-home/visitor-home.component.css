@@ -1,0 +1,7 @@
+:host ::ng-deep app-navbar,
+:host ::ng-deep button,
+:host ::ng-deep a {
+  pointer-events: none;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
