@@ -1,5 +1,5 @@
 import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
-import { isPlatformBrowser } from '@angular/common';  // Importation de isPlatformBrowser
+import {isPlatformBrowser, NgIf} from '@angular/common';  // Importation de isPlatformBrowser
 import {NavigationEnd, Router, RouterOutlet} from '@angular/router';
 import { NavbarComponent } from "./layout/navbar/navbar.component";
 import { FooterComponent } from "./layout/footer/footer.component";
@@ -20,7 +20,9 @@ import {ChatBubbleComponent} from "./reservation-service/chat-bubble/chat-bubble
     RouterOutlet,
     FooterComponent,
     HttpClientModule,
-    ChatBubbleComponent
+    ChatBubbleComponent,
+    NavbarComponent,
+    NgIf
   ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']

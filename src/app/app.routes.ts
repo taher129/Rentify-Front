@@ -45,18 +45,18 @@ import {EditBlogComponent} from "./editblog/editblog.component";
 
 export const routes: Routes = [
    // Page d'accueil
-   { path: '', component: HomeComponent },
-   { path: 'home', component: HomeComponent },
+  { path: '', redirectTo: 'visit', pathMatch: 'full' },
+  { path: 'visit', component: VisitorHomeComponent },
 
    // Pages principales
-   { path: 'about', component: AboutComponent },
-   { path: 'contact', component: ContactUsComponent },
-   { path: 'store-locator', component: StoreLocatorComponent },
-   { path: 'faq', component: FaqComponent },
-   { path: 'coming-soon', component: ComingSoonComponent },
-   { path: 'become-a-lender', component: BecomeALenderComponent },
-   { path: 'insurance', component: InsuranceComponent },
-   { path: 'sustainability', component: SustainabilityComponent },
+   { path: 'about', component: AboutComponent, canActivate: [AuthGuard] },
+   { path: 'contact', component: ContactUsComponent, canActivate: [AuthGuard] },
+   { path: 'store-locator', component: StoreLocatorComponent, canActivate: [AuthGuard] },
+   { path: 'faq', component: FaqComponent, canActivate: [AuthGuard] },
+   { path: 'coming-soon', component: ComingSoonComponent , canActivate: [AuthGuard] },
+   { path: 'become-a-lender', component: BecomeALenderComponent , canActivate: [AuthGuard] },
+   { path: 'insurance', component: InsuranceComponent, canActivate: [AuthGuard] },
+   { path: 'sustainability', component: SustainabilityComponent , canActivate: [AuthGuard] },
 
   //Product et categories
   { path: 'products/category/:categoryId', component: ProductListComponent },
@@ -133,8 +133,6 @@ export const routes: Routes = [
   // Page de gestion des erreurs 404
   { path: '404', component: NotFoundComponent },
 
-  // Redirection vers la page d'accueil par défaut
-  { path: '**', redirectTo: '/404', pathMatch: 'full' },
   // Pages principales
   { path: 'about', component: AboutComponent, canActivate: [AuthGuard] },
   { path: 'contact', component: ContactUsComponent , canActivate: [AuthGuard]},
@@ -160,9 +158,6 @@ export const routes: Routes = [
 
   { path: '**', redirectTo: 'visit' },
   { path: 'oauth2-redirect', component: Oauth2RedirectComponent },
-
-  // Page de gestion des erreurs 404
-  { path: '404', component: NotFoundComponent },
 
 
 ];
