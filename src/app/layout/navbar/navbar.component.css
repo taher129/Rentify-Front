@@ -90,3 +90,13 @@
   justify-content: center;
   font-weight: bold;
 }
+/* Add these styles for better dropdown appearance */
+.nav-item.dropdown:hover .dropdown-menu {
+  display: block;
+}
+
+.dropdown-menu {
+  max-height: 70vh;
+  overflow-y: auto;
+}
+

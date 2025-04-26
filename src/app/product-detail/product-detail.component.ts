@@ -1,11 +1,12 @@
-import { Component, OnInit } from '@angular/core';
-import {ActivatedRoute, RouterLink} from '@angular/router';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ProductService } from '../services/product.service';
 import { Product } from '../models/product';
-import {CurrencyPipe, NgIf} from "@angular/common";
+import { CurrencyPipe, NgIf } from "@angular/common";
 import { Address } from '../models/address';
-import {LeafletComponent} from "../leaflet/leaflet.component";
-
+import { LeafletComponent } from "../leaflet/leaflet.component";
+import { Subject, takeUntil } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-product-detail',
@@ -19,7 +20,7 @@ import {LeafletComponent} from "../leaflet/leaflet.component";
   ],
   styleUrls: ['./product-detail.component.css']
 })
-export class ProductDetailComponent implements OnInit {
+export class ProductDetailComponent implements OnInit, OnDestroy {
   product!: Product;
   address: Address = {
     city: 'gabes',
@@ -27,20 +28,30 @@ export class ProductDetailComponent implements OnInit {
     country: 'Tunisie',
     zipCode: '6010'
   };
+  private destroy$ = new Subject<void>();
+
   constructor(
     private route: ActivatedRoute,
-    private productService: ProductService
+    private productService: ProductService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
-    const productId = Number(this.route.snapshot.paramMap.get('id'));
     console.log('Mocked address:', this.address);
-    this.productService.getProductById(productId).subscribe({
+
+    this.route.paramMap.pipe(
+      takeUntil(this.destroy$),
+      switchMap(params => {
+        const productId = Number(params.get('id'));
+        return this.productService.getProductById(productId);
+      })
+    ).subscribe({
       next: (data) => {
         if (data.productImage && !data.productImage.startsWith('http')) {
           data.productImage = 'http://localhost:8084' + data.productImage;
         }
         this.product = data;
+        this.cdr.detectChanges();
       },
       error: (err) => {
         console.error('Error fetching product:', err);
@@ -48,4 +59,8 @@ export class ProductDetailComponent implements OnInit {
     });
   }
 
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 }

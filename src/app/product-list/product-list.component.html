@@ -11,7 +11,7 @@
 
           <!-- Footer section to align price + button -->
           <div class="card-footer mt-auto p-0 pt-1 border-0">
-            <p class="card-text price mb-2">Price: {{ product.price | currency }}</p>
+            <p class="card-text price mb-2">Price: {{ product.price | currency:'TND':'symbol':'1.3-3' }}</p>
             <a href="#" class="btn btn-primary w-100">Book Now</a>
           </div>
         </div>

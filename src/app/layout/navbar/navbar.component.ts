@@ -81,6 +81,7 @@ export class NavbarComponent {
     this.isProfileOpen = false;
   }
   ngOnInit(): void {
+    this.loadCategories();
     this.categoryService.getAllCategories().subscribe({
       next: (data: Category[]) => (this.categories = data),
       error: (err: any) => console.error('Failed to load categories', err),
@@ -93,6 +94,7 @@ export class NavbarComponent {
       this.cdr.detectChanges();
     });
   }
+
   onCategoryChange(event: Event): void {
     const value = (event.target as HTMLSelectElement).value;
     this.selectedCategoryId = value !== '' ? parseInt(value, 10) : null;
@@ -147,5 +149,13 @@ export class NavbarComponent {
       this.cdr.detectChanges(); // Force change detection
     }
   }
-
+  loadCategories(): void {
+    this.categoryService.getAllCategories().subscribe({
+      next: (data: Category[]) => {
+        this.categories = data;
+        this.cdr.detectChanges();
+      },
+      error: (err: any) => console.error('Failed to load categories', err),
+    });
+  }
 }

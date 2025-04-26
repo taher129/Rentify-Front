@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ProductService } from '../services/product.service';
 import { Product } from '../models/product';
-import {ActivatedRoute, RouterLink} from '@angular/router';
-import {CurrencyPipe, NgForOf} from '@angular/common';
-import {environment} from "../environments/environment";
+import { ActivatedRoute, RouterLink } from '@angular/router';
+import { CurrencyPipe, NgForOf } from '@angular/common';
+import {Subject, takeUntil, tap} from 'rxjs';
+import { distinctUntilChanged } from 'rxjs/operators';
 
 @Component({
   selector: 'app-product-list',
@@ -16,9 +17,9 @@ import {environment} from "../environments/environment";
   ],
   styleUrls: ['./product-list.component.css']
 })
-export class ProductListComponent implements OnInit {
+export class ProductListComponent implements OnInit, OnDestroy {
   products: Product[] = [];
-  categoryId: number | undefined;
+  private destroy$ = new Subject<void>();
 
   constructor(
     private productService: ProductService,
@@ -26,45 +27,40 @@ export class ProductListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const categoryIdParam = this.route.snapshot.paramMap.get('categoryId');
-    this.categoryId = categoryIdParam ? Number(categoryIdParam) : undefined;
-
-    if (this.categoryId) {
-      this.loadProductsByCategory();
-    } else {
-      this.loadAllProducts();
-    }
+    this.route.paramMap.pipe(
+      takeUntil(this.destroy$),
+      distinctUntilChanged(),
+      tap(params => {
+        const categoryId = params.get('categoryId');
+        if (categoryId) {
+          this.loadProductsByCategory(+categoryId);
+        } else {
+          this.loadAllProducts();
+        }
+      })
+    ).subscribe();
   }
 
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 
-
-  loadProductsByCategory(): void {
-    if (this.categoryId) {
-      this.productService.getProductsByCategory(this.categoryId).subscribe({
-        next: (data: Product[]) => {
-          this.products = data.map(product => {
-            if (product.productImage && !product.productImage.startsWith('http')) {
-              product.productImage = 'http://localhost:8084' + product.productImage;
-            }
-            return product;
-          });
-        },
-        error: (error) => {
-          console.error('Error loading products by category', error);
-        }
-      });
-    }
+  loadProductsByCategory(categoryId: number): void {
+    this.productService.getProductsByCategory(categoryId).subscribe({
+      next: (data: Product[]) => {
+        this.products = this.processProductImages(data);
+      },
+      error: (error) => {
+        console.error('Error loading products by category', error);
+      }
+    });
   }
 
   loadAllProducts(): void {
     this.productService.getAllProducts().subscribe({
       next: (data: Product[]) => {
-        this.products = data.map(product => {
-          if (product.productImage && !product.productImage.startsWith('http')) {
-            product.productImage = 'http://localhost:8084' + product.productImage;
-          }
-          return product;
-        });
+        this.products = this.processProductImages(data);
       },
       error: (error) => {
         console.error('Error loading all products', error);
@@ -72,6 +68,12 @@ export class ProductListComponent implements OnInit {
     });
   }
 
-
-
+  private processProductImages(products: Product[]): Product[] {
+    return products.map(product => {
+      if (product.productImage && !product.productImage.startsWith('http')) {
+        product.productImage = 'http://localhost:8084' + product.productImage;
+      }
+      return product;
+    });
+  }
 }
