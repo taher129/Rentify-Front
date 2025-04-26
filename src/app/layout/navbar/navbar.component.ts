@@ -3,12 +3,13 @@ import { Product } from "../../models/product";
 import { Category } from "../../models/category";
 import { CategoryService } from "../../services/category.service";
 import { ProductService } from "../../services/product.service";
-import { RouterLink } from "@angular/router";
+import {NavigationEnd, Router, RouterLink} from "@angular/router";
 import {CurrencyPipe, NgForOf, NgIf} from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from '@angular/router';
 import {NavChatContainerComponent} from "../../reservation-service/nav-chat-container/nav-chat-container.component";
 import {MessageService} from "../../services/message.service";
+import {AuthService} from "../../userManagement/services/auth.service";
 
 
 @Component({
@@ -18,17 +19,21 @@ import {MessageService} from "../../services/message.service";
     RouterLink,
     NgForOf,
     FormsModule,
-    CurrencyPipe, RouterModule, NavChatContainerComponent, NgIf
+    CurrencyPipe,
+    RouterModule,
+    NavChatContainerComponent,
+    NgIf
   ],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.css'
 })
 export class NavbarComponent {
+  isProfilePage: boolean = false;
+  isLoggedIn = false;
   isChatOpen: boolean = false;
   isNotificationsOpen: boolean = false;
   isProfileOpen: boolean = false;
   unreadMessages: number = 0;
-
   products: Product[] = [];
   selectedCategoryId: number | null = null;
   searchQuery: string = '';
@@ -38,11 +43,11 @@ export class NavbarComponent {
     private productService: ProductService,
     private categoryService: CategoryService,
     private messageService: MessageService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private authService: AuthService,
+    private router: Router
   ) {
   }
-
-
 
   toggleChat(event: Event): void {
     event.stopPropagation();
@@ -80,7 +85,21 @@ export class NavbarComponent {
     this.isNotificationsOpen = false;
     this.isProfileOpen = false;
   }
+
   ngOnInit(): void {
+    this.isLoggedIn = this.authService.isLoggedIn();
+    this.authService.authStatusChanged.subscribe(
+      (loggedIn: boolean) => {
+        this.isLoggedIn = loggedIn;
+      }
+    );
+    // Subscribe to NavigationEnd event to handle URL changes
+    this.router.events.subscribe(event => {
+      if (event instanceof NavigationEnd) {
+        // Check if the current route is the profile page
+        this.isProfilePage = event.url.includes('profile');
+      }
+    });
     this.loadCategories();
     this.categoryService.getAllCategories().subscribe({
       next: (data: Category[]) => (this.categories = data),
@@ -93,6 +112,11 @@ export class NavbarComponent {
       this.unreadMessages = count;
       this.cdr.detectChanges();
     });
+  }
+
+  logout(): void {
+    this.authService.logout();
+    this.router.navigate(['/login']);
   }
 
   onCategoryChange(event: Event): void {
@@ -149,6 +173,7 @@ export class NavbarComponent {
       this.cdr.detectChanges(); // Force change detection
     }
   }
+
   loadCategories(): void {
     this.categoryService.getAllCategories().subscribe({
       next: (data: Category[]) => {

@@ -1,0 +1,14 @@
+<h2 mat-dialog-title class="text-center">🚪 Access Restricted</h2>
+<mat-dialog-content class="text-center">
+  <p>You need an account to interact with the platform.</p>
+  <p>Sign in or create a new account to continue.</p>
+</mat-dialog-content>
+
+<mat-dialog-actions align="center">
+  <button mat-raised-button
+          color="primary"
+          (click)="onLogin()">Login</button>
+  <button mat-raised-button
+          color="accent"
+          (click)="onSignup()">Sign Up</button>
+</mat-dialog-actions>

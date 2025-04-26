@@ -1,0 +1,58 @@
+<div class="verification-container" [@fadeIn]>
+  <div class="verification-card" [ngClass]="{ 'success': !isError, 'error': isError }">
+<!--    <div class="verification-icon">-->
+<!--      <svg *ngIf="!isError" viewBox="0 0 24 24">-->
+<!--        <path fill="currentColor" d="M12 2C6.5 2 2 6.5 2 12S6.5 22 12 22 22 17.5 22 12 17.5 2 12 2M10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z"/>-->
+<!--      </svg>-->
+<!--      <svg *ngIf="isError" viewBox="0 0 24 24">-->
+<!--        <path fill="currentColor" d="M12,2C17.53,2 22,6.47 22,12C22,17.53 17.53,22 12,22C6.47,22 2,17.53 2,12C2,6.47 6.47,2 12,2M15.59,7L12,10.59L8.41,7L7,8.41L10.59,12L7,15.59L8.41,17L12,13.41L15.59,17L17,15.59L13.41,12L17,8.41L15.59,7Z"/>-->
+<!--      </svg>-->
+<!--    </div>-->
+
+    <div class="verification-content">
+      <h2 class="verification-title">
+        {{ !isError ? 'Email Verified' : 'Verification Issue' }}
+      </h2>
+
+      <div *ngIf="isLoading" class="loading-spinner">
+        <p>Verifying your email...</p>
+      </div>
+
+      <div *ngIf="!isLoading">
+        <p class="verification-message">{{ message }}</p>
+
+        <div *ngIf="!isError" class="verification-footer" @staggerIn>
+          <p class="redirect-message">You will be redirected to login in {{ countdown }} seconds...</p>
+
+          <div class="verification-divider">
+            <span class="divider-line"></span>
+            <span class="divider-text">Or</span>
+            <span class="divider-line"></span>
+          </div>
+
+          <a class="login-link" routerLink="/login">
+            <span>Go to Login Now</span>
+            <svg viewBox="0 0 24 24">
+              <path fill="currentColor" d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z"/>
+            </svg>
+          </a>
+        </div>
+
+        <div *ngIf="isError" class="verification-footer" @staggerIn>
+          <div class="verification-divider">
+            <span class="divider-line"></span>
+            <span class="divider-text">Need assistance?</span>
+            <span class="divider-line"></span>
+          </div>
+
+          <a class="support-link" routerLink="/contact">
+            <span>Contact Support</span>
+            <svg viewBox="0 0 24 24">
+              <path fill="currentColor" d="M22,6C22,4.9 21.1,4 20,4H4C2.9,4 2,4.9 2,6V18C2,19.1 2.9,20 4,20H20C21.1,20 22,19.1 22,18V6M20,6L12,11L4,6H20M20,18H4V8L12,13L20,8V18Z"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

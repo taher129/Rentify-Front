@@ -1,0 +1,13 @@
+mat-dialog-content {
+  font-size: 16px;
+  padding-bottom: 10px;
+}
+
+mat-dialog-actions button {
+  margin: 5px;
+}
+
+::ng-deep .custom-dialog-container {
+  border-radius: 12px;
+  padding: 10px;
+}

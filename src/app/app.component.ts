@@ -1,12 +1,12 @@
 import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';  // Importation de isPlatformBrowser
-import { RouterOutlet } from '@angular/router';
+import {NavigationEnd, Router, RouterOutlet} from '@angular/router';
 import { NavbarComponent } from "./layout/navbar/navbar.component";
 import { FooterComponent } from "./layout/footer/footer.component";
-import { FormsModule } from '@angular/forms';
 import AOS from 'aos';  // Importation de AOS
 import { HttpClientModule } from '@angular/common/http';
 
+import { FormsModule } from '@angular/forms';
 
 import { InsuranceComponent } from './pages/insurance/insurance.component';
 import { AboutComponent } from './pages/about/about.component';
@@ -19,17 +19,26 @@ import {ChatBubbleComponent} from "./reservation-service/chat-bubble/chat-bubble
   imports: [
     RouterOutlet,
     FooterComponent,
-    NavbarComponent,
     HttpClientModule,
-    ChatBubbleComponent,
+    ChatBubbleComponent
   ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
   title = 'Rentify';
+  showHeaderAndFooter = true;
+  hideNavbar = false;
 
-  constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
+
+  constructor(@Inject(PLATFORM_ID) private platformId: Object,private router: Router) {this.router.events.subscribe(event => {
+    if (event instanceof NavigationEnd) {
+      // Check the route data
+      const route = this.router.routerState.snapshot.root.firstChild;
+      this.hideNavbar = route?.data?.['hideNavbar'] || false;
+    }
+  });
+  }
 
   ngOnInit(): void {
     // Vérification que nous sommes dans un environnement de navigateur

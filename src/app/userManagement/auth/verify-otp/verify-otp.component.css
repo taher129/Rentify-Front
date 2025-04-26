@@ -1,0 +1,31 @@
+.reset-container {
+  max-width: 500px;
+  margin: 100px auto;
+  padding: 2rem;
+  background-color: #f5f5f5;
+  border-radius: 10px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+input {
+  padding: 0.7rem;
+  margin: 1rem 0;
+  width: 100%;
+  font-size: 1rem;
+}
+button {
+  padding: 0.7rem 2rem;
+  font-size: 1rem;
+  background-color: #1976d2;
+  color: white;
+  border: none;
+  border-radius: 6px;
+}
+.success {
+  color: green;
+  margin-top: 1rem;
+}
+.error {
+  color: red;
+  margin-top: 1rem;
+}
