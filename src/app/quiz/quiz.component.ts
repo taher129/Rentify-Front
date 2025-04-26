@@ -1,96 +1,94 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { questions } from '../../assets/questions';
-import { BlogService } from "../services/blog.service";
-import { StatsService } from "../services/stats.service";
+// src/app/components/quiz/quiz.component.ts
+
+import { Component, OnInit } from '@angular/core';
+import { QuizService} from "../services/quiz.service";
+import { question } from '../models/question';
+import {NgClass, NgForOf, NgIf} from "@angular/common";
 
 @Component({
   selector: 'app-quiz',
-  standalone: true,
-  imports: [CommonModule],
   templateUrl: './quiz.component.html',
-  styleUrl: './quiz.component.scss',
-  providers: [StatsService] // Ensure service is provided for standalone component
+  standalone: true,
+  imports: [
+    NgClass,
+    NgForOf,
+    NgIf
+  ],
+  styleUrls: ['./quiz.component.css']
 })
 export class QuizComponent implements OnInit {
-  questions: Array<any> = []; // Changed from Object to any for better type safety
+  questions: question[] = [];
+  question!: question;
+  answers: (number | null)[] = Array(10).fill(null);
   questionNo: number = 0;
-  question: any;
-  answers: Array<number | null> = new Array(10).fill(null); // More specific type
-  @Output('endQuiz') endQuiz: EventEmitter<void> = new EventEmitter<void>();
 
-  constructor(
-    private blogService: BlogService,
-    private statsService: StatsService
-  ) {}
+  constructor(private quizService: QuizService) {}
 
-  // Shuffle algorithm (Fisher-Yates)
-  shuffle(array: any[]) {
-    for (let i = array.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [array[i], array[j]] = [array[j], array[i]];
-    }
-    return array;
+  ngOnInit() {
+    this.loadQuiz();
   }
 
-  ngOnInit(): void {
-    this.questions = this.randomQuestions();
-    this.question = this.questions[0];
-    this.blogService.setQuestions(this.questions);
-  }
-
-  submitAnswer(questionId: number, chosenOption: number) {
-    this.statsService.submitResponse(questionId, chosenOption).subscribe({
-      next: () => console.log('Response recorded successfully'),
-      error: (err) => console.error('Failed to record response:', err)
+  loadQuiz() {
+    this.quizService.getQuestions().subscribe({
+      next: (questions) => {
+        this.questions = questions;
+        this.question = this.questions[0];
+      },
+      error: (err) => console.error(err)
     });
   }
 
-  randomQuestions() {
-    const shuffled = [...questions]; // Create a copy to shuffle
-    this.shuffle(shuffled);
-    return shuffled.slice(0, 10);
+  setAnswer(qIndex: number, answerIndex: number) {
+    this.answers[qIndex] = answerIndex;
   }
 
-  setQuestion(queNo: number) {
-    if (queNo >= 0 && queNo < this.questions.length) {
-      this.questionNo = queNo;
-      this.question = this.questions[queNo];
-    }
-  }
-
-  setAnswer(index: number, answer: number) {
-    if (index >= 0 && index < this.answers.length) {
-      this.answers[index] = answer;
-      this.blogService.setAnswers(this.answers);
-      this.submitAnswer(index, answer); // Track the response
-    }
+  setQuestion(i: number) {
+    this.questionNo = i;
+    this.question = this.questions[this.questionNo];
   }
 
   nextQue() {
     if (this.questionNo < this.questions.length - 1) {
-      this.setQuestion(this.questionNo + 1);
+      this.questionNo++;
+      this.question = this.questions[this.questionNo];
     }
   }
 
   prevQue() {
     if (this.questionNo > 0) {
-      this.setQuestion(this.questionNo - 1);
+      this.questionNo--;
+      this.question = this.questions[this.questionNo];
     }
   }
 
   clear() {
     this.answers[this.questionNo] = null;
-    this.blogService.setAnswers(this.answers);
   }
 
   submit() {
-    // Submit all answers before ending quiz
-    this.answers.forEach((answer, index) => {
-      if (answer !== null) {
-        this.submitAnswer(index, answer);
+    const payload = {
+      answers: this.answers
+    };
+    console.log('Submitting quiz:', payload);
+    // you can send payload to backend here if you want
+  }
+
+  submitQuiz() {
+    const payload = {
+      questions: this.questions, // full questions (text and options)
+      answers: this.answers // array of selected indexes
+    };
+
+    this.quizService.submitQuiz(payload).subscribe({
+      next: (res) => {
+        console.log('Quiz submitted successfully');
+      },
+      error: (err) => {
+        console.error('Failed to submit quiz', err);
       }
     });
-    this.endQuiz.emit();
   }
+
 }
+
+

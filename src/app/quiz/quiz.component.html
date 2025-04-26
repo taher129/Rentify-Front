@@ -15,13 +15,24 @@
     <li
       *ngFor="let option of question.options; let i = index"
       (click)="setAnswer(questionNo, i)"
-      [ngClass]="i == answers[questionNo] ? 'optionActive' : ''"
+      [ngClass]="i === answers[questionNo] ? 'optionActive' : ''"
     >
-      <i class="fa-regular fa-circle" *ngIf="i != answers[questionNo]"></i>
-      <i class="fa-solid fa-circle-check" *ngIf="i == answers[questionNo]"></i>
-      <span>{{ option }}</span>
+      <input
+        type="radio"
+        name="option{{questionNo}}"
+        [checked]="i === answers[questionNo]"
+        (change)="setAnswer(questionNo, i)"
+        id="option{{questionNo}}-{{i}}"
+        class="hiddenRadio"
+      />
+      <label for="option{{questionNo}}-{{i}}">
+        <i  *ngIf="i !== answers[questionNo]"></i>
+        <i  *ngIf="i === answers[questionNo]"></i>
+        <span>{{ option }}</span>
+      </label>
     </li>
   </ul>
+
   <div class="buttons">
     <button (click)="prevQue()" [ngClass]="questionNo == 0 ? 'disable' : ''">
       <i class="fa-solid fa-arrow-left"></i>
@@ -33,6 +44,7 @@
   </div>
 
   <div class="buttons" *ngIf="questionNo == 9">
-    <div (click)="submit()" class="submit">Submit Quiz</div>
+    <div (click)="submitQuiz()" class="submit">Submit Quiz</div>
+
   </div>
 </div>
