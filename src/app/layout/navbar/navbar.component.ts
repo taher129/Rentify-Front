@@ -39,6 +39,8 @@ export class NavbarComponent {
   searchQuery: string = '';
   categories: Category[] = [];
 
+  isSticky: boolean = false;
+
   constructor(
     private productService: ProductService,
     private categoryService: CategoryService,
@@ -183,4 +185,8 @@ export class NavbarComponent {
       error: (err: any) => console.error('Failed to load categories', err),
     });
   }
+
+
+
+
 }

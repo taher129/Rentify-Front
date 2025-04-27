@@ -2,8 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
-import {Review, ReviewSummary, ReviewRequest, ReviewService} from "../services/review.service";
-//import {  Review, ReviewSummary, ReviewRequest, ReviewService } from '../../../../Rentify-Admin-Front/src/app/pages/service/reviews/review.service';
+import { Review, ReviewSummary, ReviewRequest, ReviewService } from "../services/review.service";
 
 @Component({
   selector: 'app-customer-review',
@@ -20,7 +19,7 @@ export class CustomerReviewComponent implements OnInit {
   totalReviews: number = 0;
   ratingDistribution: { percentage: number, stars: number }[] = [];
   userRating: number = 5;
-  userReviewText: string = '';
+  userReviewDescription: string = ''; // Changé de userReviewText à userReviewDescription
 
   reviews: Review[] = [];
   displayedReviews: number = 2; // Initially show 2 reviews
@@ -61,14 +60,14 @@ export class CustomerReviewComponent implements OnInit {
   }
 
   submitReview(): void {
-    if (!this.userReviewText.trim()) {
-      alert('Please enter a review comment');
+    if (!this.userReviewDescription.trim()) {
+      alert('Please enter a review description');
       return;
     }
 
     const reviewRequest: ReviewRequest = {
       productId: this.productId,
-      comment: this.userReviewText,
+      description: this.userReviewDescription, // Utiliser description au lieu de comment
       rating: this.userRating,
       images: [] // In a real app, you'd handle image uploads here
     };
@@ -80,7 +79,7 @@ export class CustomerReviewComponent implements OnInit {
         this.reviews.unshift(review);
 
         // Reset form
-        this.userReviewText = '';
+        this.userReviewDescription = '';
         this.userRating = 5;
 
         // Reload summary data to reflect the new review

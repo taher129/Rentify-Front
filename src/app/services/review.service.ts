@@ -15,8 +15,9 @@ export interface Review {
   userImage: string;
   date: string;
   rating: number;
+  description: string;       // Champ description pour l'utilisateur
   reviewsWritten: number;
-  comment: string;
+  comment?: string;          // Champ comment pour le manager (optionnel)
   images?: string[];
   isManager?: boolean;
   productId: number;
@@ -32,18 +33,17 @@ export interface ReviewSummary {
 
 export interface ReviewRequest {
   productId: number;
-  comment: string;
+  description: string;       // Changé de comment à description
   rating: number;
   images?: string[];
 }
-
 
 @Injectable({
   providedIn: 'root'
 })
 export class ReviewService {
   private apiUrl = 'http://localhost:8085/reviews';
-  
+
   // Mock user ID for demo purposes - in a real app, this would come from auth service
   private userId = 1;
 
@@ -62,14 +62,12 @@ export class ReviewService {
   }
 
   submitReview(reviewRequest: ReviewRequest): Observable<Review> {
-    const headers = new HttpHeaders().set('User-Id', this.userId.toString());
-    return this.http.post<Review>(this.apiUrl, reviewRequest, { headers });
+    // Utiliser le nouvel endpoint create/{userId}
+    return this.http.post<Review>(`${this.apiUrl}/create/${this.userId}`, reviewRequest);
   }
 
-  submitManagerResponse(productId: number, comment: string): Observable<Review> {
-    return this.http.post<Review>(`${this.apiUrl}/manager-response`, 
-      { productId, comment },  // Changed to send both productId and comment in the request body
-      { headers: new HttpHeaders().set('Content-Type', 'application/json') }
-    );
+  submitManagerResponse(reviewId: number, comment: string): Observable<Review> {
+    // Utiliser le nouvel endpoint PATCH /{reviewId}/manager-response
+    return this.http.patch<Review>(`${this.apiUrl}/${reviewId}/manager-response?comment=${comment}`, {});
   }
 }
