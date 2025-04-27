@@ -14,6 +14,10 @@
       <div class="map-wrapper">
         <app-leaflet [address]="address"></app-leaflet>
       </div>
-</div>
+    </div>
+    <!-- Customer Reviews -->
+    <div class="customer-reviews-section">
+      <app-customer-review *ngIf="product.id !== undefined" [productId]="product.id"></app-customer-review>
+    </div>
   </div>
 </div>

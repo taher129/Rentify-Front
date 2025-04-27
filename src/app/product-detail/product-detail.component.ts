@@ -7,6 +7,7 @@ import { Address } from '../models/address';
 import { LeafletComponent } from "../leaflet/leaflet.component";
 import { Subject, takeUntil } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
+import {CustomerReviewComponent} from "../customer-review/customer-review.component";
 
 @Component({
   selector: 'app-product-detail',
@@ -16,7 +17,8 @@ import { switchMap } from 'rxjs/operators';
     CurrencyPipe,
     NgIf,
     LeafletComponent,
-    RouterLink
+    RouterLink,
+    CustomerReviewComponent
   ],
   styleUrls: ['./product-detail.component.css']
 })
