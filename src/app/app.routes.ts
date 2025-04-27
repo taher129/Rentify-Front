@@ -41,6 +41,7 @@ import {AddBlogComponent} from "./add-blog/add-blog.component";
 import {QuizComponent} from "./quiz/quiz.component";
 import {MyblogsComponent} from "./myblogs/myblogs.component";
 import {EditBlogComponent} from "./editblog/editblog.component";
+import {CustomerReviewComponent} from "./customer-review/customer-review.component";
 
 
 export const routes: Routes = [
@@ -118,17 +119,14 @@ export const routes: Routes = [
    component: ResponseDetailComponent
  },
 
+//rating-review
+
+  {
+    path: 'customer-review',
+    component: CustomerReviewComponent
+  },
 
 
-
-
-
-
-
-  // {
-  //    path: 'rating',
-  //    loadComponent: () => import('./rating/rating.component').then(m => m.RatingComponent)
-  //  },
 
   // Page de gestion des erreurs 404
   { path: '404', component: NotFoundComponent },

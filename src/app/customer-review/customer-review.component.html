@@ -1,9 +1,10 @@
+<!-- Customer Reviews Section with Improved Design -->
 <div class="review-add">
   <div class="review-header">
     <h1>Customer Reviews</h1>
   </div>
   <div class="divider"></div>
-  
+
   <!-- Loading spinner -->
   <div *ngIf="isLoading" class="loading-spinner">
     <div class="spinner"></div>
@@ -21,7 +22,7 @@
       </div>
       <p>{{ totalReviews }} reviews</p>
     </div>
-    
+
     <div class="rating-bars">
       <div class="rating-bar" *ngFor="let rating of ratingDistribution">
         <span>{{ rating.stars }} stars</span>
@@ -38,7 +39,14 @@
     <h3>Write a Review</h3>
     <div class="rating-selector">
       <label for="user-rating">Your Rating:</label>
-      <select id="user-rating" [(ngModel)]="userRating">
+      <div class="interactive-stars">
+        <span
+          *ngFor="let star of [5,4,3,2,1]; let i = index"
+          class="interactive-star"
+          [class.active]="userRating >= star"
+          (click)="userRating = star">★</span>
+      </div>
+      <select id="user-rating" [(ngModel)]="userRating" class="rating-dropdown">
         <option [value]="5">5 - Excellent</option>
         <option [value]="4">4 - Good</option>
         <option [value]="3">3 - Average</option>
@@ -46,16 +54,16 @@
         <option [value]="1">1 - Terrible</option>
       </select>
     </div>
-    
+
     <div class="comment-section">
-      <label for="user-review">Your Review:</label>
-      <textarea 
-        id="user-review" 
-        [(ngModel)]="userReviewText" 
-        rows="4" 
+      <label for="user-review">Your Description:</label>
+      <textarea
+        id="user-review"
+        [(ngModel)]="userReviewDescription"
+        rows="4"
         placeholder="Share your experience with this product..."></textarea>
     </div>
-    
+
     <button class="post-review-btn" (click)="submitReview()" [disabled]="isLoading">
       <span *ngIf="!isLoading">Post Review</span>
       <span *ngIf="isLoading">Submitting...</span>
@@ -65,39 +73,62 @@
   <!-- Reviews List -->
   <div class="reviews-list" *ngIf="!isLoading && reviews.length > 0">
     <h3>Customer Reviews</h3>
-    
+
     <div class="review-item" *ngFor="let review of reviews | slice:0:displayedReviews">
       <!-- User info and rating -->
       <div class="review-user-info">
         <div class="user-avatar">
-          <!-- <img [src]="review.userImage" alt="{{ review.userName }}"> -->
           <img [src]="'http://localhost:8085/assets/images/userr1.jpg'" alt="{{ review.userName }}">
         </div>
         <div class="user-details">
           <h3>{{ review.userName }}</h3>
           <div class="stay-info" *ngIf="!review.isManager">
-            <span>{{ review.date }}</span>
-            <span *ngIf="review.reviewsWritten"> • {{ review.reviewsWritten }} reviews written</span>
+            <span class="review-date">{{ review.date }}</span>
+            <span *ngIf="review.reviewsWritten" class="reviews-count"> • {{ review.reviewsWritten }} reviews written</span>
           </div>
         </div>
         <div class="review-rating" *ngIf="!review.isManager">
-          {{ review.rating | number: '1.1-1' }}
+          <span class="rating-value">{{ review.rating | number: '1.1-1' }}</span>
+          <div class="review-stars">
+            <span *ngFor="let star of generateStarArray(review.rating)" class="review-star">
+              {{ star === 1 ? '★' : (star === 0.5 ? '½' : '☆') }}
+            </span>
+          </div>
         </div>
       </div>
-      
+
       <!-- Review content -->
-      <div class="review-content" [class.manager-response]="review.isManager">
-        <p>{{ review.comment }}</p>
-        
+      <div class="review-content">
+        <!-- User description -->
+        <div class="user-description">
+          <p>{{ review.description }}</p>
+        </div>
+
         <!-- Review images -->
         <div class="review-images" *ngIf="review.images && review.images.length > 0">
           <div class="review-image" *ngFor="let image of review.images">
             <img [src]="image" alt="Review image">
           </div>
         </div>
+
+        <!-- Manager Response (if exists) -->
+        <div *ngIf="review.comment" class="manager-response">
+          <div class="manager-header">
+            <div class="manager-avatar">
+              <img src="http://localhost:8085/assets/images/manager.jpg" alt="Manager">
+            </div>
+            <div class="manager-info">
+              <h4>Manager Response</h4>
+              <span class="manager-name">Customer Support Team</span>
+            </div>
+          </div>
+          <div class="manager-comment">
+            <p>{{ review.comment }}</p>
+          </div>
+        </div>
       </div>
     </div>
-    
+
     <!-- Load more button -->
     <div class="load-more-container" *ngIf="reviews.length > displayedReviews">
       <button class="load-more-btn" (click)="loadMoreReviews()">
@@ -105,7 +136,7 @@
       </button>
     </div>
   </div>
-  
+
   <!-- No reviews message -->
   <div *ngIf="!isLoading && reviews.length === 0" class="no-reviews">
     <p>No reviews yet. Be the first to review this product!</p>
