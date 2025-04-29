@@ -1,7 +1,7 @@
 /* customer-review.component.scss */
 .review-add {
   font-family: 'Segoe UI', Arial, sans-serif;
-  max-width: 750px;
+  width: 100%;
   margin: 0 auto;
   padding: 30px;
   color: #333;
@@ -132,6 +132,15 @@
   font-size: 15px;
   color: #333;
   font-weight: 500;
+}
+@media (max-width: 768px) {
+  .rating-summary{
+    width: 49%;
+
+  }
+  .review-form {
+    width: 49%;
+  }
 }
 
 /* Review Form Section */
