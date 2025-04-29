@@ -1,13 +1,13 @@
-<div class="chat-bubble-container">
-    <div class="chat-bubble" (click)="toggleChatPopup()">
-        <img src="/assets/images/payment/lendy.jpg" alt="Chat Icon" />
-        <div *ngIf="unreadCount > 0" class="unread-count">{{ unreadCount }}</div>
-    </div>
+<div class="chat-bubble-container" *ngIf="showChatBubble">
+  <div class="chat-bubble" (click)="toggleChatPopup()">
+    <img src="/assets/images/payment/lendy.jpg" alt="Chat Icon" />
+    <div *ngIf="unreadCount > 0" class="unread-count">{{ unreadCount }}</div>
+  </div>
 
-    <app-chat-bot-popup
-            *ngIf="isChatOpen"
-            [conversation]="conversation"
-            [currentOtherUserName]="currentOtherUserName"
-            (close)="handleChatClose()">
-    </app-chat-bot-popup>
+  <app-chat-bot-popup
+    *ngIf="isChatOpen"
+    [conversation]="conversation"
+    [currentOtherUserName]="currentOtherUserName"
+    (close)="handleChatClose()">
+  </app-chat-bot-popup>
 </div>

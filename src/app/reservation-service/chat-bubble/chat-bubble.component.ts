@@ -1,9 +1,10 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router, NavigationEnd } from '@angular/router';
 import { ChatService } from '../../services/chat.service';
 import { ChatBotPopupComponent } from '../chat-bot-popup/chat-bot-popup.component';
-import { Subscription } from 'rxjs';
+import { Subscription, filter } from 'rxjs';
 
 @Component({
   selector: 'app-chat-bubble',
@@ -18,11 +19,39 @@ export class ChatBubbleComponent implements OnInit, OnDestroy {
   currentOtherUserName = 'Lendy';
   conversation: any = null;
   private subscription: Subscription | null = null;
+  private routerSubscription: Subscription | null = null;
 
-  constructor(private chatService: ChatService) {}
+  // Flag to determine if the chat bubble should be shown
+  showChatBubble = true;
+
+  // List of routes where chat bubble should be hidden
+  private excludedRoutes = ['/complaint', '/complaint-add'];
+
+  constructor(
+    private chatService: ChatService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.setupConversation();
+
+    // Subscribe to router events to detect route changes
+    this.routerSubscription = this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe((event: any) => {
+      // Check if current route is in excluded routes
+      const currentUrl = event.urlAfterRedirects;
+      this.showChatBubble = !this.excludedRoutes.some(route => currentUrl.startsWith(route));
+
+      // Close chat if we navigate to an excluded route
+      if (!this.showChatBubble && this.isChatOpen) {
+        this.isChatOpen = false;
+      }
+    });
+
+    // Check initial route
+    const currentUrl = this.router.url;
+    this.showChatBubble = !this.excludedRoutes.some(route => currentUrl.startsWith(route));
 
     this.subscription = this.chatService.messages$.subscribe((msgs) => {
       // Update the conversation object when messages change
@@ -47,6 +76,9 @@ export class ChatBubbleComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe();
+    }
+    if (this.routerSubscription) {
+      this.routerSubscription.unsubscribe();
     }
   }
 
