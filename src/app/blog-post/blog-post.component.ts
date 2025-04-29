@@ -153,4 +153,9 @@ export class BlogPostComponent implements OnInit, AfterViewInit {
   shareOnWhatsApp(): void {
     window.open(`https://wa.me/?text=${encodeURIComponent(this.shareText + ' ' + this.currentUrl)}`, '_blank');
   }
+  rentProduct() {
+    // Exemple : redirection ou ouverture d'une modal
+    console.log('Rent button clicked!');
+    // window.location.href = '/rent/' + this.blogId;
+  }
 }

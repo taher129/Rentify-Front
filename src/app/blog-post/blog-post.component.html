@@ -22,8 +22,6 @@
           <div class="author-name">Lori Stevens</div>
           <div class="post-meta">
             <span class="post-date">{{ blogPost.date | date:'MMM d, yyyy' }}</span>
-            <span class="dot-separator">•</span>
-            <span class="read-time">5 min read</span>
           </div>
         </div>
       </div>
@@ -54,7 +52,11 @@
     </div>
   </div>
 
-
+  <div class="rent-product-container">
+    <button class="rent-product-btn" (click)="rentProduct()">
+      Rent the Product
+    </button>
+  </div>
   <!-- Add null check -->
 
   <app-comment [blogId]="blogId"></app-comment>

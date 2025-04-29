@@ -1,3 +1,29 @@
+.rent-product-container {
+  display: flex;
+  justify-content: center;
+  margin: 2rem 0;
+}
+
+.rent-product-btn {
+  padding: 0.8rem 1.5rem;
+  background-color: #38a169; /* Green tone */
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(56, 161, 105, 0.3);
+}
+
+.rent-product-btn:hover {
+  background-color: #2f855a;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(56, 161, 105, 0.4);
+}
+
+
 /* Enhanced Blog Post CSS */
 .blog-detail-page {
   padding: 2rem;

@@ -18,9 +18,9 @@
   <div class="comments-list">
     <div *ngFor="let comment of comments" class="comment" [class.current-user]="comment.userId === 1">
       <div class="comment-header">
-        <img src="assets/images/default-avatar.png" alt="User avatar" width="40">
+        <img src="assets/images/blog/profile.png" alt="User avatar" width="40">
         <div class="comment-meta">
-          <div class="user">User #{{comment.userId}}</div>
+          <div class="user">Abdou</div>
 
           <!-- Display content or edit form -->
           <div *ngIf="!editingStates[comment.id]" class="comment-body">
