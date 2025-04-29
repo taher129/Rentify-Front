@@ -26,9 +26,11 @@
       </button>
     </div>
     <!-- Add loading indicator if needed -->
-    <!-- <div *ngIf="isSearching" class="search-loading">Searching...</div> -->
+    <div *ngIf="isSearching" class="search-loading">Searching...</div>
   </div>
-  <div class="blog-page-title">
+
+  <!-- Featured blogs section -->
+  <div class="blog-page-title" *ngIf="featuredBlogs.length > 0">
     <h3>Featured Blogs</h3>
   </div>
 
@@ -65,7 +67,7 @@
         <p class="blog-subtitle">{{ featuredBlogs[0].description || 'No description available' }}</p>
 
         <div class="blog-footer">
-          <span class="like-count">{{ featuredBlogs[0].likeCount }} likes</span>
+          <span class="view-count">{{ featuredBlogs[0].viewCount }} Views</span>
           <a [routerLink]="['/blogpost', featuredBlogs[0].idBlog]" class="read-more">Read more
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -105,7 +107,7 @@
             </h3>
 
             <div class="suggestion-meta">
-              <span class="like-count">{{ blog.likeCount }} likes</span>
+              <span class="view-count">{{ blog.viewCount }} Views</span>
               <a [routerLink]="['/blogpost', blog.idBlog]" class="read-more">Read more
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -117,7 +119,14 @@
         </div>
       </div>
     </div>
-  </div> <!-- This is the missing closing div for blog-highlight -->
+  </div>
+
+  <!-- Feedback section: New content here -->
+  <div class="feedback-section">
+    <h3>We'd love to hear from you!</h3>
+    <p>We value your feedback. Please take a moment to fill out our quick quiz and share your thoughts with us.</p>
+    <button class="feedback-button" [routerLink]="['/quiz']">Take the Quiz</button>
+  </div>
 
   <!-- Latest articles -->
   <div class="blog-page-title">
@@ -125,9 +134,9 @@
   </div>
 
   <div class="blog-list">
-    <!-- Display blogs in rows of 3 -->
-    <div class="blog-row" *ngFor="let row of blogRows">
-      <div class="blog-card" *ngFor="let blog of row">
+    <!-- Display current page blogs in rows of 3 -->
+    <div class="blog-row">
+      <div class="blog-card" *ngFor="let blog of currentPageBlogs">
         <div class="blog-image">
           <a [routerLink]="['/blogpost', blog.idBlog]">
             <img [src]="blog.image || '/assets/images/blog/default.jpg'"
@@ -143,13 +152,42 @@
             <p class="blog-date">{{ blog.date | date: 'MMM d, yyyy' }}</p>
             <div class="blog-stats">
               <span class="view-count">{{ blog.viewCount }} views</span>
-              <span class="like-count">{{ blog.likeCount }} likes</span>
             </div>
           </div>
           <a [routerLink]="['/blogpost', blog.idBlog]" class="read-more-button">Read More</a>
         </div>
       </div>
     </div>
+  </div>
+
+  <!-- Pagination -->
+  <div class="pagination" *ngIf="totalPages > 1">
+    <button class="pagination-button"
+            [class.disabled]="currentPage === 1"
+            (click)="changePage(currentPage - 1)"
+            [disabled]="currentPage === 1">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="15 18 9 12 15 6"></polyline>
+      </svg>
+    </button>
+
+    <div class="page-numbers">
+      <button class="page-number"
+              *ngFor="let page of getPageNumbers()"
+              [class.active]="page === currentPage"
+              (click)="changePage(page)">
+        {{ page }}
+      </button>
+    </div>
+
+    <button class="pagination-button"
+            [class.disabled]="currentPage === totalPages"
+            (click)="changePage(currentPage + 1)"
+            [disabled]="currentPage === totalPages">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="9 18 15 12 9 6"></polyline>
+      </svg>
+    </button>
   </div>
 
   <!-- No results message -->
