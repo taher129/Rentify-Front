@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { WebsocketService } from '../../services/websocket.service';
 import { ChatPopupComponent } from '../chat-popup/chat-popup.component';
 import { RouterLink } from "@angular/router";
+import {UserDetails} from "../../userManagement/models/user";
+import {AuthService} from "../../userManagement/services/auth.service";
 
 interface Conversation {
   messageBoxId: string;
@@ -41,7 +43,6 @@ interface ActiveChat {
 })
 export class ChatNavbarComponent implements OnInit {
   @Input() conversations: Conversation[] = [];
-  @Input() userId: number | null = null;
   @Input() isOpen: boolean = false;
   @Input() closeNavbar: () => void = () => {};
 
@@ -52,14 +53,34 @@ export class ChatNavbarComponent implements OnInit {
   filteredConversations: Conversation[] = [];
   activeChats: ActiveChat[] = [];
 
-  constructor(private websocketService: WebsocketService) {}
+  // Current user from auth service
+  currentUser: UserDetails | null = null;
+
+  constructor(
+    private websocketService: WebsocketService,
+    private authService: AuthService // Inject AuthService
+  ) {}
 
   ngOnInit(): void {
+    this.loadUserDetails();
     this.filterConversations();
   }
 
   ngOnChanges(): void {
     this.filterConversations();
+  }
+
+  // Load user details from auth service
+  loadUserDetails(): void {
+    const token = this.authService.getToken(); // Assuming you have a getToken method
+    if (token) {
+      this.currentUser = this.authService.getUserDetails(token);
+      if (!this.currentUser) {
+        console.error('User details not found. Please login again.');
+      }
+    } else {
+      console.error('No authentication token found. Please login.');
+    }
   }
 
   @HostListener('document:click', ['$event'])
@@ -109,15 +130,35 @@ export class ChatNavbarComponent implements OnInit {
       return false;
     });
   }
+  getInitials(name: string): string {
+    if (!name) return '';
 
+    const nameParts = name.split(' ');
+    if (nameParts.length === 1) {
+      return nameParts[0].charAt(0).toUpperCase();
+    }
+
+    return (nameParts[0].charAt(0) + nameParts[nameParts.length - 1].charAt(0)).toUpperCase();
+  }
+
+  getAvatarColor(name: string): string {
+    const colors = ['#2196F3', '#32c787', '#00BCD4', '#ff5652', '#ffc107', '#ff85af', '#FF9800', '#39bbb0'];
+    let hash = 0;
+    for (let i = 0; i < name.length; i++) {
+      hash = 31 * hash + name.charCodeAt(i);
+    }
+    return colors[Math.abs(hash % colors.length)];
+  }
   onSearchChange(): void {
     this.filterConversations();
   }
 
   getOtherUser(conversation: Conversation): { id: number, name: string } {
-    if (!this.userId) return { id: 0, name: '' };
+    // Get current user ID from auth service
+    const userId = this.currentUser?.id;
+    if (!userId) return { id: 0, name: '' };
 
-    return conversation.user1Id === this.userId
+    return conversation.user1Id === userId
       ? { id: conversation.user2Id, name: conversation.user2Name }
       : { id: conversation.user1Id, name: conversation.user1Name };
   }

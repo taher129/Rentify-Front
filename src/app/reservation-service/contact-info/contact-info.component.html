@@ -9,7 +9,18 @@
   <div class="contact-info-content">
     <div class="profile-section">
       <div class="profile-image">
-        <img [src]="user?.avatarUrl || '/assets/default-avatar.jpg'" alt="{{ user?.name }}">
+        <!-- Replace img with SVG -->
+        <svg class="avatar-svg"
+             [attr.viewBox]="'0 0 100 100'"
+             [style.background-color]="getAvatarColor(user?.name)">
+          <text x="50%" y="50%"
+                text-anchor="middle"
+                dy=".3em"
+                fill="white"
+                font-size="40">
+            {{ getInitials(user?.name) }}
+          </text>
+        </svg>
       </div>
       <h2 class="user-name">{{ user?.name }}</h2>
       <p class="user-status">{{ user?.status }}</p>

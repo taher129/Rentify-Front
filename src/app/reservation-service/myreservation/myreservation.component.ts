@@ -9,15 +9,8 @@ import { catchError, map } from 'rxjs/operators';
 
 import jsPDF from "jspdf";
 import { Reservation } from "../../models/reservation";
-
-export interface User {
-  userId: number | null;
-  firstName: string;
-  lastName: string;
-  email: string;
-  phoneNumber: number;
-  isLoggedIn: boolean;
-}
+import {UserDetails} from "../../userManagement/models/user";
+import {AuthService} from "../../userManagement/services/auth.service";
 
 interface BookingViewModel {
   id?: number;
@@ -29,10 +22,10 @@ interface BookingViewModel {
   status: 'upcoming' | 'completed' | 'canceled' | 'rejected';
   totalPrice: number;
   productImgPath: string;
-  productCategory?: number;  // Changed to optional
+  productCategory?: number;
   reservationDetails: Reservation;
   productDetails?: Product;
-  userDetails?: User;
+  userDetails?: UserDetails;
 }
 
 @Component({
@@ -53,28 +46,50 @@ export class MyreservationComponent implements OnInit {
   isLoading: boolean = true;
   error: string | null = null;
 
-  // Mock user with userId = 15
-  mockUser: User = {
-    userId: 15,
-    firstName: 'abdou',
-    lastName: 'bouafif',
-    email: 'abdou.bouafif@gmail.com',
-    phoneNumber: 56142979,
-    isLoggedIn: true
-  };
+  // User details from auth service
+  currentUser: UserDetails | null = null;
 
   constructor(
     private reservationService: ReservationService,
-    private productService: ProductService
+    private productService: ProductService,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
-    this.loadReservations();
+    // Get user details from auth service
+    this.loadUserDetails();
+  }
+
+  loadUserDetails(): void {
+    // Get the authentication token (you may need to adjust this based on how you store the token)
+    const token = this.authService.getToken(); // Assuming you have a getToken method
+
+    if (token) {
+      // Get user details using the token
+      this.currentUser = this.authService.getUserDetails(token);
+
+      if (this.currentUser && this.currentUser.id) {
+        // Load reservations once we have the user details
+        this.loadReservations();
+      } else {
+        this.error = 'User details not found. Please login again.';
+        this.isLoading = false;
+      }
+    } else {
+      this.error = 'You are not logged in. Please login to view your reservations.';
+      this.isLoading = false;
+    }
   }
 
   loadReservations(): void {
+    if (!this.currentUser || !this.currentUser.id) {
+      this.error = 'User ID not found. Please login again.';
+      this.isLoading = false;
+      return;
+    }
+
     this.isLoading = true;
-    this.reservationService.showMyBookingByUserId(this.mockUser.userId).subscribe({
+    this.reservationService.showMyBookingByUserId(this.currentUser.id).subscribe({
       next: (reservations: Reservation[]) => {
         this.processReservations(reservations);
       },
@@ -153,7 +168,11 @@ export class MyreservationComponent implements OnInit {
           const product = productMap.get(productId);
           if (!product) return;
 
-          const bookedBy = `${this.mockUser.firstName} ${this.mockUser.lastName}`;
+          // Use current user details for bookedBy
+          const bookedBy = this.currentUser ?
+            `${this.currentUser.firstName} ${this.currentUser.lastName}` :
+            'Unknown User';
+
           const startDate = new Date(reservation.startDate);
           const endDate = new Date(reservation.endDate);
 
@@ -181,10 +200,10 @@ export class MyreservationComponent implements OnInit {
             status: status,
             totalPrice: reservation.totalPrice || 0,
             productImgPath: product.productImage || '/assets/placeholder.jpg',
-            productCategory: product.categoryId ,
+            productCategory: product.categoryId,
             reservationDetails: reservation,
             productDetails: product,
-            userDetails: this.mockUser
+            userDetails: this.currentUser || undefined
           };
 
           this.allBookings.push(booking);
@@ -272,6 +291,7 @@ export class MyreservationComponent implements OnInit {
     // Return the icon for the given category ID, or a default icon if not found
     return categoryIcons[categoryId] || '📦';
   }
+
   cancelBooking(booking: BookingViewModel): void {
     const reservationId = booking.reservationDetails.id;
 

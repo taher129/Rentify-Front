@@ -13,39 +13,35 @@
   <div class="search-container">
     <div class="search-box">
       <i class="fa fa-search search-icon"></i>
-      <input
-        type="text"
-        placeholder="Search Messenger"
-        [(ngModel)]="searchQuery"
-        (input)="onSearchChange()"
-      />
+      <input type="text" placeholder="Search Messenger" [(ngModel)]="searchQuery" (input)="onSearchChange()" />
     </div>
   </div>
 
   <!-- Tab Navigation -->
   <div class="tab-navigation">
-    <button
-      class="tab-btn"
-      [class.active]="activeTab === 'chats'"
-      (click)="switchTab('chats')"
-    >
+    <button class="tab-btn" [class.active]="activeTab === 'chats'" (click)="switchTab('chats')">
       Inbox
     </button>
   </div>
 
   <!-- Conversations List -->
   <div class="conversations-list" *ngIf="activeTab === 'chats'">
-    <div
-      *ngFor="let conversation of filteredConversations"
-      class="conversation-item"
-      (click)="selectConversation(conversation)"
-    >
+    <div *ngFor="let conversation of filteredConversations"
+         class="conversation-item"
+         (click)="selectConversation(conversation)">
       <div class="avatar-container">
-        <img
-          class="avatar-img"
-          [src]="'/avatar-' + getOtherUser(conversation).name + '.jpg'"
-          alt="User Avatar"
-        />
+        <!-- Replace img with SVG for user avatars -->
+        <svg class="avatar-svg"
+             [attr.viewBox]="'0 0 40 40'"
+             [style.background-color]="getAvatarColor(getOtherUser(conversation).name)">
+          <text x="50%" y="50%"
+                text-anchor="middle"
+                dy=".3em"
+                fill="white"
+                font-size="16">
+            {{ getInitials(getOtherUser(conversation).name) }}
+          </text>
+        </svg>
       </div>
 
       <div class="conversation-info">
@@ -72,7 +68,7 @@
       *ngFor="let chat of activeChats"
       [conversation]="chat.conversation"
       [currentOtherUserName]="chat.otherUserName"
-      (close)="closeChat(chat.messageBoxId)"
-    ></app-chat-popup>
+      (close)="closeChat(chat.messageBoxId)">
+    </app-chat-popup>
   </div>
 </div>

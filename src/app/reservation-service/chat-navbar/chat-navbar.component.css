@@ -212,3 +212,27 @@
   z-index: 999;
 }
 
+.avatar-svg {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  vertical-align: middle;
+}
+
+.avatar-container {
+  flex-shrink: 0;
+  margin-right: 10px;
+  position: relative;
+}
+
+.avatar-container .online-indicator {
+  width: 10px;
+  height: 10px;
+  background-color: #4CAF50;
+  border-radius: 50%;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  border: 2px solid white;
+}
+

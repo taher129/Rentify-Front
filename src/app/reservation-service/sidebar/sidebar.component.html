@@ -1,10 +1,18 @@
 <div class="sidebar">
   <!-- Current User Info -->
   <div class="current-user">
-    <img class="avatar-img" src="/avatar-{{username}}.jpg" alt="User" />
+    <ng-container *ngIf="userImage; else userInitialsAvatar">
+      <img class="avatar-img" [src]="userImage" alt="User" />
+    </ng-container>
+    <ng-template #userInitialsAvatar>
+      <svg class="avatar-svg" [attr.viewBox]="'0 0 40 40'" [style.background-color]="getAvatarColor(username)">
+        <text x="50%" y="50%" text-anchor="middle" dy=".3em" fill="white" font-size="16">
+          {{ getInitials(username) }}
+        </text>
+      </svg>
+    </ng-template>
     <span class="username">{{ username }}</span>
   </div>
-
   <!-- Search Input -->
   <div class="search-box">
     <input type="text" placeholder="Search or start new chat"
@@ -13,13 +21,23 @@
   </div>
 
   <!-- Conversations List -->
-  <div class="conversations-list">
-    <div *ngFor="let conversation of filteredConversations"
-         class="conversation-item"
-         [ngClass]="{'selected': conversation.messageBoxId === selectedConversationId}"
-         (click)="selectConversation(conversation)">
+  <div *ngFor="let conversation of filteredConversations"
+       class="conversation-item"
+       [ngClass]="{'selected': conversation.messageBoxId === selectedConversationId}"
+       (click)="selectConversation(conversation)">
+
+    <ng-container *ngIf="false; else contactInitialsAvatar">
+      <!-- We're replacing the image-based avatar -->
       <img class="avatar-img" src="/avatar-{{getOtherUser(conversation).name}}.jpg" alt="Avatar" />
-      <div class="conversation-info">
+    </ng-container>
+    <ng-template #contactInitialsAvatar>
+      <svg class="avatar-svg" [attr.viewBox]="'0 0 40 40'" [style.background-color]="getAvatarColor(getOtherUser(conversation).name)">
+        <text x="50%" y="50%" text-anchor="middle" dy=".3em" fill="white" font-size="16">
+          {{ getInitials(getOtherUser(conversation).name) }}
+        </text>
+      </svg>
+    </ng-template>
+<div class="conversation-info">
         <div class="top-row">
           <span class="conversation-name">{{ getOtherUser(conversation).name }}</span>
           <span class="message-date">26/04/2021</span>
@@ -38,4 +56,3 @@
       No conversations found
     </div>
   </div>
-</div>

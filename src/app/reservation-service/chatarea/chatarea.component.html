@@ -2,7 +2,11 @@
   <div *ngIf="conversation" class="chat-container" [class.contact-info-open]="showContactInfo">
     <div class="chat-header">
       <div class="current-user">
-        <img class="avatar-img" [src]="'/avatar-' + currentOtherUserName + '.jpg'" alt="User" />
+        <svg class="avatar-svg" [attr.viewBox]="'0 0 40 40'" [style.background-color]="getAvatarColor(currentOtherUserName)">
+          <text x="50%" y="50%" text-anchor="middle" dy=".3em" fill="white" font-size="16">
+            {{ getInitials(currentOtherUserName) }}
+          </text>
+        </svg>
         <span class="username">{{ currentOtherUserName }}</span>
         <div class="actions">
           <div class="dropdown-container">

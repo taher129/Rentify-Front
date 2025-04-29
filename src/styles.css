@@ -1,2 +1,14 @@
 /* You can add global styles to this file, and also import other style files */
 @import 'igniteui-webcomponents/themes/light/bootstrap.css';
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  height: 100%;
+  overflow-x: hidden; /* Prevent horizontal scrolling */
+  font-family: Roboto, "Open Sans", Arial, sans-serif;
+  width: 100%;
+}

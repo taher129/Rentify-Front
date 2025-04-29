@@ -9,6 +9,7 @@ import { ProductService } from "../../services/product.service";
 import {CategoryService} from "../../services/category.service";
 import {WebsocketService} from "../../services/websocket.service";
 import {Subscription, take} from "rxjs";
+import {AuthService} from "../../userManagement/services/auth.service";
 
 export interface Product {
   productId: number | null;
@@ -50,15 +51,24 @@ export interface User {
 })
 export class ReservationComponent implements OnInit {
   // Static user data as requested
-  user: User = {
-    userId: 15,
-    firstName: 'abdou',
-    lastName: 'bouafif',
-    email: 'taherezzine@gmail.com',
-    phoneNumber: 56142979,
-    isLoggedIn: true
-  };
 
+
+  user: User = {
+    userId: null,
+    firstName: '',
+    lastName: '',
+    email: '',
+    phoneNumber: 0,
+    isLoggedIn: false
+  };
+  owner: User = {
+    userId: null,
+    firstName: '',
+    lastName: '',
+    email: '',
+    phoneNumber: 0,
+    isLoggedIn: false
+  };
   product: Product = {
     productId: null,
     productName: '',
@@ -98,6 +108,8 @@ export class ReservationComponent implements OnInit {
   unavailableDates: Date[] = [];
   nextAvailableStartDate: Date | null = null;
   datePickerDisabledDates: string[] = [];
+  private staticOwnerId = 15;
+  private staticOwnerName = 'abdou bouafif';
 
   paymentForm!: FormGroup;
   userDetailsForm!: FormGroup;
@@ -123,7 +135,8 @@ export class ReservationComponent implements OnInit {
     private rs: ReservationService,
     private productService: ProductService,
     private categoryService: CategoryService,
-    private websocketService: WebsocketService
+    private websocketService: WebsocketService,
+    private authService: AuthService
 
   ) {
     // Set minimum date to today's date in YYYY-MM-DD format
@@ -131,7 +144,6 @@ export class ReservationComponent implements OnInit {
     this.minDate = today.toISOString().split('T')[0];
 
     // Initialize forms
-    this.initForms();
   }
 
   initForms() {
@@ -154,6 +166,24 @@ export class ReservationComponent implements OnInit {
   }
 
   ngOnInit(): void {
+
+
+    //getting user details
+    const userData = this.authService.getUserDetails('');
+
+    if (userData) {
+      // Map the userData to your User interface
+      this.user = {
+        userId: userData.id || null,
+        firstName: userData.firstName || '',
+        lastName: userData.lastName || '',
+        email: userData.email || '',
+        phoneNumber: userData.phoneNumber || 0,
+        isLoggedIn: true
+      };
+    }
+    console.log(userData);
+    this.initForms();
     // Load product from route params
     const productId = Number(this.route.snapshot.paramMap.get('id'));
     if (productId) {
@@ -219,37 +249,46 @@ export class ReservationComponent implements OnInit {
       return;
     }
 
-    // Static owner data since user integration is not complete
-    const ownerId = 16;
-    const ownerName = 'Product Owner'; // Static name, you can update this when you have real data
-
     // Set user info in WebsocketService
     this.websocketService.setUserInfo(this.user.userId as number, `${this.user.firstName} ${this.user.lastName}`);
 
-    // Start a new conversation
-    this.websocketService.startNewConversation(ownerId, ownerName);
+    // Check if conversation already exists with this owner
+    this.websocketService.conversations$.pipe(take(1)).subscribe(conversations => {
+      const existingConversation = conversations.find(
+        conv => (conv.user1Id === this.product.ownerId || conv.user2Id === this.product.ownerId) &&
+          (conv.user1Id === this.user.userId || conv.user2Id === this.user.userId)
+      );
 
-    // We can also send an initial message about the reservation
-    // First we need to wait for the conversation to be created and get its ID
-    // This is a simplified approach - in a real app you might need a more robust solution
-    setTimeout(() => {
-      // Get the conversation list
-      this.websocketService.conversations$.subscribe(conversations => {
-        // Find the conversation with the owner
-        const ownerConversation = conversations.find(
-          conv => (conv.user1Id === ownerId || conv.user2Id === ownerId) &&
-            (conv.user1Id === this.user.userId || conv.user2Id === this.user.userId)
-        );
+      if (existingConversation) {
+        // Use existing conversation
+        const message = `Hi, I'm interested in your ${this.product.productName} from ${this.formatDate(this.reservation.startDate)} to ${this.formatDate(this.reservation.endDate)}.`;
+        this.websocketService.sendMessage(message, existingConversation.messageBoxId);
+      } else {
+        // Only create a new conversation if one doesn't exist
+        const ownerId = this.product.ownerId;
+        if (ownerId !== undefined) { // Ensure ownerId is not undefined
+          const ownerName = 'abdou bouafif'; // You might want to get this dynamically
+          this.websocketService.startNewConversation(ownerId, ownerName);
 
-        if (ownerConversation) {
-          // Send a message about the reservation
-          const message = `Hi, I've just reserved your ${this.product.productName} from ${this.formatDate(this.reservation.startDate)} to ${this.formatDate(this.reservation.endDate)}. Looking forward to it!`;
-          this.websocketService.sendMessage(message, ownerConversation.messageBoxId);
+          // Wait for the conversation to be created
+          setTimeout(() => {
+            this.websocketService.conversations$.pipe(take(1)).subscribe(updatedConversations => {
+              const newConversation = updatedConversations.find(
+                conv => (conv.user1Id === ownerId || conv.user2Id === ownerId) &&
+                  (conv.user1Id === this.user.userId || conv.user2Id === this.user.userId)
+              );
+
+              if (newConversation) {
+                // Send a message about the interest
+                const message = `Hi, I'm interested in your ${this.product.productName} from ${this.formatDate(this.reservation.startDate)} to ${this.formatDate(this.reservation.endDate)}.`;
+                this.websocketService.sendMessage(message, newConversation.messageBoxId);
+              }
+            });
+          }, 1000);
         }
-      });
-    }, 1000); // Give it a second to create the conversation
-  }
-  getCategoryName(categoryId: number): void {
+      }
+    });
+  }  getCategoryName(categoryId: number): void {
     this.categoryService.getCategoryById(categoryId).subscribe({
       next: (category) => {
         this.product.productCategory = category.category_Name || '';
@@ -613,19 +652,16 @@ export class ReservationComponent implements OnInit {
     return false; // No conflicts
   }
   sendReservationConfirmation(): void {
-    // If we don't have owner ID in the product, we can't start a conversation
-    if (!this.product.ownerId) {
-      console.error('Owner ID not available in product data');
-      return;
-    }
+    const ownerId = this.staticOwnerId;
+    const ownerName = this.staticOwnerName;
 
     // Set user info in WebsocketService if not already set
     this.websocketService.setUserInfo(this.user.userId as number, `${this.user.firstName} ${this.user.lastName}`);
 
     // Check if a conversation already exists with this owner
-    this.websocketService.conversations$.subscribe(conversations => {
+    this.websocketService.conversations$.pipe(take(1)).subscribe(conversations => {
       const existingConversation = conversations.find(
-        conv => (conv.user1Id === this.product.ownerId || conv.user2Id === this.product.ownerId) &&
+        conv => (conv.user1Id === ownerId || conv.user2Id === ownerId) &&
           (conv.user1Id === this.user.userId || conv.user2Id === this.user.userId)
       );
 
@@ -635,19 +671,17 @@ export class ReservationComponent implements OnInit {
         this.websocketService.sendMessage(message, existingConversation.messageBoxId);
       } else {
         // If no conversation exists yet, create one and send the message
-        if (this.product.ownerId != null) {
-          this.websocketService.startNewConversation(this.product.ownerId, 'Product Owner');
-        }
+        this.websocketService.startNewConversation(ownerId, ownerName);
 
         setTimeout(() => {
-          this.websocketService.conversations$.subscribe(updatedConversations => {
+          this.websocketService.conversations$.pipe(take(1)).subscribe(updatedConversations => {
             const newConversation = updatedConversations.find(
-              conv => (conv.user1Id === this.product.ownerId || conv.user2Id === this.product.ownerId) &&
+              conv => (conv.user1Id === ownerId || conv.user2Id === ownerId) &&
                 (conv.user1Id === this.user.userId || conv.user2Id === this.user.userId)
             );
 
             if (newConversation) {
-              const message = `Hi there! I've just made a reservation for your ${this.product.productName} from ${this.formatDate(this.reservation.startDate)} to ${this.formatDate(this.reservation.endDate)}. Looking forward to it!`;
+              const message = `You just requested the renting of ${this.product.productName}. How should we meet to arrange the details?`;
               this.websocketService.sendMessage(message, newConversation.messageBoxId);
             }
           });
@@ -655,6 +689,8 @@ export class ReservationComponent implements OnInit {
       }
     });
   }
+
+
   private formatDateForBackend(date: Date): string {
     return date.toISOString().split('T')[0];
   }
@@ -664,34 +700,39 @@ export class ReservationComponent implements OnInit {
       return; // Skip if already contacted or no owner ID
     }
 
+    // Use the static owner ID and name
+    const ownerId = this.staticOwnerId;
+    const ownerName = this.staticOwnerName;
+
     // Set user info in WebsocketService
     this.websocketService.setUserInfo(this.user.userId as number, `${this.user.firstName} ${this.user.lastName}`);
 
     // Check if a conversation already exists
-    this.websocketService.conversations$.subscribe(conversations => {
+    this.websocketService.conversations$.pipe(take(1)).subscribe(conversations => {
       const existingConversation = conversations.find(
-        conv => (conv.user1Id === this.product.ownerId || conv.user2Id === this.product.ownerId) &&
+        conv => (conv.user1Id === ownerId || conv.user2Id === ownerId) &&
           (conv.user1Id === this.user.userId || conv.user2Id === this.user.userId)
       );
 
       if (existingConversation) {
-        // Conversation exists, mark as contacted
+        // Conversation exists, mark as contacted and use existing one
         this.hasContactedOwner = true;
+        // Optionally send a message using the existing conversation
+        const message = `I'm interested in your ${this.product.productName}. I'm looking at dates from ${this.formatDate(this.reservation.startDate)} to ${this.formatDate(this.reservation.endDate)}.`;
+        this.websocketService.sendMessage(message, existingConversation.messageBoxId);
       } else {
         // No conversation exists, create one and send initial message
-        if (this.product.ownerId != null) {
-          this.websocketService.startNewConversation(this.product.ownerId, 'Product Owner');
-        }
+        this.websocketService.startNewConversation(ownerId, ownerName);
 
         setTimeout(() => {
-          this.websocketService.conversations$.subscribe(updatedConversations => {
+          this.websocketService.conversations$.pipe(take(1)).subscribe(updatedConversations => {
             const newConversation = updatedConversations.find(
-              conv => (conv.user1Id === this.product.ownerId || conv.user2Id === this.product.ownerId) &&
+              conv => (conv.user1Id === ownerId || conv.user2Id === ownerId) &&
                 (conv.user1Id === this.user.userId || conv.user2Id === this.user.userId)
             );
 
             if (newConversation) {
-              const message = `Hello, I just launched a demand to rent your product ${this.product.productName}. Can we talk?`;
+              const message = `You just requested the renting of ${this.product.productName}. How should we meet to arrange the details?`;
               this.websocketService.sendMessage(message, newConversation.messageBoxId);
               this.hasContactedOwner = true;
             }
@@ -700,9 +741,19 @@ export class ReservationComponent implements OnInit {
       }
     });
   }
-// Add a property to track the subscription
-  private ownerNotificationSubscription: Subscription | null = null;
 
+
+  private ownerNotificationSubscription: Subscription | null = null;
+  private findExistingConversation(userId1: number, userId2: number): any {
+    let existingConversation = null;
+    this.websocketService.conversations$.pipe(take(1)).subscribe(conversations => {
+      existingConversation = conversations.find(
+        conv => (conv.user1Id === userId1 || conv.user2Id === userId1) &&
+          (conv.user1Id === userId2 || conv.user2Id === userId2)
+      );
+    });
+    return existingConversation;
+  }
   notifyOwnerOfInterest(): void {
     // If we don't have owner ID in the product, we can't start a conversation
     if (!this.product.ownerId) {
@@ -710,14 +761,8 @@ export class ReservationComponent implements OnInit {
       return;
     }
 
-    // Set the flag to indicate user has contacted owner
-    this.hasContactedOwner = true;
-
     // Set user info in WebsocketService
     this.websocketService.setUserInfo(this.user.userId as number, `${this.user.firstName} ${this.user.lastName}`);
-
-    // Start a new conversation with the owner
-    this.websocketService.startNewConversation(this.product.ownerId, 'Product Owner');
 
     // Clean up any existing subscription first
     if (this.ownerNotificationSubscription) {
@@ -725,25 +770,45 @@ export class ReservationComponent implements OnInit {
       this.ownerNotificationSubscription = null;
     }
 
-    // Send initial interest message
-    setTimeout(() => {
-      // Get the conversation list - using take(1) to auto-complete after first emission
-      this.ownerNotificationSubscription = this.websocketService.conversations$.pipe(
-        take(1) // This will auto-complete the subscription after one emission
-      ).subscribe(conversations => {
-        // Find the conversation with the owner
-        const ownerConversation = conversations.find(
-          conv => (conv.user1Id === this.product.ownerId || conv.user2Id === this.product.ownerId) &&
-            (conv.user1Id === this.user.userId || conv.user2Id === this.user.userId)
-        );
+    // Check if conversation already exists
+    this.ownerNotificationSubscription = this.websocketService.conversations$.pipe(
+      take(1)
+    ).subscribe(conversations => {
+      const existingConversation = conversations.find(
+        conv => (conv.user1Id === this.product.ownerId || conv.user2Id === this.product.ownerId) &&
+          (conv.user1Id === this.user.userId || conv.user2Id === this.user.userId)
+      );
 
-        if (ownerConversation) {
-          // Send a message showing interest in the product
-          const message = `Hi, I'm interested in your ${this.product.productName}. Is it still available for rent? I'm looking at dates from ${this.formatDate(this.reservation.startDate)} to ${this.formatDate(this.reservation.endDate)}.`;
-          this.websocketService.sendMessage(message, ownerConversation.messageBoxId);
+      if (existingConversation) {
+        // Use existing conversation
+        this.hasContactedOwner = true;
+        const message = `Hi, I'm interested in your ${this.product.productName}. Is it still available for rent? I'm looking at dates from ${this.formatDate(this.reservation.startDate)} to ${this.formatDate(this.reservation.endDate)}.`;
+        this.websocketService.sendMessage(message, existingConversation.messageBoxId);
+      } else {
+        // Only create new conversation if none exists
+        this.hasContactedOwner = true;
+
+        // Ensure product owner ID is defined before using it
+        if (this.product.ownerId !== undefined) {
+          this.websocketService.startNewConversation(this.product.ownerId, 'abdou bouafif');
+
+          // Wait for the conversation to be created
+          setTimeout(() => {
+            this.websocketService.conversations$.pipe(take(1)).subscribe(updatedConversations => {
+              const newConversation = updatedConversations.find(
+                conv => (conv.user1Id === this.product.ownerId || conv.user2Id === this.product.ownerId) &&
+                  (conv.user1Id === this.user.userId || conv.user2Id === this.user.userId)
+              );
+
+              if (newConversation) {
+                const message = `Hi, I'm interested in your ${this.product.productName}. Is it still available for rent? I'm looking at dates from ${this.formatDate(this.reservation.startDate)} to ${this.formatDate(this.reservation.endDate)}.`;
+                this.websocketService.sendMessage(message, newConversation.messageBoxId);
+              }
+            });
+          }, 1000);
         }
-      });
-    }, 1000);
+      }
+    });
   }
 
   calculateRentingDuration(): void {

@@ -1,7 +1,8 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { WebsocketService } from '../../services/websocket.service';
-import {FormsModule} from "@angular/forms";
+import { FormsModule } from "@angular/forms";
+import {AuthService} from "../../userManagement/services/auth.service";
 
 @Component({
   selector: 'app-sidebar',
@@ -9,7 +10,8 @@ import {FormsModule} from "@angular/forms";
   imports: [CommonModule, FormsModule],
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.css']
-})export class SidebarComponent {
+})
+export class SidebarComponent implements OnInit { // Add OnInit interface
   @Input() conversations: any[] = [];
   @Input() contacts: any[] = [];
   @Output() startConversation = new EventEmitter<{otherUserId: number, otherUserName: string}>();
@@ -18,6 +20,7 @@ import {FormsModule} from "@angular/forms";
   selectedConversationId: string | null = null;  // Track the selected conversation ID
   searchQuery: string = ''; // Add this for search functionality
   filteredConversations: any[] = []; // Add this to store filtered conversations
+  userImage: string = '';
 
   get username(): string {
     return this.websocketService.username || '';
@@ -27,7 +30,44 @@ import {FormsModule} from "@angular/forms";
     return this.websocketService.userId;
   }
 
-  constructor(private websocketService: WebsocketService) {}
+  constructor(
+    private websocketService: WebsocketService,
+    private authService: AuthService
+  ) {}
+
+
+  ngOnInit() {
+    // Check if user info is already set in WebsocketService
+    if (!this.websocketService.userId || !this.websocketService.username) {
+      // If not set, try to get it from AuthService
+      const userData = this.authService.getUserDetails('');
+
+      if (userData) {
+        const userId = userData.id || 0;
+        let username = 'User';
+
+        // Get the user image from user data
+        this.userImage = userData.userImage || '';
+
+        if (userData.firstName && userData.lastName) {
+          username = `${userData.firstName} ${userData.lastName}`;
+        } else if (userData.firstName) {
+          username = userData.firstName;
+        } else if (userData.email) {
+          username = userData.email.split('@')[0];
+        }
+
+        // Set the user info in the WebsocketService
+        this.websocketService.setUserInfo(userId, username);
+      }
+    } else {
+      // If the user info is already set, try to get the image from AuthService
+      const userData = this.authService.getUserDetails('');
+      if (userData) {
+        this.userImage = userData.userImage || '';
+      }
+    }
+  }
 
   ngOnChanges() {
     // Update filtered conversations whenever the input conversations change
@@ -58,7 +98,16 @@ import {FormsModule} from "@angular/forms";
       return false;
     });
   }
+  getInitials(name: string): string {
+    if (!name) return '';
 
+    const nameParts = name.split(' ');
+    if (nameParts.length === 1) {
+      return nameParts[0].charAt(0).toUpperCase();
+    }
+
+    return (nameParts[0].charAt(0) + nameParts[nameParts.length - 1].charAt(0)).toUpperCase();
+  }
   onSearchChange(event: any) {
     this.searchQuery = event.target.value;
     this.filterConversations();

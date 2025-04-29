@@ -51,10 +51,9 @@ export class ChatBotPopupComponent implements AfterViewInit, OnChanges, OnInit, 
 
   contactInfo = {
     name: '',
-    status: 'Hi there! I\'m using FuseChat.',
+    status: 'Hi there! I\'m Lendy',
     avatarUrl: '',
     email: '',
-    phone: '',
     title: '',
     company: '',
     media: []
@@ -135,11 +134,10 @@ export class ChatBotPopupComponent implements AfterViewInit, OnChanges, OnInit, 
     // Set contact info for the chatbot
     this.contactInfo = {
       avatarUrl: `/avatar-${this.currentOtherUserName}.jpg`,
-      company: 'FuseChat',
-      email: `${this.currentOtherUserName.toLowerCase().replace(' ', '')}@fusechat.com`,
+      company: 'Rentify',
+      email: `${this.currentOtherUserName.toLowerCase().replace(' ', '')}@gmail.com`,
       media: [],
       name: this.currentOtherUserName,
-      phone: '800-123-4567',
       status: 'Online and ready to assist!',
       title: 'Virtual Assistant'
     };

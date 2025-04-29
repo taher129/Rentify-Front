@@ -166,3 +166,17 @@
 .dropdown-item.delete {
   color: #e53935;
 }
+
+.avatar-svg {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  vertical-align: middle;
+}
+
+.avatar-img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}

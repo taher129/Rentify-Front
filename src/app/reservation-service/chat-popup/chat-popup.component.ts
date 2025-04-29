@@ -50,13 +50,9 @@ export class ChatPopupComponent implements AfterViewInit, OnChanges, OnInit, OnD
 
   contactInfo = {
     name: '',
-    status: 'Hi there! I\'m using FuseChat.',
+    status: 'Hi there! ',
     avatarUrl: '',
     email: '',
-    phone: '',
-    title: '',
-    company: '',
-    media: []
   };
 
   get userId(): number | null {
@@ -114,7 +110,25 @@ export class ChatPopupComponent implements AfterViewInit, OnChanges, OnInit, OnD
       this.isDropdownOpen = false;
     }
   }
+  getInitials(name: string): string {
+    if (!name) return '';
 
+    const nameParts = name.split(' ');
+    if (nameParts.length === 1) {
+      return nameParts[0].charAt(0).toUpperCase();
+    }
+
+    return (nameParts[0].charAt(0) + nameParts[nameParts.length - 1].charAt(0)).toUpperCase();
+  }
+
+  getAvatarColor(name: string): string {
+    const colors = ['#2196F3', '#32c787', '#00BCD4', '#ff5652', '#ffc107', '#ff85af', '#FF9800', '#39bbb0'];
+    let hash = 0;
+    for (let i = 0; i < name.length; i++) {
+      hash = 31 * hash + name.charCodeAt(i);
+    }
+    return colors[Math.abs(hash % colors.length)];
+  }
   toggleDropdown(event: Event): void {
     event.stopPropagation(); // Prevent the document click listener from firing
     this.isDropdownOpen = !this.isDropdownOpen;
@@ -146,14 +160,10 @@ export class ChatPopupComponent implements AfterViewInit, OnChanges, OnInit, OnD
   openContactInfo(): void {
     // In a real app, you'd fetch this data from a service
     this.contactInfo = {
-      avatarUrl: `/avatar-${this.currentOtherUserName}.jpg`,
-      company: 'Boilcat',
+      avatarUrl: ``,
       email: `${this.currentOtherUserName.toLowerCase().replace(' ', '')}@mail.com`,
-      media: [],
       name: this.currentOtherUserName,
-      phone: '893 548 2862',
       status: 'Place holder',
-      title: 'reting xx product or category'
     };
 
     this.showContactInfo = true;
