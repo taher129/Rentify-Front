@@ -19,19 +19,39 @@ export class AddCommentComponent {
 
   constructor(private commentService: CommentService) {}
 
-  submitComment(): void {
+  async submitComment(): Promise<void> {
     if (!this.commentContent.trim() || !this.blogId) return;
 
-    const formData = new FormData();
-    formData.append('blogId', this.blogId.toString());
-    formData.append('content', this.commentContent);
-    formData.append('userId', '1'); // Your user ID
+    try {
+      // Call the profanity detection API
+      const response = await fetch('https://vector.profanity.dev', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: this.commentContent })
+      });
 
-    this.commentService.addComment(formData).subscribe({
-      next: () => {
-        window.location.reload(); // This will refresh the entire page
-      },
-      error: (err) => console.error('Error:', err)
-    });
+      const result = await response.json();
+
+      if (result.isProfanity) {
+        alert('Your comment contains inappropriate language.');
+        return;
+      }
+
+      // If no profanity detected, submit the comment
+      const formData = new FormData();
+      formData.append('blogId', this.blogId.toString());
+      formData.append('content', this.commentContent);
+      formData.append('userId', '1'); // Your user ID
+
+      this.commentService.addComment(formData).subscribe({
+        next: () => {
+          window.location.reload(); // Or emit the comment instead of reloading
+        },
+        error: (err) => console.error('Error:', err)
+      });
+    } catch (error) {
+      console.error('Error checking profanity:', error);
+    }
   }
-  }
+
+}
