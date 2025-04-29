@@ -4,6 +4,7 @@ import { Component, OnInit } from '@angular/core';
 import { QuizService} from "../services/quiz.service";
 import { question } from '../models/question';
 import {NgClass, NgForOf, NgIf} from "@angular/common";
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-quiz',
@@ -20,9 +21,10 @@ export class QuizComponent implements OnInit {
   questions: question[] = [];
   question!: question;
   answers: (number | null)[] = Array(10).fill(null);
-  questionNo: number = 0;
+  questionNo: number = 0
+  showThankYou = false;
 
-  constructor(private quizService: QuizService) {}
+  constructor(private quizService: QuizService, private router: Router) {}
 
   ngOnInit() {
     this.loadQuiz();
@@ -75,20 +77,23 @@ export class QuizComponent implements OnInit {
 
   submitQuiz() {
     const payload = {
-      questions: this.questions, // full questions (text and options)
-      answers: this.answers // array of selected indexes
+      questions: this.questions,
+      answers: this.answers
     };
 
     this.quizService.submitQuiz(payload).subscribe({
-      next: (res) => {
-        console.log('Quiz submitted successfully');
+      next: () => {
+        this.showThankYou = true;
       },
       error: (err) => {
         console.error('Failed to submit quiz', err);
+        window.alert('Something went wrong. Please try again later.');
       }
     });
   }
-
+  goToBlog() {
+    this.router.navigate(['/blog']);
+  }
 }
 
 
