@@ -28,7 +28,7 @@ export class AddBlogComponent {
     this.blogForm = this.fb.group({
       title: ['', [
         Validators.required,
-        Validators.minLength(5),
+        Validators.minLength(2),
         Validators.maxLength(100)
       ]],
       description: ['', [Validators.maxLength(255)]],
