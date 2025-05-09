@@ -6,13 +6,14 @@ import { RouterLink} from '@angular/router';
 import {Router} from "@angular/router";
 import {HttpClient} from "@angular/common/http";
 import {animate, style, transition, trigger} from "@angular/animations";
-import {MatDialog, MatDialogModule, MatDialogRef} from '@angular/material/dialog';
+import {MatDialog} from '@angular/material/dialog';
 import {CameraService} from "../../services/camera.service";
+import {CarouselComponent} from "../login/carousel/carousel.component";
 
 @Component({
   selector: 'app-signup',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, RouterLink, NgOptimizedImage, FormsModule],
+  imports: [ReactiveFormsModule, CommonModule, RouterLink, NgOptimizedImage, FormsModule, CarouselComponent],
   templateUrl: './signup.component.html',
   styleUrls: ['./signup.component.css'],
   animations: [
@@ -103,9 +104,6 @@ export class SignupComponent implements AfterViewInit ,OnInit {
     private router: Router,
     private dialog: MatDialog,
     private cameraService: CameraService,
-    // private dialogRef: MatDialogRef<SignupComponent>
-
-
   ) {}
 
   ngOnInit() {
@@ -203,7 +201,12 @@ export class SignupComponent implements AfterViewInit ,OnInit {
     this.authService.signup(registrationData).subscribe({
       next: (response) => {
         this.isLoading = false;
-        this.router.navigate(['/login'], );
+        this.showSuccessMessage = true;
+        this.successMessage = 'Registration successful! Please check your email to verify your account.';
+
+        setTimeout(() => {
+          this.router.navigate(['/login']);
+        }, 3000);
       },
       error: (error) => {
         this.isLoading = false;
@@ -319,18 +322,7 @@ export class SignupComponent implements AfterViewInit ,OnInit {
     setTimeout(() => this.initializeCamera(), 100);
   }
 
-  async initializeCamera(): Promise<void> {
-    try {
-      this.isCameraActive = await this.cameraService.initializeCamera(this.videoElement.nativeElement);
-      if (!this.isCameraActive) {
-        throw new Error('Camera initialization failed');
-      }
-    } catch (error) {
-      console.error('Failed to initialize camera:', error);
-      this.showFaceCaptureModal = false;
-      alert('Could not access camera. Please try again or continue without Face ID.');
-    }
-  }
+
 
 
   private delay(ms: number): Promise<void> {
@@ -361,6 +353,41 @@ export class SignupComponent implements AfterViewInit ,OnInit {
 
 
 
+
+
+  flashCameraEffect() {
+    const preview = document.querySelector('.camera-preview') as HTMLElement;
+    if (!preview) return;
+    preview.style.animation = 'flash 0.2s';
+    setTimeout(() => preview.style.animation = '', 200);
+  }
+
+
+
+
+
+  openFaceCaptureModal(): void {
+    if (this.signupForm.invalid) {
+      this.signupForm.markAllAsTouched();
+      return;
+    }
+    this.showFaceCaptureModal = true;
+    setTimeout(() => this.initializeCamera(), 100);
+  }
+
+  async initializeCamera(): Promise<void> {
+    try {
+      this.isCameraActive = await this.cameraService.initializeCamera(this.videoElement.nativeElement);
+      if (!this.isCameraActive) {
+        throw new Error('Camera initialization failed');
+      }
+    } catch (error) {
+      console.error('Failed to initialize camera:', error);
+      this.showFaceCaptureModal = false;
+      alert('Could not access camera. Please try again or continue without Face ID.');
+    }
+  }
+
   startCapture() {
     if (!this.isCameraActive) return;
     this.isCapturingFace = true;
@@ -369,7 +396,8 @@ export class SignupComponent implements AfterViewInit ,OnInit {
     this.captureNextImage();
   }
 
-  captureNextImage() {
+
+  captureNextImage(): void {
     if (this.currentCapture >= this.totalCaptures) {
       this.completeCapture();
       return;
@@ -382,12 +410,13 @@ export class SignupComponent implements AfterViewInit ,OnInit {
       this.captureImage();
       this.currentCapture++;
       this.captureNextImage();
-    }, 3000); // 3 seconds between captures
+    }, 3000);
   }
 
-  captureImage() {
+
+  captureImage(): void {
     const canvas = document.createElement('canvas');
-    const video = this.videoElement.nativeElement as HTMLVideoElement;
+    const video = this.videoElement.nativeElement;
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
     const ctx = canvas.getContext('2d');
@@ -399,26 +428,15 @@ export class SignupComponent implements AfterViewInit ,OnInit {
     }
   }
 
-  flashCameraEffect() {
-    const preview = document.querySelector('.camera-preview') as HTMLElement;
-    if (!preview) return;
-    preview.style.animation = 'flash 0.2s';
-    setTimeout(() => preview.style.animation = '', 200);
-  }
-
-  completeCapture() {
+  completeCapture(): void {
     this.isCapturingFace = false;
     this.captureProgress = 100;
-
-    // Brief success message
     setTimeout(() => {
       this.showFaceCaptureModal = false;
+      // Now submit the form with face images
+      this.onSubmit();
     }, 1000);
   }
-
-
-
-
 
 
 }

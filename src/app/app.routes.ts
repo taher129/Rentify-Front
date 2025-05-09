@@ -43,23 +43,37 @@ import {MyblogsComponent} from "./myblogs/myblogs.component";
 import {EditBlogComponent} from "./editblog/editblog.component";
 import {CustomerReviewComponent} from "./customer-review/customer-review.component";
 
+import {ResetPasswordComponent} from "./userManagement/auth/reset-password/reset-password.component";
+import {ForgotPasswordComponent} from "./userManagement/auth/forgot-password/forgot-password.component";
 
 export const routes: Routes = [
-   // Page d'accueil
+  // Home/Visitor Page
   { path: '', redirectTo: 'visit', pathMatch: 'full' },
   { path: 'visit', component: VisitorHomeComponent },
 
-   // Pages principales
-   { path: 'about', component: AboutComponent, canActivate: [AuthGuard] },
-   { path: 'contact', component: ContactUsComponent, canActivate: [AuthGuard] },
-   { path: 'store-locator', component: StoreLocatorComponent, canActivate: [AuthGuard] },
-   { path: 'faq', component: FaqComponent, canActivate: [AuthGuard] },
-   { path: 'coming-soon', component: ComingSoonComponent , canActivate: [AuthGuard] },
-   { path: 'become-a-lender', component: BecomeALenderComponent , canActivate: [AuthGuard] },
-   { path: 'insurance', component: InsuranceComponent, canActivate: [AuthGuard] },
-   { path: 'sustainability', component: SustainabilityComponent , canActivate: [AuthGuard] },
+  // Authentication Pages
+  { path: 'signup', component: SignupComponent, data: { hideNavbar: true } },
+  { path: 'login', component: LoginComponent, data: { hideNavbar: true } },
+  { path: 'forgot-password', component: ForgotPasswordComponent, data: { hideNavbar: true } },
+  { path: 'verify-email', component: VerifyEmailComponent, data: { hideNavbar: true } },
+  { path: 'verify-otp', component: VerifyOtpComponent, data: { hideNavbar: true } },
+  { path: 'reset-password', component: ResetPasswordComponent, data: { hideNavbar: true } },
+  { path: 'password-reset-success', component: ResetPasswordComponent, data: { hideNavbar: true } },
+  { path: 'oauth2-redirect', component: Oauth2RedirectComponent },
 
-  //Product et categories
+  // Main Pages (Protected)
+  { path: 'about', component: AboutComponent, canActivate: [AuthGuard] },
+  { path: 'contact', component: ContactUsComponent, canActivate: [AuthGuard] },
+  { path: 'store-locator', component: StoreLocatorComponent, canActivate: [AuthGuard] },
+  { path: 'faq', component: FaqComponent, canActivate: [AuthGuard] },
+  { path: 'coming-soon', component: ComingSoonComponent, canActivate: [AuthGuard] },
+  { path: 'become-a-lender', component: BecomeALenderComponent, canActivate: [AuthGuard] },
+  { path: 'insurance', component: InsuranceComponent, canActivate: [AuthGuard] },
+  { path: 'sustainability', component: SustainabilityComponent, canActivate: [AuthGuard] },
+  { path: 'home', component: HomeComponent, canActivate: [AuthGuard] },
+  { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
+
+  // Product & Categories
   { path: 'products/category/:categoryId', component: ProductListComponent },
   { path: 'categories', component: CategoryListComponent },
   { path: 'product/:id', component: ProductDetailComponent },
@@ -119,14 +133,17 @@ export const routes: Routes = [
    component: ResponseDetailComponent
  },
 
-//rating-review
-
-  {
-    path: 'customer-review',
-    component: CustomerReviewComponent
-  },
 
 
+
+
+
+
+
+  // {
+  //    path: 'rating',
+  //    loadComponent: () => import('./rating/rating.component').then(m => m.RatingComponent)
+  //  },
 
   // Page de gestion des erreurs 404
   { path: '404', component: NotFoundComponent },
@@ -152,7 +169,7 @@ export const routes: Routes = [
   { path: 'verify-email', component: VerifyEmailComponent,data: { hideNavbar: true } },
   { path: 'verify-otp', component: VerifyOtpComponent ,data: { hideNavbar: true }  },
   { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard] },
-  { path: 'profile/:userId', component: ProfileComponent, canActivate: [AuthGuard]},
+  { path: 'profile/:userId', component: ProfileComponent, canActivate: [AuthGuard] },
 
   { path: '**', redirectTo: 'visit' },
   { path: 'oauth2-redirect', component: Oauth2RedirectComponent },

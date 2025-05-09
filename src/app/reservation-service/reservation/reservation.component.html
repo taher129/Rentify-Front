@@ -306,7 +306,6 @@
                         </div>
                         <div class="form-group">
                           <input type="text" class="card-input" placeholder="YYYY"
-                                 formControlName="expiryYear"
                                  [class.is-invalid]="isFieldInvalid(paymentForm, 'expiryYear')">
                           <div class="error-message" *ngIf="isFieldInvalid(paymentForm, 'expiryYear')">
                             {{ getFieldError(paymentForm, 'expiryYear') }}
@@ -346,7 +345,8 @@
                 <button
                   class="pay-now-btn"
                   (click)="processPayment()"
-                  [disabled]="paymentForm.invalid ">
+                   >
+<!--                [disabled]="paymentForm.invalid"-->
                   Pay Now
                 </button>
               </div>

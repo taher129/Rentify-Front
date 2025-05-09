@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { FaceAuthService } from './face-auth.service';
+import { FaceService } from './face.service';
 
 describe('FaceAuthService', () => {
-  let service: FaceAuthService;
+  let service: FaceService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(FaceAuthService);
+    service = TestBed.inject(FaceService);
   });
 
   it('should be created', () => {

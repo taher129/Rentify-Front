@@ -13,12 +13,16 @@
       <div class="avatar-container">
         <div class="avatar-wrapper">
           <img *ngIf="profileData?.userImage"
-               [src]="'http://localhost:8082/images/' + profileData.userImage"
-               alt="Profile Picture" />
+               [src]="getAvatarUrl(profileData.userImage)"
+               (error)="handleImageError($event)"
+               alt="Profile Picture"
+               class="profile-image" />
           <div *ngIf="!profileData?.userImage" class="avatar-placeholder">
             {{ getInitials() }}
           </div>
+
         </div>
+
         <div class="status-indicator"></div>
       </div>
 

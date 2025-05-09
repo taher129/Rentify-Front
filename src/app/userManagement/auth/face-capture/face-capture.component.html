@@ -1,0 +1,58 @@
+<!-- face-capture.component.html -->
+<div class="face-capture-container">
+  <div class="camera-container" [class.capturing]="isCapturing">
+    <video #videoElement autoplay playsinline muted></video>
+    <canvas #canvasElement style="display: none;"></canvas>
+
+    <div *ngIf="isCapturing" class="capture-overlay">
+      <div class="instruction">{{ captureInstructions[currentStep] }}</div>
+      <div class="progress-container">
+        <div class="progress-bar" [style.width.%]="progress"></div>
+      </div>
+    </div>
+
+    <div *ngIf="!isCameraActive && !errorMessage" class="camera-loading">
+      <mat-spinner diameter="40"></mat-spinner>
+      <p>Initializing camera...</p>
+    </div>
+
+    <div *ngIf="errorMessage" class="camera-error">
+      <mat-icon>error_outline</mat-icon>
+      <p>{{ errorMessage }}</p>
+      <button mat-stroked-button (click)="retryCapture()">
+        <mat-icon>refresh</mat-icon>
+        Try Again
+      </button>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button mat-raised-button color="primary"
+            (click)="startCapture()"
+            [disabled]="!isCameraActive || isCapturing">
+      <mat-icon>camera</mat-icon>
+      Start Face Capture
+    </button>
+
+    <button mat-button (click)="stopCamera()"
+            [disabled]="!isCameraActive">
+      <mat-icon>stop</mat-icon>
+      Stop Camera
+    </button>
+  </div>
+
+  <div *ngIf="capturedImages.length > 0" class="capture-results">
+    <h3>Captured Images ({{ capturedImages.length }}/{{ totalSteps }})</h3>
+    <div class="thumbnails">
+      <div *ngFor="let img of capturedImages" class="thumbnail">
+        <img [src]="img" alt="Captured face">
+      </div>
+    </div>
+
+    <button mat-raised-button color="accent"
+            (click)="completeRegistration()"
+            [disabled]="capturedImages.length < totalSteps">
+      Complete Registration
+    </button>
+  </div>
+</div>

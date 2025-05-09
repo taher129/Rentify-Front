@@ -112,10 +112,18 @@ export class ProfileComponent implements OnInit {
   getInitials(): string {
     if (!this.profileData) return '';
 
-    const firstName = this.profileData.firstName || '';
-    const lastName = this.profileData.lastName || '';
+    // Fallback to form values if profileData is incomplete
+    const firstName = this.profileData.firstName || this.profileForm.get('firstName')?.value || '';
+    const lastName = this.profileData.lastName || this.profileForm.get('lastName')?.value || '';
 
-    return (firstName.charAt(0) + lastName.charAt(0)).toUpperCase();
+    // Handle empty names
+    if (!firstName && !lastName) return '?';
+
+    // Get initials (first letter of each name)
+    return (
+      (firstName ? firstName.charAt(0) : '') +
+      (lastName ? lastName.charAt(0) : '')
+    ).toUpperCase();
   }
 
   getJoinDate(): string {
@@ -157,4 +165,66 @@ export class ProfileComponent implements OnInit {
       }
     });
   }
+
+  resolveAvatarPath(userImage: string): string {
+    if (!userImage) return '';
+
+    // Remove any leading/trailing slashes
+    const cleanPath = userImage.replace(/^\/|\/$/g, '');
+
+    // Handle different possible path formats
+    if (cleanPath.startsWith('images/') || cleanPath.startsWith('avatar/')) {
+      return `${environment.apiUrl}/${cleanPath}`;
+    }
+
+    // Handle full paths that might come from different versions
+    if (cleanPath.includes('avatars/') || cleanPath.includes('avatar/')) {
+      return `${environment.apiUrl}/${cleanPath.startsWith('images/') ? '' : 'images/'}${cleanPath}`;
+    }
+
+    // Default case - assume it's a direct path
+    return `${environment.apiUrl}/images/avatars/${cleanPath}`;
+  }
+
+  handleImageError(event: Event) {
+    const imgElement = event.target as HTMLImageElement;
+    console.error('Failed to load avatar:', imgElement.src);
+    imgElement.style.display = 'none';
+    this.profileData.userImage = null; // Fallback to initials
+  }
+
+  getAvatarUrl(userImage: string): string {
+    if (!userImage) return '';
+
+    // Case 1: Already complete URL
+    if (userImage.startsWith('http://') || userImage.startsWith('https://')) {
+      return userImage;
+    }
+
+    // Case 2: Starts with /images/ (common case)
+    if (userImage.startsWith('/images/')) {
+      return 'http://localhost:8082' + userImage;
+    }
+
+    // Case 3: Starts with images/ (no leading slash)
+    if (userImage.startsWith('images/')) {
+      return 'http://localhost:8082/' + userImage;
+    }
+
+    // Case 4: Just a filename (UUID.png)
+    if (userImage.match(/^[a-f0-9-]+\.(png|jpg|jpeg)$/i)) {
+      return 'http://localhost:8082/images/' + userImage;
+    }
+
+    // Case 5: avatars/female/ or avatars/male/ paths
+    if (userImage.includes('avatars/')) {
+      return 'http://localhost:8082/images/' +
+        (userImage.startsWith('/') ? userImage.substring(1) : userImage);
+    }
+
+    // Default case
+    return 'http://localhost:8082/images/' + userImage;
+  }
+
+
 }

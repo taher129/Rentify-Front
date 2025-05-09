@@ -1,7 +1,67 @@
-<div class="reset-container">
-  <h2>Verify OTP</h2>
-  <input type="text" [(ngModel)]="otp" placeholder="Enter OTP" />
-  <button (click)="verify()">Verify</button>
-  <div *ngIf="message" class="success">{{ message }}</div>
-  <div *ngIf="error" class="error">{{ error }}</div>
+<div class="auth-container">
+  <!-- Left side - Carousel -->
+  <div class="carousel-container">
+    <app-carousel></app-carousel>
+  </div>
+
+  <!-- Right side - Form -->
+  <div class="form-container">
+    <div class="form-content">
+      <div class="brand">
+        <div class="logo-container">
+          <div class="logo">R</div>
+        </div>
+        <span>Rentify</span>
+      </div>
+
+      <div class="form-header">
+        <h1>Verify OTP</h1>
+        <p>Step 2 of 3</p>
+        <p class="subtitle">Enter the 6-digit code sent to *******{{phoneNumber.slice(-3)}}</p>
+      </div>
+
+      <div class="form-scroll-container">
+        <form [formGroup]="otpForm" (ngSubmit)="onSubmit()" class="auth-form">
+          <div class="form-group">
+            <label>Enter 6-digit OTP</label>
+
+            <div class="otp-input-container">
+              <ng-container *ngFor="let control of otpControls; let i = index">
+                <input
+                  type="text"
+                  [formControlName]="'digit' + i"
+                  class="otp-input"
+                  maxlength="1"
+                  (keydown)="onKeyDown($event, i)"
+                  (input)="onOtpInput($event, i)"
+                  (paste)="onPaste($event)"
+                  #otpInput>
+              </ng-container>
+            </div>
+
+            <div *ngIf="otpForm.invalid && (otpForm.touched || otpForm.dirty)" class="error-message">
+              Please enter a valid 6-digit OTP
+            </div>
+          </div>
+
+          <button type="submit" class="submit-btn" [disabled]="otpForm.invalid">
+            Verify OTP
+          </button>
+
+          <div class="resend-otp">
+            <p>Didn't receive OTP? <a (click)="resendOtp()" class="resend-link">Resend OTP</a></p>
+          </div>
+
+          <div class="back-link">
+            <a routerLink="/forgot-password">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 12H5M12 19l-7-7 7-7"/>
+              </svg>
+              Back to phone number
+            </a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
 </div>

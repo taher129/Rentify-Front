@@ -1,0 +1,119 @@
+<div class="carousel-container"
+     (touchstart)="handleTouchStart($event)"
+     (touchmove)="handleTouchMove($event)"
+     (touchend)="handleTouchEnd()">
+
+  <div class="carousel-gradient-bg"></div>
+
+  <div class="particles">
+    <div class="particle" *ngFor="let i of [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19]"
+         [style.left.%]="i * 5"
+         [style.top.%]="(i * 7) % 100"
+         [style.width.px]="(i % 3) + 1"
+         [style.height.px]="(i % 3) + 1"
+         [style.animation-duration]="5" >
+    </div>
+  </div>
+
+  <div class="carousel-wrapper">
+    <div class="carousel-track" #carouselTrack
+         [style.transform]="'translateY(-' + (currentIndex * 100) + '%)'">
+
+      <!-- Stats Card -->
+      <div class="carousel-card" *ngFor="let item of rentalItems; let i = index; trackBy: trackByFn"
+           [class.active]="i === currentIndex">
+
+        <div class="stats-card" *ngIf="item.type === 'stats'" [@slideAnimation]="i === currentIndex">
+          <div class="card-content">
+            <h3 class="card-title">{{item.title}}</h3>
+            <div class="stats-value">{{item.value}}</div>
+            <div class="stats-subvalue">{{item.subValue}}</div>
+            <p class="card-description">{{item.description}}</p>
+          </div>
+        </div>
+
+        <!-- Chart Card -->
+        <div class="chart-card" *ngIf="item.type === 'chart'" [@slideAnimation]="i === currentIndex">
+          <div class="card-content">
+            <h3 class="card-title">{{item.title}}</h3>
+            <p class="card-description">{{item.description}}</p>
+
+            <div class="chart">
+              <div class="chart-bar" *ngFor="let value of item.chartData; let j = index"
+                   [style.height.%]="value"
+                   [style.animation-delay]="5">
+              </div>
+            </div>
+
+            <div class="chart-labels">
+              <div class="chart-label" *ngFor="let month of ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun']">
+                {{month}}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Testimonial Card -->
+        <div class="testimonial-card" *ngIf="item.type === 'testimonial'" [@slideAnimation]="i === currentIndex">
+          <div class="card-content">
+            <div class="quote">{{item.quote}}</div>
+
+            <div class="author">
+              <div class="author-info">
+                <div class="author-name">{{item.author?.name}}</div>
+                <div class="author-title">{{item.author?.title}}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Category Card -->
+        <div class="category-card" *ngIf="item.type === 'category'" [@slideAnimation]="i === currentIndex">
+          <div class="card-content">
+            <h3 class="card-title">{{item.title}}</h3>
+            <p class="card-description">{{item.description}}</p>
+
+            <div class="categories">
+              <div class="category-item" *ngFor="let category of item.categories; let j = index"
+                   [style.animation-delay]="5">
+                <div class="category-name">{{category.name}}</div>
+                <div class="category-count">{{category.count}}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Clients Card -->
+        <div class="clients-card" *ngIf="item.type === 'clients'" [@slideAnimation]="i === currentIndex">
+          <div class="card-content">
+            <h3 class="card-title">{{item.title}}</h3>
+            <p class="card-description">{{item.description}}</p>
+
+            <div class="client-data">
+              <div class="client-total">{{item.clientData?.total}}</div>
+              <div class="client-growth">
+                <span class="growth-value">{{item.clientData?.growth}}</span>
+                <span class="growth-period">{{item.clientData?.period}}</span>
+              </div>
+            </div>
+
+            <div class="client-circles">
+              <div class="circle" *ngFor="let i of [0,1,2,3,4,5,6,7,8,9,10,11]"
+                   [style.animation-delay]="5">
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="carousel-dots">
+    <div class="dot"
+         *ngFor="let item of rentalItems; let i = index"
+         [class.active]="i === currentIndex"
+         (click)="goToSlide(i)">
+    </div>
+  </div>
+</div>

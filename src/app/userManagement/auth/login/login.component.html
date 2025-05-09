@@ -2,13 +2,21 @@
   <!-- Left side - Login form -->
   <div class="login-form-container">
     <div class="login-form-content">
+      <div class="brand">
+        <div class="logo-container">
+          <div class="logo">R</div>
+        </div>
+        <span>Rentify</span>
+      </div>
+
       <div class="login-header">
         <h1>Welcome back!</h1>
         <p>
           Welcome back, <strong>Rentino</strong> and <strong>Rentina</strong>! <br />
-          Let’s make this chapter of your journey unforgettable.
+          Let's make this chapter of your journey unforgettable.
         </p>
       </div>
+
       <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
         <div class="login-form">
           <!-- Email Field -->
@@ -22,9 +30,7 @@
               (blur)="markEmailAsTouched()"
               [class.invalid]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
             />
-
           </div>
-
 
           <!-- Password Field -->
           <div class="form-group">
@@ -42,37 +48,38 @@
               }"
               (blur)="markPasswordAsTouched()"
             />
-
           </div>
 
           <div class="remember-me-inline">
-            <input type="checkbox" id="remember" name="remember" />
-            <label for="remember">Remember me</label>
-            <a href="#" class="forgot-password">Forgot password</a>
+            <div class="remember-option">
+              <input type="checkbox" id="remember" name="remember" />
+              <label for="remember">Remember me</label>
+            </div>
+            <a routerLink="/forgot-password" class="forgot-password">Forgot password</a>
           </div>
-
 
           <!-- Submit Button -->
           <button
             type="submit"
-            [disabled]="loginForm.invalid || isLoading"
+            [disabled]="verificationInProgress || isLoading"
             class="login-button"
           >
-            <span *ngIf="!isLoading">Login</span>
+            <span *ngIf="!isLoading && !verificationInProgress">Login</span>
+            <span *ngIf="verificationInProgress">Verifying...</span>
             <span *ngIf="isLoading" class="spinner"></span>
           </button>
+
           <div *ngIf="errorMessage" class="error-message-minimalist">
-            <span class="error-icon-minimalist">⚠️</span>
             <p>{{ errorMessage }}</p>
           </div>
 
-          <button class="login-button"  type="button" (click)="openFaceLogin()">🔓 Login with Face ID</button>
-
-
+          <button class="login-button face-id-button" type="button" (click)="openFaceLogin()">
+            Login with Face ID
+          </button>
 
           <!-- Divider -->
           <div class="divider">
-            <span>Or</span>
+            <span>Or continue with</span>
           </div>
 
           <!-- Social Login Buttons -->
@@ -106,8 +113,8 @@
               <span>Sign in with Google</span>
             </button>
 
-            <!-- Apple -->
-            <button class="social-button facebook-button"  (click)="loginWithFacebook()">
+            <!-- Facebook -->
+            <button class="social-button facebook-button" (click)="loginWithFacebook()">
               <svg
                 width="18"
                 height="18"
@@ -133,9 +140,8 @@
     </div>
   </div>
 
-  <!-- Right side - Plant image -->
-  <div class="image-container">
-    <!-- You can add an image here -->
-    <!-- Example: <img src="assets/plant.png" alt="Eco Plant" /> -->
+  <!-- Right side - Carousel -->
+  <div class="carousel-container">
+    <app-carousel></app-carousel>
   </div>
 </div>

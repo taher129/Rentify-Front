@@ -29,7 +29,7 @@ export class Oauth2RedirectComponent implements OnInit {
           this.router.navigate(['/home']);
         });
       } else {
-        this.router.navigate(['/login']);
+        this.router.navigate(['/visit']);
       }
     });
   }

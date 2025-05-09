@@ -157,10 +157,10 @@ export class ReservationComponent implements OnInit {
 
     // Payment form
     this.paymentForm = this.formBuilder.group({
-      cardNumber: ['', [Validators.required, Validators.pattern(/^[0-9]{16}$/)]],
-      expiryMonth: ['', [Validators.required, Validators.pattern(/^(0[1-9]|1[0-2])$/)]],
-      expiryYear: ['', [Validators.required, Validators.pattern(/^[0-9]{2}$/), this.validateExpiryDate.bind(this)]],
-      cvv: ['', [Validators.required, Validators.pattern(/^[0-9]{3,4}$/)]],
+      cardNumber: ['', [Validators.required]],
+      expiryMonth: [''],
+      expiryYear: [''],
+      cvv: ['', [Validators.required]],
       cardholderName: ['', [Validators.required]]
     });
   }

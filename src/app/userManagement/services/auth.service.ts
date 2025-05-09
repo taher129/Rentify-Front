@@ -127,6 +127,8 @@ export class AuthService {
 
   loginWithFacebook(): void {
     window.location.href = `${this.apiUrl}/oauth2/authorization/facebook`;
+    this.router.navigate(['/home']);
+
   }
 
   // ======================
