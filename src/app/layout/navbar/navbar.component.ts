@@ -130,7 +130,7 @@ export class NavbarComponent {
       this.productService.getProductsByCategory(this.selectedCategoryId).subscribe({
         next: (data: Product[]) => {
           this.products = data.map(product => {
-            product.productImage = 'http://localhost:8084' + product.productImage;
+            product.productImage = 'http://www.rentify.duckdns.org:8084' + product.productImage;
             return product;
           });
           console.log('Products from category:', this.products);
@@ -157,7 +157,7 @@ export class NavbarComponent {
         next: (data: Product[]) => {
           this.products = data.map(product => {
             if (product.productImage && !product.productImage.startsWith('http')) {
-              product.productImage = 'http://localhost:8084' + product.productImage;
+              product.productImage = 'http://www.rentify.duckdns.org:8084' + product.productImage;
             }
             return product;
           });

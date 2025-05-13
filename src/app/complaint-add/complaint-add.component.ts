@@ -36,30 +36,30 @@ export class ComplaintAddComponent implements OnInit {
   isLoading = false;
   errorMessage = '';
   isSubmitted = false;
-  
+
   // Image to text properties
   showImageToText = false;
   imageUrl: string = '';
   isImageProcessing = false;
   imageProcessingError = '';
-  
+
   complaintTypes: string[] =['Fraud', 'Billing Issues', 'Product Issues', 'Reservation Problems'];
-  
+
   constructor(
-    public router: Router, 
+    public router: Router,
     private complaintService: ComplaintService,
     private http: HttpClient,
     public chatbotPopupService: ChatbotpopupcomplaintService
-    
+
   ) {}
-  
+
   ngOnInit(): void {
     this.complaintDTO.userId = 77;
     this.complaintDTO.reportedUserId = 77;
     this.complaintDTO.status = 'PENDING';
     this.complaintDTO.complaintDate = new Date().toISOString();
   }
-  
+
   onFileSelected(event: any): void {
     this.selectedFiles = Array.from(event.target.files);
     // Show file names for better UX
@@ -72,32 +72,32 @@ export class ComplaintAddComponent implements OnInit {
       }
     }
   }
-  
+
   toggleImageToText(): void {
     this.showImageToText = !this.showImageToText;
     if (!this.showImageToText) {
       this.resetImageToText();
     }
   }
-  
+
   resetImageToText(): void {
     this.imageUrl = '';
     this.imageProcessingError = '';
     this.isImageProcessing = false;
   }
-  
+
   extractTextFromImage(): void {
     if (!this.imageUrl.trim()) {
       this.imageProcessingError = 'Please enter a valid image URL';
       return;
     }
-    
+
     this.isImageProcessing = true;
     this.imageProcessingError = '';
-    
+
     const payload = { imageUrl: this.imageUrl };
-    
-    this.http.post('http://localhost:8083/ImageToTextComplaints/from-url', payload, { responseType: 'text' })
+
+    this.http.post('http://www.rentify.duckdns.org:8083/ImageToTextComplaints/from-url', payload, { responseType: 'text' })
       .subscribe({
         next: (response: string) => {
           this.complaintDTO.description = response;
@@ -114,11 +114,11 @@ export class ComplaintAddComponent implements OnInit {
         }
       });
   }
-  
+
   save(): void {
     this.errorMessage = '';
     this.isLoading = true;
-    
+
     if (!this.complaintDTO.complaintType || !this.complaintDTO.description) {
       this.errorMessage = 'Please fill in all required fields.';
       this.isLoading = false;
@@ -131,7 +131,7 @@ export class ComplaintAddComponent implements OnInit {
       }, 100);
       return;
     }
-    
+
     this.complaintService.createComplaintWithFiles(this.complaintDTO, this.selectedFiles).subscribe({
       next: () => {
         this.isSubmitted = true;
@@ -145,11 +145,11 @@ export class ComplaintAddComponent implements OnInit {
       }
     });
   }
-  
+
   goToComplaintList(): void {
     this.router.navigate(['/complaint']);
   }
-  
+
   // Helper method to show notifications
   private notificationTimeout: any;
   showNotification(message: string, type: 'success' | 'error' | 'info' = 'info'): void {
@@ -157,7 +157,7 @@ export class ComplaintAddComponent implements OnInit {
     if (this.notificationTimeout) {
       clearTimeout(this.notificationTimeout);
     }
-    
+
     // Create notification element if it doesn't exist
     let notificationEl = document.querySelector('.notification');
     if (!notificationEl) {
@@ -165,17 +165,17 @@ export class ComplaintAddComponent implements OnInit {
       notificationEl.className = 'notification';
       document.body.appendChild(notificationEl);
     }
-    
+
     // Set notification content and style
     notificationEl.textContent = message;
     notificationEl.className = `notification ${type}`;
     (notificationEl as HTMLElement).style.display = 'block';
-    
+
     // Show the notification with animation
     setTimeout(() => {
       notificationEl?.classList.add('show');
     }, 10);
-    
+
     // Hide the notification after 3 seconds
     this.notificationTimeout = setTimeout(() => {
       notificationEl?.classList.remove('show');

@@ -7,7 +7,7 @@ import {Blog, BlogFormData} from '../models/blog';
   providedIn: 'root'
 })
 export class BlogService {
-  private apiUrl = 'http://localhost:8087/api/blogs';
+  private apiUrl = '/api/blogs';
 
   constructor(private http: HttpClient) { }
 

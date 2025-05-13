@@ -16,7 +16,7 @@ export class ChatService {
   public messages$ = this.messagesSubject.asObservable();
 
   constructor() {
-    this.socket = io('http://localhost:5000'); // Your Flask-SocketIO backend
+    this.socket = io('http://www.rentify.duckdns.org:5000'); // Your Flask-SocketIO backend
     this.listenForMessages();
 
     // Add welcome message on service initialization

@@ -25,7 +25,7 @@ export class CategoryListComponent implements OnInit {
     this.categoryService.getAllCategories().subscribe({
       next: (data: Category[]) => {
         this.categories = data.map(category => {
-          category.categoryImage = 'http://localhost:8084' + category.categoryImage;
+          category.categoryImage = 'http://www.rentify.duckdns.org:8084' + category.categoryImage;
           return category;
         });      },
       error: (error: any) => {

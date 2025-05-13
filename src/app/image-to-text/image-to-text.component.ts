@@ -33,7 +33,7 @@ export class ImageToTextComponent {
 
     const payload = { imageUrl: this.imageUrl };
 
-    this.http.post('http://localhost:8083/ImageToTextComplaints/from-url', payload, { responseType: 'text' })
+    this.http.post('http://www.rentify.duckdns.org:8083/ImageToTextComplaints/from-url', payload, { responseType: 'text' })
       .subscribe({
         next: (response: string) => {
           this.extractedText = response;

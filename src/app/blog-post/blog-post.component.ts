@@ -60,7 +60,7 @@ export class BlogPostComponent implements OnInit, AfterViewInit {
     this.blogService.getBlogById(numericId).subscribe({
       next: (data) => {
         if (data.image) {
-          data.image = 'http://localhost:8087' + data.image;
+          data.image = 'http://www.rentify.duckdns.org:8087' + data.image;
         }
 
         this.blogPost = data;

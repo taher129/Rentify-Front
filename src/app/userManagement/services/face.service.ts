@@ -6,7 +6,7 @@ import {Observable} from "rxjs";
   providedIn: 'root'
 })
 export class FaceService {
-  private baseUrl = 'http://localhost:8082/api/face'; // Update for prod env if needed
+  private baseUrl = '/api/face'; // Update for prod env if needed
 
   constructor(private http: HttpClient) {}
 

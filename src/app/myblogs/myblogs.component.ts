@@ -26,7 +26,7 @@ export class MyblogsComponent implements OnInit {
     this.blogService.getBlogsByUserId(this.userId).subscribe({
       next: (blogs) => {
         this.userBlogs = blogs.map(blog => {
-          blog.image = 'http://localhost:8087' + blog.image;
+          blog.image = 'http://www.rentify.duckdns.org:8087' + blog.image;
           return blog;
         });
         this.isLoading = false;

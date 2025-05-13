@@ -203,27 +203,27 @@ export class ProfileComponent implements OnInit {
 
     // Case 2: Starts with /images/ (common case)
     if (userImage.startsWith('/images/')) {
-      return 'http://localhost:8082' + userImage;
+      return 'http://www.rentify.duckdns.org:8082' + userImage;
     }
 
     // Case 3: Starts with images/ (no leading slash)
     if (userImage.startsWith('images/')) {
-      return 'http://localhost:8082/' + userImage;
+      return 'http://www.rentify.duckdns.org:8082/' + userImage;
     }
 
     // Case 4: Just a filename (UUID.png)
     if (userImage.match(/^[a-f0-9-]+\.(png|jpg|jpeg)$/i)) {
-      return 'http://localhost:8082/images/' + userImage;
+      return 'http://www.rentify.duckdns.org:8082/images/' + userImage;
     }
 
     // Case 5: avatars/female/ or avatars/male/ paths
     if (userImage.includes('avatars/')) {
-      return 'http://localhost:8082/images/' +
+      return 'http://www.rentify.duckdns.org:8082/images/' +
         (userImage.startsWith('/') ? userImage.substring(1) : userImage);
     }
 
     // Default case
-    return 'http://localhost:8082/images/' + userImage;
+    return 'http://www.rentify.duckdns.org:8082/images/' + userImage;
   }
 
 

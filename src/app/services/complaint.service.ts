@@ -12,54 +12,54 @@ import { map, catchError, throwError } from 'rxjs';
   providedIn: 'root'
 })
 export class ComplaintService {
-  private apiUrl = 'http://localhost:8083/complaints';
+  private apiUrl = '/complaints';
 
   constructor(private http: HttpClient) {}
 
   createComplaint(complaintDTO: ComplaintDTO): Observable<ComplaintDTO> {
-    return this.http.post<ComplaintDTO>('http://localhost:8083/complaints/create', complaintDTO);
+    return this.http.post<ComplaintDTO>('http://www.rentify.duckdns.org:8083/complaints/create', complaintDTO);
   }
-  
+
   // Nouvelle méthode pour l'upload de fichiers
   createComplaintWithFiles(complaint: ComplaintDTO, files: File[]): Observable<ComplaintDTO> {
     const formData = new FormData();
-    
+
     // Ajout des données JSON de la plainte
     formData.append('complaintDTO', new Blob([JSON.stringify(complaint)], {
       type: 'application/json'
     }));
-    
+
     // Ajout des fichiers
     if (files && files.length > 0) {
       for (const file of files) {
         formData.append('evidence', file);
       }
     }
-    
-    return this.http.post<ComplaintDTO>('http://localhost:8083/complaints/create', formData);
+
+    return this.http.post<ComplaintDTO>('http://www.rentify.duckdns.org:8083/complaints/create', formData);
   }
 
-  
+
 
 
 
   updateComplaintWithFiles(id: number, complaint: ComplaintDTO, files: File[]): Observable<ComplaintDTO> {
     const formData = new FormData();
-  
+
     // Ajout du corps de la plainte en JSON
     formData.append('complaintDTO', new Blob([JSON.stringify(complaint)], {
       type: 'application/json'
     }));
-  
+
     // Ajout des fichiers si présents
     if (files && files.length > 0) {
       for (const file of files) {
         formData.append('evidence', file);
       }
     }
-  
+
     // Requête PUT vers l'endpoint de mise à jour
-    return this.http.put<ComplaintDTO>(`http://localhost:8083/complaints/update/${id}`, formData);
+    return this.http.put<ComplaintDTO>(`http://www.rentify.duckdns.org:8083/complaints/update/${id}`, formData);
   }
 
 
@@ -74,7 +74,7 @@ export class ComplaintService {
   getAllComplaints(): Observable<Complaint[]> {
     return this.http.get<Complaint[]>(`${this.apiUrl}/list`);
   }
-  
+
 
 
   filterComplaintsByStatus(status: string): Observable<Complaint[]> {
@@ -95,7 +95,7 @@ export class ComplaintService {
   // filterComplaintsByStatus(status: string): Observable<Complaint[]> {
   //   return this.http.get<Complaint[]>(`${this.apiUrl}/filter?status=${status}`);
   // }
-  
+
   // getComplaintById(complaintId: number): Observable<Complaint> {
   //   return this.http.get<Complaint>(`${this.apiUrl}/details/${complaintId}`);
   // }
@@ -113,7 +113,7 @@ export class ComplaintService {
   }
 
 
-  
+
   downloadComplaintPdf(id: number): Observable<Blob> {
     console.log(`Appel API: ${this.apiUrl}/pdf/${id}`);
     return this.http.get(`${this.apiUrl}/pdf/${id}`, {
@@ -136,9 +136,9 @@ export class ComplaintService {
   deleteComplaint(complaintId: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/delete/${complaintId}`);
   }
- 
 
-  
+
+
 
 
   // downloadComplaintPdf(id: number): void {

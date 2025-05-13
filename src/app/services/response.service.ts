@@ -8,7 +8,7 @@ import { ComplaintResponse } from '../models/ComplaintResponse';
 })
 export class ResponseService {
 
-  private apiUrl = 'http://localhost:8083/responses';
+  private apiUrl = 'http://www.rentify.duckdns.org:8083/responses';
 
   constructor(private http: HttpClient) { }
 
@@ -23,6 +23,6 @@ export class ResponseService {
   getResponseByComplaintId(complaintId: number): Observable<ComplaintResponse> {
     return this.http.get<ComplaintResponse>(`${this.apiUrl}/complaint/${complaintId}`);
   }
- 
+
 
 }

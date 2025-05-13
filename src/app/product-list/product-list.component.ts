@@ -71,7 +71,7 @@ export class ProductListComponent implements OnInit, OnDestroy {
   private processProductImages(products: Product[]): Product[] {
     return products.map(product => {
       if (product.productImage && !product.productImage.startsWith('http')) {
-        product.productImage = 'http://localhost:8084' + product.productImage;
+        product.productImage = 'http://www.rentify.duckdns.org:8084' + product.productImage;
       }
       return product;
     });

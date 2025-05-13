@@ -281,7 +281,7 @@ export class LoginComponent implements  AfterViewInit {
 
         // Redirect
         if (res.role === 'ROLE_ADMIN') {
-          window.location.href = 'http://localhost:4201'; // adjust if needed
+          window.location.href = 'http://www.rentify.duckdns.org:4201'; // adjust if needed
 
           // this.router.navigate(['/dashboard']);
         } else if (res.role === 'ROLE_USER') {

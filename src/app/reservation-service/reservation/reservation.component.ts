@@ -200,7 +200,7 @@ export class ReservationComponent implements OnInit {
           if (data.productImage) {
             this.product.productImgPath = data.productImage.startsWith('http')
               ? data.productImage
-              : 'http://localhost:8084' + data.productImage;
+              : 'http://www.rentify.duckdns.org:8084' + data.productImage;
           }
           this.hasContactedOwner = false;
           if (this.user.userId && this.product.ownerId) {

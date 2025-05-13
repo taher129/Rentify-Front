@@ -30,11 +30,11 @@ export class ComplaintComponent implements OnInit {
   sortDirection: 'asc' | 'desc' = 'asc';
    // Search functionality
    searchTerm: string = '';
-  
+
   // Base URL for image paths
-  apiBaseUrl = 'http://localhost:8083';
-  baseFileUrl = 'http://localhost:8083/files/';
-  
+  apiBaseUrl = 'http://www.rentify.duckdns.org:8083';
+  baseFileUrl = 'http://www.rentify.duckdns.org:8083/files/';
+
   // Modal properties
   showModal = false;
   selectedImage: string | null = null;
@@ -57,7 +57,7 @@ export class ComplaintComponent implements OnInit {
     complaint.description = this.translationService.toggleTranslation(complaint.description || '');
   }
 
-  
+
   ngOnInit(): void {
     this.loadComplaints();
   }
@@ -70,8 +70,8 @@ export class ComplaintComponent implements OnInit {
 
          // Tri par date décroissante par défaut
       this.sortField = 'date';
-      this.sortDirection = 'desc'; 
-      
+      this.sortDirection = 'desc';
+
         this.applyFilters();
         this.isLoading = false;
       },
@@ -86,7 +86,7 @@ applyFilters(): void {
   const status = this.selectedStatus;
   const type = this.selectedType;
   const search = this.searchTerm.toLowerCase().trim();
-  
+
   // Apply filters to the full dataset
   this.filteredComplaints = this.complaints.filter(complaint => {
     const statusMatch = status ? complaint.status === status : true;
@@ -95,7 +95,7 @@ applyFilters(): void {
  // Search term matching
  let searchMatch = true;
  if (search) {
-   searchMatch = 
+   searchMatch =
      (complaint.description?.toLowerCase().includes(search) || false) ||
      (complaint.complaintType?.toLowerCase().includes(search) || false) ||
      (complaint.complaintId?.toString().includes(search) || false) ||
@@ -105,16 +105,16 @@ applyFilters(): void {
 
  return statusMatch && typeMatch && searchMatch;
 });
-  
+
   // Appliquer le tri si un champ de tri est défini
   if (this.sortField) {
     this.applySort();
   }
-  
+
   // Update pagination
   this.totalItems = this.filteredComplaints.length;
   this.totalPages = Math.ceil(this.totalItems / this.pageSize);
-  
+
   // Reset to first page when filters change
   if (this.currentPage > this.totalPages) {
     this.currentPage = 1;
@@ -126,7 +126,7 @@ applyFilters(): void {
 
   filterComplaints(): void {
     this.isLoading = true;
-    
+
     // Small delay for loading animation
     setTimeout(() => {
       this.applyFilters();
@@ -138,7 +138,7 @@ applyFilters(): void {
   searchComplaints(): void {
     this.filterComplaints();
   }
-  
+
   // Clear search
   clearSearch(): void {
     if (this.searchTerm) {
@@ -191,7 +191,7 @@ applyFilters(): void {
   get pageNumbers(): number[] {
     const pages: number[] = [];
     const maxPagesToShow = 5;
-    
+
     if (this.totalPages <= maxPagesToShow) {
       // Show all pages if there are 5 or fewer
       for (let i = 1; i <= this.totalPages; i++) {
@@ -200,33 +200,33 @@ applyFilters(): void {
     } else {
       // Always show first page
       pages.push(1);
-      
+
       // Calculate start and end of page range
       let start = Math.max(2, this.currentPage - 1);
       let end = Math.min(this.totalPages - 1, this.currentPage + 1);
-      
+
       // Add ellipsis after first page if needed
       if (start > 2) {
         pages.push(-1); // -1 represents ellipsis
       }
-      
+
       // Add pages in range
       for (let i = start; i <= end; i++) {
         pages.push(i);
       }
-      
+
       // Add ellipsis before last page if needed
       if (end < this.totalPages - 1) {
         pages.push(-2); // -2 represents ellipsis
       }
-      
+
       // Always show last page
       pages.push(this.totalPages);
     }
-    
+
     return pages;
   }
-  
+
 
 
   deleteComplaint(complaintId: number): void {
@@ -244,27 +244,27 @@ applyFilters(): void {
 
   downloadPdf(id: number): void {
     if (!id) return;
-    
+
     console.log('Attempting to download PDF for ID:', id);
-    
+
     this.complaintService.downloadComplaintPdf(id).subscribe({
       next: (blob) => {
         console.log('Blob received:', blob);
         console.log('Blob type:', blob.type);
-        
+
         try {
           const file = new Blob([blob], { type: 'application/pdf' });
           const url = window.URL.createObjectURL(file);
-          
+
           console.log('URL created:', url);
-          
+
           const link = document.createElement('a');
           link.href = url;
           link.download = `complaint_${id}.pdf`;
           document.body.appendChild(link); // Add to DOM for compatibility
           link.click();
           document.body.removeChild(link); // Clean up
-          
+
           window.URL.revokeObjectURL(url);
           console.log('Download started!');
         } catch (error) {
@@ -340,7 +340,7 @@ sortComplaints(field: string): void {
     this.sortField = field;
     this.sortDirection = 'asc';
   }
-  
+
   // Appliquer le tri
   this.applySort();
 }
@@ -348,11 +348,11 @@ sortComplaints(field: string): void {
 // Méthode pour appliquer le tri
 applySort(): void {
   if (!this.sortField) return;
-  
+
   this.filteredComplaints.sort((a, b) => {
     let valueA: any;
     let valueB: any;
-    
+
     // Extraction des valeurs selon le champ de tri
     switch (this.sortField) {
       case 'date':
@@ -364,7 +364,7 @@ applySort(): void {
         valueA = a[this.sortField as keyof Complaint];
         valueB = b[this.sortField as keyof Complaint];
     }
-    
+
     // Comparaison selon la direction du tri
     if (this.sortDirection === 'asc') {
       return valueA > valueB ? 1 : valueA < valueB ? -1 : 0;

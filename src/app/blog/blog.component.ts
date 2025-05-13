@@ -88,7 +88,7 @@ export class BlogComponent implements OnInit {
     this.blogs = blogs.map(blog => {
       // Only prepend the base URL if the image path doesn't already have it
       if (blog.image && !blog.image.startsWith('http')) {
-        blog.image = 'http://localhost:8087' + blog.image;
+        blog.image = 'http://www.rentify.duckdns.org:8087' + blog.image;
       }
       return blog;
     });
@@ -182,7 +182,7 @@ export class BlogComponent implements OnInit {
     this.filteredBlogs = blogs.map(blog => {
       // Only prepend the base URL if the image path doesn't already have it
       if (blog.image && !blog.image.startsWith('http')) {
-        blog.image = 'http://localhost:8087' + blog.image;
+        blog.image = 'http://www.rentify.duckdns.org:8087' + blog.image;
       }
       return blog;
     });

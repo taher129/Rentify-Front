@@ -72,7 +72,7 @@ export class HomeComponent implements OnInit {
       next: (categories: Category[]) => {
         const fullUrlCategories = categories.map(cat => ({
           ...cat,
-          categoryImage: 'http://localhost:8084' + cat.categoryImage
+          categoryImage: 'http://www.rentify.duckdns.org:8084' + cat.categoryImage
         }));
         this.randomCategories = this.shuffleArray(fullUrlCategories).slice(0, 4);
       },
@@ -93,7 +93,7 @@ export class HomeComponent implements OnInit {
         // Map categories to include full image URLs
         this.categories = categories.map(category => ({
           ...category,
-          categoryImage: 'http://localhost:8084' + category.categoryImage
+          categoryImage: 'http://www.rentify.duckdns.org:8084' + category.categoryImage
         }));
       },
       error: (err) => console.error('Error loading categories', err)
@@ -127,6 +127,6 @@ export class HomeComponent implements OnInit {
     }
 
     // Prepend base URL for relative paths
-    return `http://localhost:8084${product.productImage}`;
+    return `http://www.rentify.duckdns.org:8084${product.productImage}`;
   }
 }

@@ -6,7 +6,7 @@ import { loadStripe, Stripe } from '@stripe/stripe-js';
 })
 export class StripeService {
   private stripe: Stripe | null = null;
-  private backendUrl = 'http://localhost:8086/api/payments';
+  private backendUrl = '/api/payments';
 
   async initializeStripe(): Promise<void> {
     // Ensure you're using your correct public key here.

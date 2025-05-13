@@ -35,7 +35,7 @@ interface Conversation {
 })
 export class WebsocketService implements OnDestroy {
   private stompClient: Client | null = null;
-  private serverUrl = 'http://localhost:8086';
+  private serverUrl = '';
 
   private conversationSubscription: StompSubscription | null = null;
   private readTimeout: any;

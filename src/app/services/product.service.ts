@@ -10,8 +10,8 @@ import {TopProductDTO} from "../models/TopProductDTO";
   providedIn: 'root'
 })
 export class ProductService {
-  private apiUrl = 'http://localhost:8084/api/products'; // Update the API URL as needed
-  private apiUrlReservation = 'http://localhost:8086/api/reservations'; // Update the API URL as needed
+  private apiUrl = '/api/products'; // Update the API URL as needed
+  private apiUrlReservation = '/api/reservations'; // Update the API URL as needed
 
   constructor(private http: HttpClient) {
   }

@@ -7,7 +7,7 @@ import {Reservation} from "../models/reservation";
   providedIn: 'root'
 })
 export class ReservationService {
-  private apiUrl: string = 'http://localhost:8086/api/reservations'; // Note plural
+  private apiUrl: string = '/api/reservations'; // Note plural
 
   constructor(private http: HttpClient) {}
 

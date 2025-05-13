@@ -42,7 +42,7 @@ export interface ReviewRequest {
   providedIn: 'root'
 })
 export class ReviewService {
-  private apiUrl = 'http://localhost:8085/reviews';
+  private apiUrl = '/api/reviews';
 
   // Mock user ID for demo purposes - in a real app, this would come from auth service
   private userId = 1;

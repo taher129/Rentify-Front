@@ -6,7 +6,7 @@ import {UserDTO} from "../models/user";
 
 @Injectable({ providedIn: 'root' })
 export class ProfileService {
-  private baseUrl = 'http://localhost:8082/user';
+  private baseUrl = '/user';
 
   constructor(private http: HttpClient) {}
 

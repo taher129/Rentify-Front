@@ -47,25 +47,25 @@
 
 //   downloadPdf(id: number) {
 //     console.log('Tentative de téléchargement du PDF pour ID:', id);
-    
+
 //     this.complaintService.downloadComplaintPdf(id).subscribe({
 //       next: (blob) => {
 //         console.log('Blob reçu:', blob);
 //         console.log('Type du blob:', blob.type);
-        
+
 //         try {
 //           const file = new Blob([blob], { type: 'application/pdf' });
 //           const url = window.URL.createObjectURL(file);
-          
+
 //           console.log('URL créée:', url);
-          
+
 //           const link = document.createElement('a');
 //           link.href = url;
 //           link.download = `complaint_${id}.pdf`;
 //           document.body.appendChild(link); // Ajouter au DOM pour compatibilité
 //           link.click();
 //           document.body.removeChild(link); // Nettoyer
-          
+
 //           window.URL.revokeObjectURL(url);
 //           console.log('Téléchargement lancé!');
 //         } catch (error) {
@@ -81,9 +81,9 @@
 //   // downloadPdf(id: number): void {
 //   //     this.complaintService.downloadComplaintPdf(id);
 //   //   }
-    
 
-  
+
+
 //   // openChatbot() {
 //   //   const dfMessenger = document.querySelector('df-messenger') as any;
 //   //   if (dfMessenger) {
@@ -91,7 +91,7 @@
 //   //     dfMessenger.openChat();
 //   //   }
 //   // }
-  
+
 
 
 // }
@@ -117,13 +117,13 @@ export class ComplaintDetailComponent implements OnInit {
   complaint?: ComplaintDTO;
   isLoading = false;
   errorMessage = '';
-  baseFileUrl: string = 'http://localhost:8083/files/'; // URL de base pour les fichiers
+  baseFileUrl: string = 'http://www.rentify.duckdns.org:8083/files/'; // URL de base pour les fichiers
   selectedImage: string | null = null;
   showModal: boolean = false;
 
   constructor(
-    private route: ActivatedRoute, 
-    private complaintService: ComplaintService, 
+    private route: ActivatedRoute,
+    private complaintService: ComplaintService,
     private router: Router
   ) {}
 
@@ -187,25 +187,25 @@ export class ComplaintDetailComponent implements OnInit {
 
   downloadPdf(id: number) {
     console.log('Tentative de téléchargement du PDF pour ID:', id);
-    
+
     this.complaintService.downloadComplaintPdf(id).subscribe({
       next: (blob) => {
         console.log('Blob reçu:', blob);
         console.log('Type du blob:', blob.type);
-        
+
         try {
           const file = new Blob([blob], { type: 'application/pdf' });
           const url = window.URL.createObjectURL(file);
-          
+
           console.log('URL créée:', url);
-          
+
           const link = document.createElement('a');
           link.href = url;
           link.download = `complaint_${id}.pdf`;
           document.body.appendChild(link); // Ajouter au DOM pour compatibilité
           link.click();
           document.body.removeChild(link); // Nettoyer
-          
+
           window.URL.revokeObjectURL(url);
           console.log('Téléchargement lancé!');
         } catch (error) {

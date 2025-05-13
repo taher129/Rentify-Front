@@ -65,7 +65,7 @@ export class EditBlogComponent implements OnInit {
         });
 
         if (blog.image) {
-          this.existingImageUrl = 'http://localhost:8087' + blog.image;
+          this.existingImageUrl = 'http://www.rentify.duckdns.org:8087' + blog.image;
         }
       },
       error: (err) => {

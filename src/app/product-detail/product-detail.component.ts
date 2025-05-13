@@ -50,7 +50,7 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
     ).subscribe({
       next: (data) => {
         if (data.productImage && !data.productImage.startsWith('http')) {
-          data.productImage = 'http://localhost:8084' + data.productImage;
+          data.productImage = 'http://www.rentify.duckdns.org:8084' + data.productImage;
         }
         this.product = data;
         this.cdr.detectChanges();

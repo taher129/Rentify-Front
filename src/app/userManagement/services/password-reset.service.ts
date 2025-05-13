@@ -6,7 +6,7 @@ import {HttpClient} from "@angular/common/http";
 })
 export class PasswordResetService {
 
-  private baseUrl = 'http://localhost:8082/user';
+  private baseUrl = '/user';
 
   constructor(private http: HttpClient) {}
 

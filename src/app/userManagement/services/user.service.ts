@@ -10,7 +10,7 @@ import {ToastrService} from "ngx-toastr";
   providedIn: 'root'
 })
 export class UserService {
-  private apiUrl = `${environment.apiUrl}/user`;
+  private apiUrl = `/user`;
 
   constructor(private http: HttpClient, private toastr: ToastrService) {}
   private loadingSubject = new BehaviorSubject<boolean>(false);

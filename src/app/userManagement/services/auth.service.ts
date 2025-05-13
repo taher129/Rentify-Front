@@ -15,7 +15,7 @@ interface AuthResponse {
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private readonly apiUrl = `http://localhost:8082/auth`;
+  private readonly apiUrl = `/auth`;
   private readonly TOKEN_KEY = 'auth_token';
   private readonly ROLE_KEY = 'user_role';
   private readonly USER_KEY = 'user_details'; // To store user data
