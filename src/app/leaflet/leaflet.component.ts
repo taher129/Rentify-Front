@@ -9,10 +9,10 @@ import * as L from 'leaflet';
 })
 export class LeafletComponent implements AfterViewInit, OnDestroy {
   @Input() address: any = {
-    city: 'Gabes',
-    state: 'Metouia',
+    city: 'Tunis',
+    state: 'El Menzah 6',
     country: 'Tunisia',
-    zipCode: '6010'
+    zipCode: '1002'
   };
 
   private map!: L.Map;
@@ -27,7 +27,7 @@ export class LeafletComponent implements AfterViewInit, OnDestroy {
 
   private initMap() {
     // Default coordinates (Gabes, Tunisia)
-    const defaultCoords = L.latLng(33.8815, 10.0982);
+    const defaultCoords = L.latLng(36.8350, 10.1476);
 
     this.map = L.map('map', {
       center: defaultCoords,
@@ -41,11 +41,19 @@ export class LeafletComponent implements AfterViewInit, OnDestroy {
   }
 
   private addMarker(coords: L.LatLng) {
-    L.marker(coords)
+    const customIcon = L.icon({
+      iconUrl: 'https://cdn-icons-png.flaticon.com/512/684/684908.png',
+      iconSize: [32, 32],        // size of the icon
+      iconAnchor: [16, 32],      // point of the icon which will correspond to marker's location
+      popupAnchor: [0, -32]      // point from which the popup should open relative to the iconAnchor
+    });
+
+    L.marker(coords, { icon: customIcon })
       .addTo(this.map)
       .bindPopup(this.getPopupContent())
       .openPopup();
   }
+
 
   private getPopupContent(): string {
     return `

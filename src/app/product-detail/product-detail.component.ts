@@ -25,10 +25,10 @@ import {CustomerReviewComponent} from "../customer-review/customer-review.compon
 export class ProductDetailComponent implements OnInit, OnDestroy {
   product!: Product;
   address: Address = {
-    city: 'gabes',
-    state: 'metouia',
-    country: 'Tunisie',
-    zipCode: '6010'
+    city: 'Tunis',
+    state: 'El Menzah 6',
+    country: 'Tunisia',
+    zipCode: '1002'
   };
   private destroy$ = new Subject<void>();
 
