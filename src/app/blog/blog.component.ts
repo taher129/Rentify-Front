@@ -84,24 +84,13 @@ export class BlogComponent implements OnInit {
   }
 
   processBlogs(blogs: Blog[]): void {
-    if (!blogs || !Array.isArray(blogs)) {
-      console.error('Invalid blogs data received');
-      this.filteredBlogs = [];
-      this.updatePagination();
-      return;
-    }
-
+    // Fix image paths - use the correct base URL based on your nginx config
     this.blogs = blogs.map(blog => {
-      if (!blog) return blog;
-
-      const processedBlog = { ...blog };
-
-      // Use the service method to get proper image URL
-      if (processedBlog.image) {
-        processedBlog.image = this.blogService.getImageUrl(processedBlog.image);
+      if (blog.image && !blog.image.startsWith('http')) {
+        // Use the correct path based on your nginx proxy configuration
+        blog.image = '/api' + blog.image;
       }
-
-      return processedBlog;
+      return blog;
     });
 
     this.filteredBlogs = [...this.blogs];
@@ -155,7 +144,6 @@ export class BlogComponent implements OnInit {
         top: (document.querySelector('.blog-list') as HTMLElement)?.offsetTop - 100 || 0,
         behavior: 'smooth'
       });
-
     }
   }
 
@@ -191,8 +179,9 @@ export class BlogComponent implements OnInit {
 
   handleSearchResults(blogs: Blog[]): void {
     this.filteredBlogs = blogs.map(blog => {
-      if (blog.image) {
-        blog.image = this.blogService.getImageUrl(blog.image);
+      if (blog.image && !blog.image.startsWith('http')) {
+        // Use the correct path based on your nginx proxy configuration
+        blog.image = '/api' + blog.image;
       }
       return blog;
     });
