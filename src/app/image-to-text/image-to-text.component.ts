@@ -33,7 +33,8 @@ export class ImageToTextComponent {
 
     const payload = { imageUrl: this.imageUrl };
 
-    this.http.post('http://www.rentify.duckdns.org:8083/ImageToTextComplaints/from-url', payload, { responseType: 'text' })
+    // Use the nginx proxy route instead of direct backend service call
+    this.http.post('/api/complaints/ImageToTextComplaints/from-url', payload, { responseType: 'text' })
       .subscribe({
         next: (response: string) => {
           this.extractedText = response;

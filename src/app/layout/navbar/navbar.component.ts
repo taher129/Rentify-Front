@@ -130,7 +130,10 @@ export class NavbarComponent {
       this.productService.getProductsByCategory(this.selectedCategoryId).subscribe({
         next: (data: Product[]) => {
           this.products = data.map(product => {
-            product.productImage = 'http://www.rentify.duckdns.org:8084' + product.productImage;
+            // Fixed: Use relative path through nginx proxy instead of hardcoded URL
+            if (product.productImage && !product.productImage.startsWith('http')) {
+              product.productImage = '' + product.productImage;
+            }
             return product;
           });
           console.log('Products from category:', this.products);
@@ -156,8 +159,9 @@ export class NavbarComponent {
       this.productService.searchProduct(this.searchQuery).subscribe({
         next: (data: Product[]) => {
           this.products = data.map(product => {
+            // Fixed: Use relative path through nginx proxy instead of hardcoded URL
             if (product.productImage && !product.productImage.startsWith('http')) {
-              product.productImage = 'http://www.rentify.duckdns.org:8084' + product.productImage;
+              product.productImage = '' + product.productImage;
             }
             return product;
           });
@@ -185,8 +189,4 @@ export class NavbarComponent {
       error: (err: any) => console.error('Failed to load categories', err),
     });
   }
-
-
-
-
 }

@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class ChatbotComplaintService {
 
-  private apiUrl = 'api/ChatBotComplaints/message';
+  private apiUrl = 'api/complaints/message';
 
   constructor(private http: HttpClient) {}
 

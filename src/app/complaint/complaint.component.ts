@@ -28,12 +28,13 @@ export class ComplaintComponent implements OnInit {
   typeList: string[] = ['Fraud', 'Billing Issues', 'Product Issues', 'Reservation Problems'];
   sortField: string = '';
   sortDirection: 'asc' | 'desc' = 'asc';
-   // Search functionality
-   searchTerm: string = '';
+  // Search functionality
+  searchTerm: string = '';
 
-  // Base URL for image paths
-  apiBaseUrl = 'http://www.rentify.duckdns.org:8083';
-  baseFileUrl = 'http://www.rentify.duckdns.org:8083/files/';
+  // Updated URLs to work with your Nginx configuration
+  // Remove hardcoded external URLs - use relative paths that go through Nginx proxy
+  // Your Nginx config proxies /complaints to complaint-service:8083
+  // Your uploads are served from /uploads/ location
 
   // Modal properties
   showModal = false;
@@ -57,7 +58,6 @@ export class ComplaintComponent implements OnInit {
     complaint.description = this.translationService.toggleTranslation(complaint.description || '');
   }
 
-
   ngOnInit(): void {
     this.loadComplaints();
   }
@@ -68,9 +68,9 @@ export class ComplaintComponent implements OnInit {
       next: (data) => {
         this.complaints = data;
 
-         // Tri par date décroissante par défaut
-      this.sortField = 'date';
-      this.sortDirection = 'desc';
+        // Tri par date décroissante par défaut
+        this.sortField = 'date';
+        this.sortDirection = 'desc';
 
         this.applyFilters();
         this.isLoading = false;
@@ -81,48 +81,47 @@ export class ComplaintComponent implements OnInit {
       }
     });
   }
+
 // Modifier la méthode applyFilters pour inclure le tri
-applyFilters(): void {
-  const status = this.selectedStatus;
-  const type = this.selectedType;
-  const search = this.searchTerm.toLowerCase().trim();
+  applyFilters(): void {
+    const status = this.selectedStatus;
+    const type = this.selectedType;
+    const search = this.searchTerm.toLowerCase().trim();
 
-  // Apply filters to the full dataset
-  this.filteredComplaints = this.complaints.filter(complaint => {
-    const statusMatch = status ? complaint.status === status : true;
-    const typeMatch = type ? complaint.complaintType === type : true;
+    // Apply filters to the full dataset
+    this.filteredComplaints = this.complaints.filter(complaint => {
+      const statusMatch = status ? complaint.status === status : true;
+      const typeMatch = type ? complaint.complaintType === type : true;
 
- // Search term matching
- let searchMatch = true;
- if (search) {
-   searchMatch =
-     (complaint.description?.toLowerCase().includes(search) || false) ||
-     (complaint.complaintType?.toLowerCase().includes(search) || false) ||
-     (complaint.complaintId?.toString().includes(search) || false) ||
-     (complaint.status?.toLowerCase().includes(search) || false);
- }
+      // Search term matching
+      let searchMatch = true;
+      if (search) {
+        searchMatch =
+          (complaint.description?.toLowerCase().includes(search) || false) ||
+          (complaint.complaintType?.toLowerCase().includes(search) || false) ||
+          (complaint.complaintId?.toString().includes(search) || false) ||
+          (complaint.status?.toLowerCase().includes(search) || false);
+      }
 
+      return statusMatch && typeMatch && searchMatch;
+    });
 
- return statusMatch && typeMatch && searchMatch;
-});
+    // Appliquer le tri si un champ de tri est défini
+    if (this.sortField) {
+      this.applySort();
+    }
 
-  // Appliquer le tri si un champ de tri est défini
-  if (this.sortField) {
-    this.applySort();
+    // Update pagination
+    this.totalItems = this.filteredComplaints.length;
+    this.totalPages = Math.ceil(this.totalItems / this.pageSize);
+
+    // Reset to first page when filters change
+    if (this.currentPage > this.totalPages) {
+      this.currentPage = 1;
+    } else if (this.totalPages === 0) {
+      this.currentPage = 1;
+    }
   }
-
-  // Update pagination
-  this.totalItems = this.filteredComplaints.length;
-  this.totalPages = Math.ceil(this.totalItems / this.pageSize);
-
-  // Reset to first page when filters change
-  if (this.currentPage > this.totalPages) {
-    this.currentPage = 1;
-  } else if (this.totalPages === 0) {
-    this.currentPage = 1;
-  }
-}
-
 
   filterComplaints(): void {
     this.isLoading = true;
@@ -146,7 +145,6 @@ applyFilters(): void {
       this.filterComplaints();
     }
   }
-
 
   // Pagination methods
   get paginatedComplaints(): Complaint[] {
@@ -227,8 +225,6 @@ applyFilters(): void {
     return pages;
   }
 
-
-
   deleteComplaint(complaintId: number): void {
     if (complaintId && confirm('Êtes-vous sûr de vouloir supprimer cette réclamation ?')) {
       this.complaintService.deleteComplaint(complaintId).subscribe({
@@ -239,8 +235,6 @@ applyFilters(): void {
       });
     }
   }
-
-
 
   downloadPdf(id: number): void {
     if (!id) return;
@@ -308,13 +302,23 @@ applyFilters(): void {
     return parts[parts.length - 1];
   }
 
-  // Get complete file URL
+  // Updated method to work with your Nginx configuration
   getFileUrl(filePath: string): string {
     if (!filePath) return '';
+
+    // If it's already a full URL, return as is
     if (filePath.startsWith('http')) {
       return filePath;
     }
-    return this.baseFileUrl + this.getFileName(filePath);
+
+    // If it already starts with /uploads/, use it as is (served by Nginx)
+    if (filePath.startsWith('/uploads/')) {
+      return filePath;
+    }
+
+    // If it's just a filename, prepend /uploads/
+    // This matches your Nginx configuration: location /uploads/
+    return `/uploads/${this.getFileName(filePath)}`;
   }
 
   // Open image in large format
@@ -331,67 +335,61 @@ applyFilters(): void {
   }
 
 // Nouvelle méthode pour le tri
-sortComplaints(field: string): void {
-  // Si on clique sur le même champ, on inverse la direction du tri
-  if (this.sortField === field) {
-    this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
-  } else {
-    // Sinon, on définit le nouveau champ et on commence par un tri ascendant
-    this.sortField = field;
-    this.sortDirection = 'asc';
+  sortComplaints(field: string): void {
+    // Si on clique sur le même champ, on inverse la direction du tri
+    if (this.sortField === field) {
+      this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+    } else {
+      // Sinon, on définit le nouveau champ et on commence par un tri ascendant
+      this.sortField = field;
+      this.sortDirection = 'asc';
+    }
+
+    // Appliquer le tri
+    this.applySort();
   }
 
-  // Appliquer le tri
-  this.applySort();
-}
-
 // Méthode pour appliquer le tri
-applySort(): void {
-  if (!this.sortField) return;
+  applySort(): void {
+    if (!this.sortField) return;
 
-  this.filteredComplaints.sort((a, b) => {
-    let valueA: any;
-    let valueB: any;
+    this.filteredComplaints.sort((a, b) => {
+      let valueA: any;
+      let valueB: any;
 
-    // Extraction des valeurs selon le champ de tri
-    switch (this.sortField) {
-      case 'date':
-        valueA = new Date(a.complaintDate || '').getTime();
-        valueB = new Date(b.complaintDate || '').getTime();
-        break;
-      // Vous pouvez ajouter d'autres cas pour trier par d'autres colonnes
-      default:
-        valueA = a[this.sortField as keyof Complaint];
-        valueB = b[this.sortField as keyof Complaint];
-    }
+      // Extraction des valeurs selon le champ de tri
+      switch (this.sortField) {
+        case 'date':
+          valueA = new Date(a.complaintDate || '').getTime();
+          valueB = new Date(b.complaintDate || '').getTime();
+          break;
+        // Vous pouvez ajouter d'autres cas pour trier par d'autres colonnes
+        default:
+          valueA = a[this.sortField as keyof Complaint];
+          valueB = b[this.sortField as keyof Complaint];
+      }
 
-    // Comparaison selon la direction du tri
-    if (this.sortDirection === 'asc') {
-      return valueA > valueB ? 1 : valueA < valueB ? -1 : 0;
-    } else {
-      return valueA < valueB ? 1 : valueA > valueB ? -1 : 0;
-    }
-  });
-}
+      // Comparaison selon la direction du tri
+      if (this.sortDirection === 'asc') {
+        return valueA > valueB ? 1 : valueA < valueB ? -1 : 0;
+      } else {
+        return valueA < valueB ? 1 : valueA > valueB ? -1 : 0;
+      }
+    });
+  }
 
- // Navigate to add complaint page
- goToAddComplaint(): void {
-  this.router.navigate(['/complaint-add']);
-}
-
-
-
+  // Navigate to add complaint page
+  goToAddComplaint(): void {
+    this.router.navigate(['/complaint-add']);
+  }
 
 // This would be a method in your component
-showResponse(complaintId: number): void {
-  this.responseService.getResponseByComplaintId(complaintId).subscribe(response => {
-    if (response) {
-      this.router.navigate(['/complaintresponse', response.id]);
-    }
-  });
-}
-
-
-
+  showResponse(complaintId: number): void {
+    this.responseService.getResponseByComplaintId(complaintId).subscribe(response => {
+      if (response) {
+        this.router.navigate(['/complaintresponse', response.id]);
+      }
+    });
+  }
 
 }

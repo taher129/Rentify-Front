@@ -59,8 +59,9 @@ export class BlogPostComponent implements OnInit, AfterViewInit {
 
     this.blogService.getBlogById(numericId).subscribe({
       next: (data) => {
+        // Process blog image URL to work with nginx proxy
         if (data.image) {
-          data.image = 'http://www.rentify.duckdns.org:8087' + data.image;
+          data.image = this.processBlogImageUrl(data.image);
         }
 
         this.blogPost = data;
@@ -81,6 +82,47 @@ export class BlogPostComponent implements OnInit, AfterViewInit {
     });
   }
 
+  /**
+   * Process blog image URL to work with nginx proxy configuration
+   */
+  processBlogImageUrl(imageUrl: string): string {
+    if (!imageUrl) return '';
+
+    // Case 1: Already a complete URL
+    if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+      return imageUrl;
+    }
+
+    // Case 2: Already starts with /uploads/ (nginx proxy path)
+    if (imageUrl.startsWith('/uploads/')) {
+      return imageUrl;
+    }
+
+    // Case 3: Starts with uploads/ (no leading slash)
+    if (imageUrl.startsWith('uploads/')) {
+      return '/' + imageUrl;
+    }
+
+    // Case 4: Starts with /images/ (backend path - convert to nginx proxy path)
+    if (imageUrl.startsWith('/images/')) {
+      return '' + imageUrl;
+    }
+
+    // Case 5: Starts with images/ (no leading slash)
+    if (imageUrl.startsWith('images/')) {
+      return '' + imageUrl;
+    }
+
+    // Case 6: Just a filename or relative path
+    // Assume it's in the uploads/images/blogs/ directory (you may need to adjust this)
+    if (imageUrl.match(/^[^\/]/)) {
+      return 'images/blogs/' + imageUrl;
+    }
+
+    // Default case - prepend uploads path
+    return '/uploads/' + (imageUrl.startsWith('/') ? imageUrl.substring(1) : imageUrl);
+  }
+
   // Social sharing methods
   shareOnFacebook(): void {
     this.shareService.shareOnFacebook(this.currentUrl);
@@ -97,9 +139,6 @@ export class BlogPostComponent implements OnInit, AfterViewInit {
   shareOnInstagram(): void {
     this.shareService.shareOnInstagram();
   }
-
-
-
 
   // Content processing methods
   processContent(content: string): any {
@@ -150,9 +189,11 @@ export class BlogPostComponent implements OnInit, AfterViewInit {
       alert('Link copied to clipboard!');
     });
   }
+
   shareOnWhatsApp(): void {
     window.open(`https://wa.me/?text=${encodeURIComponent(this.shareText + ' ' + this.currentUrl)}`, '_blank');
   }
+
   rentProduct() {
     // Exemple : redirection ou ouverture d'une modal
     console.log('Rent button clicked!');

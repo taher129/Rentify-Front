@@ -8,9 +8,22 @@ import {Blog, BlogFormData} from '../models/blog';
 })
 export class BlogService {
   private apiUrl = '/api/blogs';
-
+  private uploadsUrl = 'http://blog-service:8087/uploads';
   constructor(private http: HttpClient) { }
+  getImageUrl(imagePath: string): string {
+    if (!imagePath) return '';
 
+    // If it's already a full URL (from backend), return as-is
+    if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+      return imagePath;
+    }
+
+    // Remove any leading slashes or uploads/ prefix that might be duplicated
+    const cleanPath = imagePath.replace(/^\/+/, '').replace(/^uploads\//, '');
+
+    // Return the proper API path
+    return `${this.uploadsUrl}/${cleanPath}`;
+  }
   getAllBlogs(): Observable<Blog[]> {
     return this.http.get<Blog[]>(this.apiUrl);
   }

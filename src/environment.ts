@@ -1,4 +1,4 @@
 export const environment = {
-  production: false,
+  production: true,
   apiUrl: 'http://www.rentify.duckdns.org:8082'
 };

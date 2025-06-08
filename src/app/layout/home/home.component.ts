@@ -10,7 +10,6 @@ import { HttpClient } from '@angular/common/http';
 import {Product} from "../../models/product";
 import {ProductService} from "../../services/product.service";
 
-
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
@@ -31,7 +30,6 @@ export class HomeComponent implements OnInit {
   topProducts: (Product & {reservationCount: number})[] = [];
   isLoading = true;
   error: string | null = null;
-
 
   slideConfig = {
     slidesToShow: 4,
@@ -62,6 +60,7 @@ export class HomeComponent implements OnInit {
       }
     ]
   };
+
   constructor(private categoryService: CategoryService , private productService: ProductService) {}
 
   ngOnInit(): void {
@@ -72,7 +71,10 @@ export class HomeComponent implements OnInit {
       next: (categories: Category[]) => {
         const fullUrlCategories = categories.map(cat => ({
           ...cat,
-          categoryImage: 'http://www.rentify.duckdns.org:8084' + cat.categoryImage
+          // Use the uploads path from your Nginx configuration
+          categoryImage: cat.categoryImage && !cat.categoryImage.startsWith('http')
+            ? `${cat.categoryImage.replace(/^\/+/, '')}`
+            : cat.categoryImage
         }));
         this.randomCategories = this.shuffleArray(fullUrlCategories).slice(0, 4);
       },
@@ -82,7 +84,6 @@ export class HomeComponent implements OnInit {
     });
   }
 
-
   shuffleArray(array: Category[]): Category[] {
     return array.sort(() => Math.random() - 0.5);
   }
@@ -90,10 +91,12 @@ export class HomeComponent implements OnInit {
   loadCategories(): void {
     this.categoryService.getAllCategories().subscribe({
       next: (categories: any[]) => {
-        // Map categories to include full image URLs
+        // Map categories to include proper image URLs through Nginx proxy
         this.categories = categories.map(category => ({
           ...category,
-          categoryImage: 'http://www.rentify.duckdns.org:8084' + category.categoryImage
+          categoryImage: category.categoryImage && !category.categoryImage.startsWith('http')
+            ? `${category.categoryImage.replace(/^\/+/, '')}`
+            : category.categoryImage
         }));
       },
       error: (err) => console.error('Error loading categories', err)
@@ -116,6 +119,7 @@ export class HomeComponent implements OnInit {
       }
     });
   }
+
   getProductImage(product: Product): string {
     if (!product?.productImage) {
       return 'assets/images/default-product.png'; // Fallback image
@@ -126,7 +130,8 @@ export class HomeComponent implements OnInit {
       return product.productImage;
     }
 
-    // Prepend base URL for relative paths
-    return `http://www.rentify.duckdns.org:8084${product.productImage}`;
+    // Use the uploads path from your Nginx configuration
+    // This will route through your Nginx proxy to the correct service
+    return `${product.productImage.replace(/^\/+/, '')}`;
   }
 }

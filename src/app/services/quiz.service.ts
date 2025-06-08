@@ -9,7 +9,7 @@ import { question } from '../models/question';
   providedIn: 'root'
 })
 export class QuizService {
-  private apiUrl = '/api/blogs'; // <--- adapt if needed
+  private apiUrl = '/api/blogs';
 
   constructor(private http: HttpClient) {}
 

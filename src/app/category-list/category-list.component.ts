@@ -25,13 +25,17 @@ export class CategoryListComponent implements OnInit {
     this.categoryService.getAllCategories().subscribe({
       next: (data: Category[]) => {
         this.categories = data.map(category => {
-          category.categoryImage = 'http://www.rentify.duckdns.org:8084' + category.categoryImage;
+          // Use the uploads path from your Nginx configuration
+          // This will route through your Nginx proxy to the correct service
+          if (category.categoryImage && !category.categoryImage.startsWith('http')) {
+            category.categoryImage = `${category.categoryImage.replace(/^\/+/, '')}`;
+          }
           return category;
-        });      },
+        });
+      },
       error: (error: any) => {
         console.error('Error loading categories', error);
       }
     });
   }
-
 }

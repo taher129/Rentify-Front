@@ -26,7 +26,18 @@ export class MyblogsComponent implements OnInit {
     this.blogService.getBlogsByUserId(this.userId).subscribe({
       next: (blogs) => {
         this.userBlogs = blogs.map(blog => {
-          blog.image = 'http://www.rentify.duckdns.org:8087' + blog.image;
+          // Fix the image URL to match your Nginx configuration
+          if (blog.image) {
+            // If the image already starts with /uploads/, use it as is
+            if (blog.image.startsWith('/uploads/')) {
+              blog.image = blog.image;
+            }
+            // If it's just a filename, prepend /uploads/
+            else if (!blog.image.startsWith('http')) {
+              blog.image = `/uploads/${blog.image}`;
+            }
+            // If it's already a full URL, keep it as is
+          }
           return blog;
         });
         this.isLoading = false;

@@ -97,7 +97,8 @@ export class ComplaintAddComponent implements OnInit {
 
     const payload = { imageUrl: this.imageUrl };
 
-    this.http.post('http://www.rentify.duckdns.org:8083/ImageToTextComplaints/from-url', payload, { responseType: 'text' })
+    // Updated URL to go through Nginx proxy - uses relative path
+    this.http.post('/api/complaints/ImageToTextComplaints/from-url', payload, { responseType: 'text' })
       .subscribe({
         next: (response: string) => {
           this.complaintDTO.description = response;
@@ -188,8 +189,4 @@ export class ComplaintAddComponent implements OnInit {
   openChatbot(): void {
     this.chatbotPopupService.openChatbot();
   }
-
-
-
-
 }

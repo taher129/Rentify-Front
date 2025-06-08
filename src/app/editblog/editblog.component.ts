@@ -65,7 +65,9 @@ export class EditBlogComponent implements OnInit {
         });
 
         if (blog.image) {
-          this.existingImageUrl = 'http://www.rentify.duckdns.org:8087' + blog.image;
+          // Updated to use relative path through Nginx proxy
+          // Assuming your blog images are served through the uploads directory
+          this.existingImageUrl = blog.image.startsWith('/uploads/') ? blog.image : '/uploads/' + blog.image;
         }
       },
       error: (err) => {

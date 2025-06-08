@@ -49,8 +49,10 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
       })
     ).subscribe({
       next: (data) => {
+        // Use the uploads path from your Nginx configuration
+        // This will route through your Nginx proxy to the correct service
         if (data.productImage && !data.productImage.startsWith('http')) {
-          data.productImage = 'http://www.rentify.duckdns.org:8084' + data.productImage;
+          data.productImage = `${data.productImage.replace(/^\/+/, '')}`;
         }
         this.product = data;
         this.cdr.detectChanges();

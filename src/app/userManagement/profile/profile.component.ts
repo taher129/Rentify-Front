@@ -174,16 +174,16 @@ export class ProfileComponent implements OnInit {
 
     // Handle different possible path formats
     if (cleanPath.startsWith('images/') || cleanPath.startsWith('avatar/')) {
-      return `${environment.apiUrl}/${cleanPath}`;
+      return `/uploads/${cleanPath}`;
     }
 
     // Handle full paths that might come from different versions
     if (cleanPath.includes('avatars/') || cleanPath.includes('avatar/')) {
-      return `${environment.apiUrl}/${cleanPath.startsWith('images/') ? '' : 'images/'}${cleanPath}`;
+      return `/uploads/${cleanPath.startsWith('images/') ? '' : 'images/'}${cleanPath}`;
     }
 
     // Default case - assume it's a direct path
-    return `${environment.apiUrl}/images/avatars/${cleanPath}`;
+    return `/uploads/images/avatars/${cleanPath}`;
   }
 
   handleImageError(event: Event) {
@@ -201,30 +201,38 @@ export class ProfileComponent implements OnInit {
       return userImage;
     }
 
-    // Case 2: Starts with /images/ (common case)
+    // Case 2: Starts with /uploads/ (nginx proxy path)
+    if (userImage.startsWith('/uploads/')) {
+      return userImage;
+    }
+
+    // Case 3: Starts with uploads/ (no leading slash)
+    if (userImage.startsWith('uploads/')) {
+      return '/' + userImage;
+    }
+
+    // Case 4: Starts with /images/ (backend path - convert to nginx proxy path)
     if (userImage.startsWith('/images/')) {
-      return 'http://www.rentify.duckdns.org:8082' + userImage;
+      return '' + userImage;
     }
 
-    // Case 3: Starts with images/ (no leading slash)
+    // Case 5: Starts with images/ (no leading slash)
     if (userImage.startsWith('images/')) {
-      return 'http://www.rentify.duckdns.org:8082/' + userImage;
+      return '' + userImage;
     }
 
-    // Case 4: Just a filename (UUID.png)
+    // Case 6: Just a filename (UUID.png) - assume it's in avatars folder
     if (userImage.match(/^[a-f0-9-]+\.(png|jpg|jpeg)$/i)) {
-      return 'http://www.rentify.duckdns.org:8082/images/' + userImage;
+      return '/images/avatars/' + userImage;
     }
 
-    // Case 5: avatars/female/ or avatars/male/ paths
+    // Case 7: avatars/female/ or avatars/male/ paths
     if (userImage.includes('avatars/')) {
-      return 'http://www.rentify.duckdns.org:8082/images/' +
+      return '/images/' +
         (userImage.startsWith('/') ? userImage.substring(1) : userImage);
     }
 
-    // Default case
-    return 'http://www.rentify.duckdns.org:8082/images/' + userImage;
+    // Default case - assume it's in images folder
+    return '/images/' + (userImage.startsWith('/') ? userImage.substring(1) : userImage);
   }
-
-
 }

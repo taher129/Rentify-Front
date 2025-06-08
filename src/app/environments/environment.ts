@@ -1,6 +1,22 @@
-// In your environment.ts or similar config file
 export const environment = {
-  production: false,
-  apiUrl: 'http://www.rentify.duckdns.org:8084', // Your backend URL
-  // ...
+  production: true,
+  apiUrl: '', // Keep empty for relative paths in production too
+
+  // API endpoints
+  api: {
+    products: '/api/products',
+    reservations: '/api/reservations',
+    auth: '/auth',
+    blogs: '/api/blogs',
+    categories: '/api/categories',
+    complaints: '/complaints',
+    reviews: '/reviews',
+    chatbot: '/api/chatbot'
+  },
+
+  // Upload paths
+  uploads: {
+    base: '/uploads',
+    products: '/uploads/product-uploads'
+  }
 };

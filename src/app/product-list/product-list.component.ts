@@ -70,8 +70,10 @@ export class ProductListComponent implements OnInit, OnDestroy {
 
   private processProductImages(products: Product[]): Product[] {
     return products.map(product => {
+      // Use the uploads path from your Nginx configuration
+      // This will route through your Nginx proxy to the correct service
       if (product.productImage && !product.productImage.startsWith('http')) {
-        product.productImage = 'http://www.rentify.duckdns.org:8084' + product.productImage;
+        product.productImage = `${product.productImage.replace(/^\/+/, '')}`;
       }
       return product;
     });

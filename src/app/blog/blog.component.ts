@@ -84,13 +84,24 @@ export class BlogComponent implements OnInit {
   }
 
   processBlogs(blogs: Blog[]): void {
-    // Fix image paths
+    if (!blogs || !Array.isArray(blogs)) {
+      console.error('Invalid blogs data received');
+      this.filteredBlogs = [];
+      this.updatePagination();
+      return;
+    }
+
     this.blogs = blogs.map(blog => {
-      // Only prepend the base URL if the image path doesn't already have it
-      if (blog.image && !blog.image.startsWith('http')) {
-        blog.image = 'http://www.rentify.duckdns.org:8087' + blog.image;
+      if (!blog) return blog;
+
+      const processedBlog = { ...blog };
+
+      // Use the service method to get proper image URL
+      if (processedBlog.image) {
+        processedBlog.image = this.blogService.getImageUrl(processedBlog.image);
       }
-      return blog;
+
+      return processedBlog;
     });
 
     this.filteredBlogs = [...this.blogs];
@@ -180,9 +191,8 @@ export class BlogComponent implements OnInit {
 
   handleSearchResults(blogs: Blog[]): void {
     this.filteredBlogs = blogs.map(blog => {
-      // Only prepend the base URL if the image path doesn't already have it
-      if (blog.image && !blog.image.startsWith('http')) {
-        blog.image = 'http://www.rentify.duckdns.org:8087' + blog.image;
+      if (blog.image) {
+        blog.image = this.blogService.getImageUrl(blog.image);
       }
       return blog;
     });

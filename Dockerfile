@@ -23,6 +23,7 @@ COPY --from=build /app/dist/rentify-front/browser /usr/share/nginx/html
 # Copy custom Nginx configuration
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
+
 # Set permissions for nginx
 RUN chown -R nginx:nginx /usr/share/nginx/html && \
     chmod -R 755 /usr/share/nginx/html
