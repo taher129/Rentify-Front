@@ -7,6 +7,7 @@ import { Blog } from '../models/blog';
 import { Router } from '@angular/router';
 import { debounceTime, distinctUntilChanged, switchMap, finalize } from 'rxjs/operators';
 import { Subject } from 'rxjs';
+import { BlogFormData } from '../models/blog'; // Make sure this is imported if used elsewhere
 
 @Component({
   selector: 'app-blog',
@@ -84,11 +85,17 @@ export class BlogComponent implements OnInit {
   }
 
   processBlogs(blogs: Blog[]): void {
-    // Fix image paths - use the correct base URL based on your nginx config
+    // NO NEED TO ADD '/api' HERE. The backend should return paths like '/uploads/blogs/...'
+    // And Nginx is configured to serve those directly from the volume.
     this.blogs = blogs.map(blog => {
+      // If the image path from the backend does not start with a schema (http/https),
+      // assume it's a relative path that Nginx can handle directly.
+      // This is generally safe if your backend returns paths like '/uploads/blogs/image.jpg'
       if (blog.image && !blog.image.startsWith('http')) {
-        // Use the correct path based on your nginx proxy configuration
-        blog.image = '/api' + blog.image;
+        // You can keep this for safety if, for example, your default image is not '/uploads/'
+        // Or if you ever have external image URLs.
+        // For your current setup, it should be just 'return blog;'
+        return blog;
       }
       return blog;
     });
@@ -178,10 +185,19 @@ export class BlogComponent implements OnInit {
   }
 
   handleSearchResults(blogs: Blog[]): void {
+    // NO NEED TO ADD '/api' HERE. The backend should return paths like '/uploads/blogs/...'
+    // And Nginx is configured to serve those directly from the volume.
     this.filteredBlogs = blogs.map(blog => {
+      // If the image path from the backend does not start with a schema (http/https),
+      // assume it's a relative path that Nginx can handle directly.
+      // This is generally safe if your backend returns paths like '/uploads/blogs/image.jpg'
       if (blog.image && !blog.image.startsWith('http')) {
-        // Use the correct path based on your nginx proxy configuration
-        blog.image = '/api' + blog.image;
+        // return blog; // This is the intended behavior
+        // Or if you only want to change it if it's not already correct
+        // If it starts with /uploads, it's fine.
+        // If it's a relative path like 'some_image.jpg', it might need '/uploads/blogs/' prefix
+        // But since backend stores '/uploads/blogs/', this map transformation is probably unneeded.
+        return blog;
       }
       return blog;
     });
